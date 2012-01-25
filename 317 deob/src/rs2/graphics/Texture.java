@@ -283,12 +283,12 @@ public final class Texture extends RSDrawingArea {
 			k3 = (k1 - i2 << 15) / (i - k);
 		}
 		if (i <= j && i <= k) {
-			if (i >= RSDrawingArea.bottomY)
+			if (i >= RSDrawingArea.endY)
 				return;
-			if (j > RSDrawingArea.bottomY)
-				j = RSDrawingArea.bottomY;
-			if (k > RSDrawingArea.bottomY)
-				k = RSDrawingArea.bottomY;
+			if (j > RSDrawingArea.endY)
+				j = RSDrawingArea.endY;
+			if (k > RSDrawingArea.endY)
+				k = RSDrawingArea.endY;
 			if (j < k) {
 				j1 = l <<= 16;
 				i2 = k1 <<= 15;
@@ -413,12 +413,12 @@ public final class Texture extends RSDrawingArea {
 			return;
 		}
 		if (j <= k) {
-			if (j >= RSDrawingArea.bottomY)
+			if (j >= RSDrawingArea.endY)
 				return;
-			if (k > RSDrawingArea.bottomY)
-				k = RSDrawingArea.bottomY;
-			if (i > RSDrawingArea.bottomY)
-				i = RSDrawingArea.bottomY;
+			if (k > RSDrawingArea.endY)
+				k = RSDrawingArea.endY;
+			if (i > RSDrawingArea.endY)
+				i = RSDrawingArea.endY;
 			if (k < i) {
 				l = i1 <<= 16;
 				k1 = l1 <<= 15;
@@ -542,12 +542,12 @@ public final class Texture extends RSDrawingArea {
 			}
 			return;
 		}
-		if (k >= RSDrawingArea.bottomY)
+		if (k >= RSDrawingArea.endY)
 			return;
-		if (i > RSDrawingArea.bottomY)
-			i = RSDrawingArea.bottomY;
-		if (j > RSDrawingArea.bottomY)
-			j = RSDrawingArea.bottomY;
+		if (i > RSDrawingArea.endY)
+			i = RSDrawingArea.endY;
+		if (j > RSDrawingArea.endY)
+			j = RSDrawingArea.endY;
 		if (i < j) {
 			i1 = j1 <<= 16;
 			l1 = i2 <<= 15;
@@ -795,12 +795,12 @@ public final class Texture extends RSDrawingArea {
 		if (k != i)
 			j2 = (l - j1 << 16) / (i - k);
 		if (i <= j && i <= k) {
-			if (i >= RSDrawingArea.bottomY)
+			if (i >= RSDrawingArea.endY)
 				return;
-			if (j > RSDrawingArea.bottomY)
-				j = RSDrawingArea.bottomY;
-			if (k > RSDrawingArea.bottomY)
-				k = RSDrawingArea.bottomY;
+			if (j > RSDrawingArea.endY)
+				j = RSDrawingArea.endY;
+			if (k > RSDrawingArea.endY)
+				k = RSDrawingArea.endY;
 			if (j < k) {
 				j1 = l <<= 16;
 				if (i < 0) {
@@ -891,12 +891,12 @@ public final class Texture extends RSDrawingArea {
 			return;
 		}
 		if (j <= k) {
-			if (j >= RSDrawingArea.bottomY)
+			if (j >= RSDrawingArea.endY)
 				return;
-			if (k > RSDrawingArea.bottomY)
-				k = RSDrawingArea.bottomY;
-			if (i > RSDrawingArea.bottomY)
-				i = RSDrawingArea.bottomY;
+			if (k > RSDrawingArea.endY)
+				k = RSDrawingArea.endY;
+			if (i > RSDrawingArea.endY)
+				i = RSDrawingArea.endY;
 			if (k < i) {
 				l = i1 <<= 16;
 				if (j < 0) {
@@ -986,12 +986,12 @@ public final class Texture extends RSDrawingArea {
 			}
 			return;
 		}
-		if (k >= RSDrawingArea.bottomY)
+		if (k >= RSDrawingArea.endY)
 			return;
-		if (i > RSDrawingArea.bottomY)
-			i = RSDrawingArea.bottomY;
-		if (j > RSDrawingArea.bottomY)
-			j = RSDrawingArea.bottomY;
+		if (i > RSDrawingArea.endY)
+			i = RSDrawingArea.endY;
+		if (j > RSDrawingArea.endY)
+			j = RSDrawingArea.endY;
 		if (i < j) {
 			i1 = j1 <<= 16;
 			if (k < 0) {
@@ -1164,12 +1164,12 @@ public final class Texture extends RSDrawingArea {
 			j8 = (k1 - i2 << 16) / (i - k);
 		}
 		if (i <= j && i <= k) {
-			if (i >= RSDrawingArea.bottomY)
+			if (i >= RSDrawingArea.endY)
 				return;
-			if (j > RSDrawingArea.bottomY)
-				j = RSDrawingArea.bottomY;
-			if (k > RSDrawingArea.bottomY)
-				k = RSDrawingArea.bottomY;
+			if (j > RSDrawingArea.endY)
+				j = RSDrawingArea.endY;
+			if (k > RSDrawingArea.endY)
+				k = RSDrawingArea.endY;
 			if (j < k) {
 				j1 = l <<= 16;
 				i2 = k1 <<= 16;
@@ -1331,12 +1331,12 @@ public final class Texture extends RSDrawingArea {
 			return;
 		}
 		if (j <= k) {
-			if (j >= RSDrawingArea.bottomY)
+			if (j >= RSDrawingArea.endY)
 				return;
-			if (k > RSDrawingArea.bottomY)
-				k = RSDrawingArea.bottomY;
-			if (i > RSDrawingArea.bottomY)
-				i = RSDrawingArea.bottomY;
+			if (k > RSDrawingArea.endY)
+				k = RSDrawingArea.endY;
+			if (i > RSDrawingArea.endY)
+				i = RSDrawingArea.endY;
 			if (k < i) {
 				l = i1 <<= 16;
 				k1 = l1 <<= 16;
@@ -1496,12 +1496,12 @@ public final class Texture extends RSDrawingArea {
 			}
 			return;
 		}
-		if (k >= RSDrawingArea.bottomY)
+		if (k >= RSDrawingArea.endY)
 			return;
-		if (i > RSDrawingArea.bottomY)
-			i = RSDrawingArea.bottomY;
-		if (j > RSDrawingArea.bottomY)
-			j = RSDrawingArea.bottomY;
+		if (i > RSDrawingArea.endY)
+			i = RSDrawingArea.endY;
+		if (j > RSDrawingArea.endY)
+			j = RSDrawingArea.endY;
 		if (i < j) {
 			i1 = j1 <<= 16;
 			l1 = i2 <<= 16;

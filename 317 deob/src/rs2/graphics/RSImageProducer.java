@@ -15,7 +15,7 @@ public final class RSImageProducer {
 		initDrawingArea();
 	}
 
-	public void drawGraphics(int y, Graphics gfx, int x) {
+	public void drawGraphics(int x, int y, Graphics gfx) {
 		draw(gfx, x, y);
 	}
 

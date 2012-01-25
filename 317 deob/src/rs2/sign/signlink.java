@@ -3,7 +3,7 @@
 // Decompiler options: packimports(3)
 // Source File Name:   signlink.java
 
-package sign;
+package rs2.sign;
 
 import java.applet.Applet;
 import java.io.DataInputStream;
@@ -46,7 +46,7 @@ public final class signlink implements Runnable {
 
 	public void run() {
 		active = true;
-		String s = findcachedir();
+		String s = getDirectory();
 		uid = getuid(s);
 		try {
 			File file = new File(s + "main_file_cache.dat");
@@ -117,7 +117,7 @@ public final class signlink implements Runnable {
 
 	}
 
-	private static String findcachedir() {
+	public static String getDirectory() {
 		return "./cache/";
 	}
 

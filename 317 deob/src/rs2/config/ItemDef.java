@@ -269,7 +269,7 @@ public final class ItemDef {
 		int j3 = RSDrawingArea.endY;
 		Texture.aBoolean1464 = false;
 		RSDrawingArea.initDrawingArea(32, 32, sprite2.myPixels);
-		RSDrawingArea.method336(32, 0, 0, 0, 32);
+		RSDrawingArea.drawFilledPixels(0, 0, 32, 32, 0);
 		Texture.method364();
 		int k3 = itemDef.modelZoom;
 		if (k == -1)

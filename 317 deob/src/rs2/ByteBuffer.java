@@ -6,7 +6,7 @@ package rs2;
 
 import java.math.BigInteger;
 
-import sign.signlink;
+import rs2.sign.signlink;
 
 public final class ByteBuffer extends NodeSub {
 

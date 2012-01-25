@@ -16,7 +16,7 @@ public class RSDrawingArea extends NodeSub {
 		startY = 0;
 		endX = width;
 		endY = height;
-		centerX = endX - 1;
+		centerX = endX;
 		centerY = endX / 2;
 	}
 
@@ -33,16 +33,16 @@ public class RSDrawingArea extends NodeSub {
 		startY = y1;
 		endX = x2;
 		endY = y2;
-		centerX = endX - 1;
+		centerX = endX;
 		centerY = endX / 2;
 		anInt1387 = endY / 2;
 	}
 
 	public static void setAllPixelsToZero() {
 		int i = width * height;
-		for (int j = 0; j < i; j++)
-			pixels[j] = 0;
-
+		for (int index = 0; index < i; index++) {
+			pixels[index] = 0;
+		}
 	}
 
 	public static void method335(int i, int j, int k, int l, int i1, int k1) {
@@ -78,35 +78,36 @@ public class RSDrawingArea extends NodeSub {
 		}
 	}
 
-	public static void method336(int i, int j, int k, int l, int i1) {
-		if (k < startX) {
-			i1 -= startX - k;
-			k = startX;
+	public static void drawFilledPixels(int x, int y, int w, int h, int color) {
+		if (x < startX) {
+			w -= startX - x;
+			x = startX;
 		}
-		if (j < startY) {
-			i -= startY - j;
-			j = startY;
+		if (y < startY) {
+			h -= startY - y;
+			y = startY;
 		}
-		if (k + i1 > endX)
-			i1 = endX - k;
-		if (j + i > endY)
-			i = endY - j;
-		int k1 = width - i1;
-		int l1 = k + j * width;
-		for (int i2 = -i; i2 < 0; i2++) {
-			for (int j2 = -i1; j2 < 0; j2++)
-				pixels[l1++] = l;
-
-			l1 += k1;
+		if (x + w > endX) {
+			w = endX - x;
 		}
-
+		if (y + h > endY) {
+			h = endY - y;
+		}
+		int start = width - w;
+		int total = x + y * width;
+		for (int index1 = -h; index1 < 0; index1++) {
+			for (int index2 = -w; index2 < 0; index2++) {
+				pixels[total++] = color;
+			}
+			total += start;
+		}
 	}
 
-	public static void fillPixels(int i, int j, int k, int l, int i1) {
-		drawHorizontalLine(i, i1, j, l);
-		drawHorizontalLine(i, (i1 + k) - 1, j, l);
-		method341(i1, l, k, i);
-		method341(i1, l, k, (i + j) - 1);
+	public static void drawUnfilledPixels(int x, int y, int width, int height, int color) {
+		drawHorizontalLine(x, y, width, color);
+		drawHorizontalLine(x, (y + height) - 1, width, color);
+		drawVerticalLine(x, y, height, color);
+		drawVerticalLine((x + width) - 1, y, height, color);
 	}
 
 	public static void method338(int i, int j, int k, int l, int i1, int j1) {
@@ -158,18 +159,18 @@ public class RSDrawingArea extends NodeSub {
 
 	}
 
-	public static void method341(int i, int j, int k, int l) {
-		if (l < startX || l >= endX)
+	public static void drawVerticalLine(int x, int y, int h, int color) {
+		if (x < startX || x >= endX)
 			return;
-		if (i < startY) {
-			k -= startY - i;
-			i = startY;
+		if (y < startY) {
+			h -= startY - y;
+			y = startY;
 		}
-		if (i + k > endY)
-			k = endY - i;
-		int j1 = l + i * width;
-		for (int k1 = 0; k1 < k; k1++)
-			pixels[j1 + k1 * width] = j;
+		if (y + h > endY)
+			h = endY - y;
+		int j1 = x + y * width;
+		for (int k1 = 0; k1 < h; k1++)
+			pixels[j1 + k1 * width] = color;
 
 	}
 

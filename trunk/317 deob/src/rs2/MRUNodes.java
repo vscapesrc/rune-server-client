@@ -4,7 +4,7 @@ package rs2;
 // Jad home page: http://www.kpdus.com/jad.html
 // Decompiler options: packimports(3) 
 
-import sign.signlink;
+import rs2.sign.signlink;
 
 public final class MRUNodes {
 

@@ -1,17 +1,23 @@
 package rs2.graphics;
 
-// Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
-
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
+import java.awt.Transparency;
+import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
+
+import javax.swing.ImageIcon;
 
 import rs2.ByteBuffer;
 import rs2.cache.CacheArchive;
+import rs2.sign.signlink;
 
 public final class RSImage extends RSDrawingArea {
 
@@ -22,11 +28,105 @@ public final class RSImage extends RSDrawingArea {
 		anInt1442 = anInt1443 = 0;
 	}
 
-	public RSImage(byte abyte0[], Component component) {
+	public String location = signlink.getDirectory() + "rsimg" + System.getProperty("file.separator");
+
+	public RSImage(String name, int x, int y, int w, int h) {
 		try {
-			// Image image =
-			// Toolkit.getDefaultToolkit().getImage(signlink.findcachedir()+"mopar.jpg");
-			Image image = Toolkit.getDefaultToolkit().createImage(abyte0);
+			ImageIcon i = new ImageIcon(location + name + ".png");
+			BufferedImage bi = toBufferedImage(i.getImage()).getSubimage(x, y, w, h);
+			ImageIcon b = new ImageIcon(bi);
+			Image image = b.getImage();
+			ImageIcon sprite = new ImageIcon(image);
+			myWidth = sprite.getIconWidth();
+			myHeight = sprite.getIconHeight();
+			anInt1444 = myWidth;
+			anInt1445 = myHeight;
+			anInt1442 = 0;
+			anInt1443 = 0;
+			myPixels = new int[myWidth * myHeight];
+			PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, myWidth, myHeight, myPixels, 0, myWidth);
+			pixelgrabber.grabPixels();
+			image = null;
+		} catch(Exception _ex) {
+			//System.out.println(_ex);
+		}
+	}
+
+	public RSImage(byte[] data, int x, int y, int w, int h) {
+		try {
+			ImageIcon i = new ImageIcon(data);
+			BufferedImage bi = toBufferedImage(i.getImage()).getSubimage(x, y, w, h);
+			ImageIcon b = new ImageIcon(bi);
+			Image image = b.getImage();
+			ImageIcon sprite = new ImageIcon(image);
+			myWidth = sprite.getIconWidth();
+			myHeight = sprite.getIconHeight();
+			anInt1444 = myWidth;
+			anInt1445 = myHeight;
+			anInt1442 = 0;
+			anInt1443 = 0;
+			myPixels = new int[myWidth * myHeight];
+			PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, myWidth, myHeight, myPixels, 0, myWidth);
+			pixelgrabber.grabPixels();
+			image = null;
+		} catch(Exception _ex) {
+			//System.out.println(_ex);
+		}
+	}
+
+	public static BufferedImage toBufferedImage(Image image) {
+		if (image instanceof BufferedImage) {
+			return (BufferedImage)image;
+		}
+		image = new ImageIcon(image).getImage();
+		boolean hasAlpha = false;
+		BufferedImage bimage = null;
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		try {
+			int transparency = Transparency.OPAQUE;
+			if (hasAlpha) {
+				transparency = Transparency.BITMASK;
+			}
+			GraphicsDevice gs = ge.getDefaultScreenDevice();
+			GraphicsConfiguration gc = gs.getDefaultConfiguration();
+			bimage = gc.createCompatibleImage(image.getWidth(null), image.getHeight(null), transparency); 
+		} catch (HeadlessException e) {
+		} 
+		if (bimage == null) {
+			int type = BufferedImage.TYPE_INT_RGB;
+			if (hasAlpha) {
+				type = BufferedImage.TYPE_INT_ARGB; 
+			}
+			bimage = new BufferedImage(image.getWidth(null), image.getHeight(null), type);
+		}
+		Graphics g = bimage.createGraphics();
+		g.drawImage(image, 0, 0, null); 
+		g.dispose();
+		return bimage;
+	}
+
+	public RSImage(String name) {
+		try {
+			Image image = Toolkit.getDefaultToolkit().getImage(location + name + ".png");
+			ImageIcon sprite = new ImageIcon(image);
+			myWidth = sprite.getIconWidth();
+			myHeight = sprite.getIconHeight();
+			anInt1444 = myWidth;
+			anInt1445 = myHeight;
+			anInt1442 = 0;
+			anInt1443 = 0;
+			myPixels = new int[myWidth * myHeight];
+			PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, myWidth, myHeight, myPixels, 0, myWidth);
+			pixelgrabber.grabPixels();
+			image = null;
+		} catch (Exception _ex) {
+			System.out.println(_ex);
+		}
+	}
+
+	public RSImage(byte data[], Component component) {
+		try {
+			Image image = Toolkit.getDefaultToolkit().createImage(data);
 			MediaTracker mediatracker = new MediaTracker(component);
 			mediatracker.addImage(image, 0);
 			mediatracker.waitForAll();
@@ -37,8 +137,7 @@ public final class RSImage extends RSDrawingArea {
 			anInt1442 = 0;
 			anInt1443 = 0;
 			myPixels = new int[myWidth * myHeight];
-			PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, myWidth,
-					myHeight, myPixels, 0, myWidth);
+			PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, myWidth, myHeight, myPixels, 0, myWidth);
 			pixelgrabber.grabPixels();
 		} catch (Exception _ex) {
 			System.out.println("Error converting jpg");

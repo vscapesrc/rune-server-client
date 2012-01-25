@@ -13,7 +13,7 @@ import java.util.zip.CRC32;
 import java.util.zip.GZIPInputStream;
 
 import rs2.cache.CacheArchive;
-import sign.signlink;
+import rs2.sign.signlink;
 
 public final class OnDemandFetcher extends OnDemandFetcherParent implements
 		Runnable {

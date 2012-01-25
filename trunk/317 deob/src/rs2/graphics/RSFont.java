@@ -75,11 +75,11 @@ public final class RSFont extends RSDrawingArea {
 	}
 
 	public void method380(String s, int i, int j, int k) {
-		method385(j, s, k, i - method384(s));
+		drawBasicString(s, i - method384(s), k, j);
 	}
 
 	public void drawText(int i, String s, int k, int l) {
-		method385(i, s, k, l - method384(s) / 2);
+		drawBasicString(s, l - method384(s) / 2, k, i);
 	}
 
 	public void method382(int i, int j, String s, int l, boolean flag) {
@@ -109,17 +109,17 @@ public final class RSFont extends RSDrawingArea {
 		return j;
 	}
 
-	public void method385(int i, String s, int j, int l) {
-		if (s == null)
+	public void drawBasicString(String string, int x, int y, int color) {
+		if (string == null)
 			return;
-		j -= anInt1497;
-		for (int i1 = 0; i1 < s.length(); i1++) {
-			char c = s.charAt(i1);
+		y -= anInt1497;
+		for (int i1 = 0; i1 < string.length(); i1++) {
+			char c = string.charAt(i1);
 			if (c != ' ')
-				method392(aByteArrayArray1491[c], l + anIntArray1494[c], j
+				method392(aByteArrayArray1491[c], x + anIntArray1494[c], y
 						+ anIntArray1495[c], anIntArray1492[c],
-						anIntArray1493[c], i);
-			l += anIntArray1496[c];
+						anIntArray1493[c], color);
+			x += anIntArray1496[c];
 		}
 	}
 
@@ -219,9 +219,9 @@ public final class RSFont extends RSDrawingArea {
 				i += anIntArray1496[c];
 			}
 		if (aBoolean1499)
-			RSDrawingArea.method339(k
-					+ (int) ((double) anInt1497 * 0.69999999999999996D),
-					0x800000, i - l, l);
+			RSDrawingArea.drawHorizontalLine(l,
+					k
+							+ (int) ((double) anInt1497 * 0.69999999999999996D), i - l, 0x800000);
 	}
 
 	public void method390(int i, int j, String s, int k, int i1) {
@@ -302,26 +302,26 @@ public final class RSFont extends RSDrawingArea {
 		int k1 = RSDrawingArea.width - k;
 		int l1 = 0;
 		int i2 = 0;
-		if (j < RSDrawingArea.topY) {
-			int j2 = RSDrawingArea.topY - j;
+		if (j < RSDrawingArea.startY) {
+			int j2 = RSDrawingArea.startY - j;
 			l -= j2;
-			j = RSDrawingArea.topY;
+			j = RSDrawingArea.startY;
 			i2 += j2 * k;
 			j1 += j2 * RSDrawingArea.width;
 		}
-		if (j + l >= RSDrawingArea.bottomY)
-			l -= ((j + l) - RSDrawingArea.bottomY) + 1;
-		if (i < RSDrawingArea.topX) {
-			int k2 = RSDrawingArea.topX - i;
+		if (j + l >= RSDrawingArea.endY)
+			l -= ((j + l) - RSDrawingArea.endY) + 1;
+		if (i < RSDrawingArea.startX) {
+			int k2 = RSDrawingArea.startX - i;
 			k -= k2;
-			i = RSDrawingArea.topX;
+			i = RSDrawingArea.startX;
 			i2 += k2;
 			j1 += k2;
 			l1 += k2;
 			k1 += k2;
 		}
-		if (i + k >= RSDrawingArea.bottomX) {
-			int l2 = ((i + k) - RSDrawingArea.bottomX) + 1;
+		if (i + k >= RSDrawingArea.endX) {
+			int l2 = ((i + k) - RSDrawingArea.endX) + 1;
 			k -= l2;
 			l1 += l2;
 			k1 += l2;
@@ -373,26 +373,26 @@ public final class RSFont extends RSDrawingArea {
 		int l1 = RSDrawingArea.width - k;
 		int i2 = 0;
 		int j2 = 0;
-		if (l < RSDrawingArea.topY) {
-			int k2 = RSDrawingArea.topY - l;
+		if (l < RSDrawingArea.startY) {
+			int k2 = RSDrawingArea.startY - l;
 			i1 -= k2;
-			l = RSDrawingArea.topY;
+			l = RSDrawingArea.startY;
 			j2 += k2 * k;
 			k1 += k2 * RSDrawingArea.width;
 		}
-		if (l + i1 >= RSDrawingArea.bottomY)
-			i1 -= ((l + i1) - RSDrawingArea.bottomY) + 1;
-		if (j < RSDrawingArea.topX) {
-			int l2 = RSDrawingArea.topX - j;
+		if (l + i1 >= RSDrawingArea.endY)
+			i1 -= ((l + i1) - RSDrawingArea.endY) + 1;
+		if (j < RSDrawingArea.startX) {
+			int l2 = RSDrawingArea.startX - j;
 			k -= l2;
-			j = RSDrawingArea.topX;
+			j = RSDrawingArea.startX;
 			j2 += l2;
 			k1 += l2;
 			i2 += l2;
 			l1 += l2;
 		}
-		if (j + k >= RSDrawingArea.bottomX) {
-			int i3 = ((j + k) - RSDrawingArea.bottomX) + 1;
+		if (j + k >= RSDrawingArea.endX) {
+			int i3 = ((j + k) - RSDrawingArea.endX) + 1;
 			k -= i3;
 			i2 += i3;
 			l1 += i3;

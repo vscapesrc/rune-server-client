@@ -2,44 +2,40 @@ package rs2.graphics;
 
 import rs2.NodeSub;
 
-// Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
-
 public class RSDrawingArea extends NodeSub {
 
-	public static void initDrawingArea(int i, int j, int ai[]) {
-		pixels = ai;
-		width = j;
-		height = i;
-		setDrawingArea(i, 0, j, 0);
+	public static void initDrawingArea(int h, int w, int pix[]) {
+		pixels = pix;
+		width = w;
+		height = h;
+		setBounds(0, w, 0, h);
 	}
 
-	public static void defaultDrawingAreaSize() {
-		topX = 0;
-		topY = 0;
-		bottomX = width;
-		bottomY = height;
-		centerX = bottomX - 1;
-		centerY = bottomX / 2;
+	public static void setDefaultArea() {
+		startX = 0;
+		startY = 0;
+		endX = width;
+		endY = height;
+		centerX = endX - 1;
+		centerY = endX / 2;
 	}
 
-	public static void setDrawingArea(int i, int j, int k, int l) {
-		if (j < 0)
-			j = 0;
-		if (l < 0)
-			l = 0;
-		if (k > width)
-			k = width;
-		if (i > height)
-			i = height;
-		topX = j;
-		topY = l;
-		bottomX = k;
-		bottomY = i;
-		centerX = bottomX - 1;
-		centerY = bottomX / 2;
-		anInt1387 = bottomY / 2;
+	public static void setBounds(int x1, int x2, int y1, int y2) {
+		if (x1 < 0)
+			x1 = 0;
+		if (y1 < 0)
+			y1 = 0;
+		if (x2 > width)
+			x2 = width;
+		if (y2 > height)
+			y2 = height;
+		startX = x1;
+		startY = y1;
+		endX = x2;
+		endY = y2;
+		centerX = endX - 1;
+		centerY = endX / 2;
+		anInt1387 = endY / 2;
 	}
 
 	public static void setAllPixelsToZero() {
@@ -50,18 +46,18 @@ public class RSDrawingArea extends NodeSub {
 	}
 
 	public static void method335(int i, int j, int k, int l, int i1, int k1) {
-		if (k1 < topX) {
-			k -= topX - k1;
-			k1 = topX;
+		if (k1 < startX) {
+			k -= startX - k1;
+			k1 = startX;
 		}
-		if (j < topY) {
-			l -= topY - j;
-			j = topY;
+		if (j < startY) {
+			l -= startY - j;
+			j = startY;
 		}
-		if (k1 + k > bottomX)
-			k = bottomX - k1;
-		if (j + l > bottomY)
-			l = bottomY - j;
+		if (k1 + k > endX)
+			k = endX - k1;
+		if (j + l > endY)
+			l = endY - j;
 		int l1 = 256 - i1;
 		int i2 = (i >> 16 & 0xff) * i1;
 		int j2 = (i >> 8 & 0xff) * i1;
@@ -83,18 +79,18 @@ public class RSDrawingArea extends NodeSub {
 	}
 
 	public static void method336(int i, int j, int k, int l, int i1) {
-		if (k < topX) {
-			i1 -= topX - k;
-			k = topX;
+		if (k < startX) {
+			i1 -= startX - k;
+			k = startX;
 		}
-		if (j < topY) {
-			i -= topY - j;
-			j = topY;
+		if (j < startY) {
+			i -= startY - j;
+			j = startY;
 		}
-		if (k + i1 > bottomX)
-			i1 = bottomX - k;
-		if (j + i > bottomY)
-			i = bottomY - j;
+		if (k + i1 > endX)
+			i1 = endX - k;
+		if (j + i > endY)
+			i = endY - j;
 		int k1 = width - i1;
 		int l1 = k + j * width;
 		for (int i2 = -i; i2 < 0; i2++) {
@@ -107,8 +103,8 @@ public class RSDrawingArea extends NodeSub {
 	}
 
 	public static void fillPixels(int i, int j, int k, int l, int i1) {
-		method339(i1, l, j, i);
-		method339((i1 + k) - 1, l, j, i);
+		drawHorizontalLine(i, i1, j, l);
+		drawHorizontalLine(i, (i1 + k) - 1, j, l);
 		method341(i1, l, k, i);
 		method341(i1, l, k, (i + j) - 1);
 	}
@@ -122,55 +118,55 @@ public class RSDrawingArea extends NodeSub {
 		}
 	}
 
-	public static void method339(int i, int j, int k, int l) {
-		if (i < topY || i >= bottomY)
+	public static void drawHorizontalLine(int x, int y, int length, int color) {
+		if (y < startY || y >= endY)
 			return;
-		if (l < topX) {
-			k -= topX - l;
-			l = topX;
+		if (x < startX) {
+			length -= startX - x;
+			x = startX;
 		}
-		if (l + k > bottomX)
-			k = bottomX - l;
-		int i1 = l + i * width;
-		for (int j1 = 0; j1 < k; j1++)
-			pixels[i1 + j1] = j;
+		if (x + length > endX)
+			length = endX - x;
+		int total = x + y * width;
+		for (int index = 0; index < length; index++) {
+			pixels[total + index] = color;
+		}
 
 	}
 
-	private static void method340(int i, int j, int k, int l, int i1) {
-		if (k < topY || k >= bottomY)
+	private static void method340(int i, int j, int k, int alphaValue, int i1) {
+		if (k < startY || k >= endY)
 			return;
-		if (i1 < topX) {
-			j -= topX - i1;
-			i1 = topX;
+		if (i1 < startX) {
+			j -= startX - i1;
+			i1 = startX;
 		}
-		if (i1 + j > bottomX)
-			j = bottomX - i1;
-		int j1 = 256 - l;
-		int k1 = (i >> 16 & 0xff) * l;
-		int l1 = (i >> 8 & 0xff) * l;
-		int i2 = (i & 0xff) * l;
+		if (i1 + j > endX)
+			j = endX - i1;
+		int alpha = 256 - alphaValue;
+		int k1 = (i >> 16 & 0xff) * alphaValue;
+		int l1 = (i >> 8 & 0xff) * alphaValue;
+		int i2 = (i & 0xff) * alphaValue;
 		int i3 = i1 + k * width;
-		for (int j3 = 0; j3 < j; j3++) {
-			int j2 = (pixels[i3] >> 16 & 0xff) * j1;
-			int k2 = (pixels[i3] >> 8 & 0xff) * j1;
-			int l2 = (pixels[i3] & 0xff) * j1;
-			int k3 = ((k1 + j2 >> 8) << 16) + ((l1 + k2 >> 8) << 8)
-					+ (i2 + l2 >> 8);
-			pixels[i3++] = k3;
+		for (int index = 0; index < j; index++) {
+			int r = (pixels[i3] >> 16 & 0xff) * alpha;
+			int g = (pixels[i3] >> 8 & 0xff) * alpha;
+			int b = (pixels[i3] & 0xff) * alpha;
+			int color = ((k1 + r >> 8) << 16) + ((l1 + g >> 8) << 8) + (i2 + b >> 8);
+			pixels[i3++] = color;
 		}
 
 	}
 
 	public static void method341(int i, int j, int k, int l) {
-		if (l < topX || l >= bottomX)
+		if (l < startX || l >= endX)
 			return;
-		if (i < topY) {
-			k -= topY - i;
-			i = topY;
+		if (i < startY) {
+			k -= startY - i;
+			i = startY;
 		}
-		if (i + k > bottomY)
-			k = bottomY - i;
+		if (i + k > endY)
+			k = endY - i;
 		int j1 = l + i * width;
 		for (int k1 = 0; k1 < k; k1++)
 			pixels[j1 + k1 * width] = j;
@@ -178,14 +174,14 @@ public class RSDrawingArea extends NodeSub {
 	}
 
 	private static void method342(int i, int j, int k, int l, int i1) {
-		if (j < topX || j >= bottomX)
+		if (j < startX || j >= endX)
 			return;
-		if (l < topY) {
-			i1 -= topY - l;
-			l = topY;
+		if (l < startY) {
+			i1 -= startY - l;
+			l = startY;
 		}
-		if (l + i1 > bottomY)
-			i1 = bottomY - l;
+		if (l + i1 > endY)
+			i1 = endY - l;
 		int j1 = 256 - k;
 		int k1 = (i >> 16 & 0xff) * k;
 		int l1 = (i >> 8 & 0xff) * k;
@@ -209,10 +205,10 @@ public class RSDrawingArea extends NodeSub {
 	public static int pixels[];
 	public static int width;
 	public static int height;
-	public static int topY;
-	public static int bottomY;
-	public static int topX;
-	public static int bottomX;
+	public static int startY;
+	public static int endY;
+	public static int startX;
+	public static int endX;
 	public static int centerX;
 	public static int centerY;
 	public static int anInt1387;

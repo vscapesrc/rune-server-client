@@ -263,10 +263,10 @@ public final class ItemDef {
 		int ai1[] = RSDrawingArea.pixels;
 		int i2 = RSDrawingArea.width;
 		int j2 = RSDrawingArea.height;
-		int k2 = RSDrawingArea.topX;
-		int l2 = RSDrawingArea.bottomX;
-		int i3 = RSDrawingArea.topY;
-		int j3 = RSDrawingArea.bottomY;
+		int k2 = RSDrawingArea.startX;
+		int l2 = RSDrawingArea.endX;
+		int i3 = RSDrawingArea.startY;
+		int j3 = RSDrawingArea.endY;
 		Texture.aBoolean1464 = false;
 		RSDrawingArea.initDrawingArea(32, 32, sprite2.myPixels);
 		RSDrawingArea.method336(32, 0, 0, 0, 32);
@@ -337,7 +337,7 @@ public final class ItemDef {
 		if (k == 0)
 			mruNodes1.removeFromCache(sprite2, i);
 		RSDrawingArea.initDrawingArea(j2, i2, ai1);
-		RSDrawingArea.setDrawingArea(j3, k2, l2, i3);
+		RSDrawingArea.setBounds(k2, l2, i3, j3);
 		Texture.textureInt1 = k1;
 		Texture.textureInt2 = l1;
 		Texture.anIntArray1472 = ai;

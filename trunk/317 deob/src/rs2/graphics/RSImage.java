@@ -144,26 +144,26 @@ public final class RSImage extends RSDrawingArea {
 		int k1 = myWidth;
 		int l1 = RSDrawingArea.width - k1;
 		int i2 = 0;
-		if (j < RSDrawingArea.topY) {
-			int j2 = RSDrawingArea.topY - j;
+		if (j < RSDrawingArea.startY) {
+			int j2 = RSDrawingArea.startY - j;
 			j1 -= j2;
-			j = RSDrawingArea.topY;
+			j = RSDrawingArea.startY;
 			i1 += j2 * k1;
 			l += j2 * RSDrawingArea.width;
 		}
-		if (j + j1 > RSDrawingArea.bottomY)
-			j1 -= (j + j1) - RSDrawingArea.bottomY;
-		if (i < RSDrawingArea.topX) {
-			int k2 = RSDrawingArea.topX - i;
+		if (j + j1 > RSDrawingArea.endY)
+			j1 -= (j + j1) - RSDrawingArea.endY;
+		if (i < RSDrawingArea.startX) {
+			int k2 = RSDrawingArea.startX - i;
 			k1 -= k2;
-			i = RSDrawingArea.topX;
+			i = RSDrawingArea.startX;
 			i1 += k2;
 			l += k2;
 			i2 += k2;
 			l1 += k2;
 		}
-		if (i + k1 > RSDrawingArea.bottomX) {
-			int l2 = (i + k1) - RSDrawingArea.bottomX;
+		if (i + k1 > RSDrawingArea.endX) {
+			int l2 = (i + k1) - RSDrawingArea.endX;
 			k1 -= l2;
 			i2 += l2;
 			l1 += l2;
@@ -204,26 +204,26 @@ public final class RSImage extends RSDrawingArea {
 		int l1 = myWidth;
 		int i2 = RSDrawingArea.width - l1;
 		int j2 = 0;
-		if (j < RSDrawingArea.topY) {
-			int k2 = RSDrawingArea.topY - j;
+		if (j < RSDrawingArea.startY) {
+			int k2 = RSDrawingArea.startY - j;
 			k1 -= k2;
-			j = RSDrawingArea.topY;
+			j = RSDrawingArea.startY;
 			j1 += k2 * l1;
 			i1 += k2 * RSDrawingArea.width;
 		}
-		if (j + k1 > RSDrawingArea.bottomY)
-			k1 -= (j + k1) - RSDrawingArea.bottomY;
-		if (i < RSDrawingArea.topX) {
-			int l2 = RSDrawingArea.topX - i;
+		if (j + k1 > RSDrawingArea.endY)
+			k1 -= (j + k1) - RSDrawingArea.endY;
+		if (i < RSDrawingArea.startX) {
+			int l2 = RSDrawingArea.startX - i;
 			l1 -= l2;
-			i = RSDrawingArea.topX;
+			i = RSDrawingArea.startX;
 			j1 += l2;
 			i1 += l2;
 			j2 += l2;
 			i2 += l2;
 		}
-		if (i + l1 > RSDrawingArea.bottomX) {
-			int i3 = (i + l1) - RSDrawingArea.bottomX;
+		if (i + l1 > RSDrawingArea.endX) {
+			int i3 = (i + l1) - RSDrawingArea.endX;
 			l1 -= i3;
 			j2 += i3;
 			i2 += i3;
@@ -242,26 +242,26 @@ public final class RSImage extends RSDrawingArea {
 		int k1 = myWidth;
 		int l1 = RSDrawingArea.width - k1;
 		int i2 = 0;
-		if (k < RSDrawingArea.topY) {
-			int j2 = RSDrawingArea.topY - k;
+		if (k < RSDrawingArea.startY) {
+			int j2 = RSDrawingArea.startY - k;
 			j1 -= j2;
-			k = RSDrawingArea.topY;
+			k = RSDrawingArea.startY;
 			i1 += j2 * k1;
 			l += j2 * RSDrawingArea.width;
 		}
-		if (k + j1 > RSDrawingArea.bottomY)
-			j1 -= (k + j1) - RSDrawingArea.bottomY;
-		if (i < RSDrawingArea.topX) {
-			int k2 = RSDrawingArea.topX - i;
+		if (k + j1 > RSDrawingArea.endY)
+			j1 -= (k + j1) - RSDrawingArea.endY;
+		if (i < RSDrawingArea.startX) {
+			int k2 = RSDrawingArea.startX - i;
 			k1 -= k2;
-			i = RSDrawingArea.topX;
+			i = RSDrawingArea.startX;
 			i1 += k2;
 			l += k2;
 			i2 += k2;
 			l1 += k2;
 		}
-		if (i + k1 > RSDrawingArea.bottomX) {
-			int l2 = (i + k1) - RSDrawingArea.bottomX;
+		if (i + k1 > RSDrawingArea.endX) {
+			int l2 = (i + k1) - RSDrawingArea.endX;
 			k1 -= l2;
 			i2 += l2;
 			l1 += l2;
@@ -418,26 +418,26 @@ public final class RSImage extends RSDrawingArea {
 		int j1 = myWidth;
 		int k1 = RSDrawingArea.width - j1;
 		int l1 = 0;
-		if (i < RSDrawingArea.topY) {
-			int i2 = RSDrawingArea.topY - i;
+		if (i < RSDrawingArea.startY) {
+			int i2 = RSDrawingArea.startY - i;
 			i1 -= i2;
-			i = RSDrawingArea.topY;
+			i = RSDrawingArea.startY;
 			l += i2 * j1;
 			k += i2 * RSDrawingArea.width;
 		}
-		if (i + i1 > RSDrawingArea.bottomY)
-			i1 -= (i + i1) - RSDrawingArea.bottomY;
-		if (j < RSDrawingArea.topX) {
-			int j2 = RSDrawingArea.topX - j;
+		if (i + i1 > RSDrawingArea.endY)
+			i1 -= (i + i1) - RSDrawingArea.endY;
+		if (j < RSDrawingArea.startX) {
+			int j2 = RSDrawingArea.startX - j;
 			j1 -= j2;
-			j = RSDrawingArea.topX;
+			j = RSDrawingArea.startX;
 			l += j2;
 			k += j2;
 			l1 += j2;
 			k1 += j2;
 		}
-		if (j + j1 > RSDrawingArea.bottomX) {
-			int k2 = (j + j1) - RSDrawingArea.bottomX;
+		if (j + j1 > RSDrawingArea.endX) {
+			int k2 = (j + j1) - RSDrawingArea.endX;
 			j1 -= k2;
 			l1 += k2;
 			k1 += k2;

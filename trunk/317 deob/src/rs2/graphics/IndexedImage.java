@@ -137,7 +137,7 @@ public final class IndexedImage extends RSDrawingArea {
 		}
 	}
 
-	public void method361(int i, int k) {
+	public void drawImage(int i, int k) {
 		i += anInt1454;
 		k += anInt1455;
 		int l = i + k * RSDrawingArea.width;
@@ -146,26 +146,26 @@ public final class IndexedImage extends RSDrawingArea {
 		int k1 = anInt1452;
 		int l1 = RSDrawingArea.width - k1;
 		int i2 = 0;
-		if (k < RSDrawingArea.topY) {
-			int j2 = RSDrawingArea.topY - k;
+		if (k < RSDrawingArea.startY) {
+			int j2 = RSDrawingArea.startY - k;
 			j1 -= j2;
-			k = RSDrawingArea.topY;
+			k = RSDrawingArea.startY;
 			i1 += j2 * k1;
 			l += j2 * RSDrawingArea.width;
 		}
-		if (k + j1 > RSDrawingArea.bottomY)
-			j1 -= (k + j1) - RSDrawingArea.bottomY;
-		if (i < RSDrawingArea.topX) {
-			int k2 = RSDrawingArea.topX - i;
+		if (k + j1 > RSDrawingArea.endY)
+			j1 -= (k + j1) - RSDrawingArea.endY;
+		if (i < RSDrawingArea.startX) {
+			int k2 = RSDrawingArea.startX - i;
 			k1 -= k2;
-			i = RSDrawingArea.topX;
+			i = RSDrawingArea.startX;
 			i1 += k2;
 			l += k2;
 			i2 += k2;
 			l1 += k2;
 		}
-		if (i + k1 > RSDrawingArea.bottomX) {
-			int l2 = (i + k1) - RSDrawingArea.bottomX;
+		if (i + k1 > RSDrawingArea.endX) {
+			int l2 = (i + k1) - RSDrawingArea.endX;
 			k1 -= l2;
 			i2 += l2;
 			l1 += l2;

@@ -67,7 +67,7 @@ final class Animable_Sub5 extends Animable {
 		anInt1605 = i1;
 		anInt1606 = k1;
 		if (l1 != -1) {
-			aAnimation_1607 = Sequence.anims[l1];
+			aAnimation_1607 = Sequence.getSeq(l1);
 			anInt1599 = 0;
 			anInt1608 = client.loopCycle;
 			if (flag && aAnimation_1607.anInt356 != -1) {

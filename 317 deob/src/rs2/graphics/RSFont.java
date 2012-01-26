@@ -82,8 +82,8 @@ public final class RSFont extends RSDrawingArea {
 		drawBasicString(s, l - method384(s) / 2, k, i);
 	}
 
-	public void method382(int i, int j, String s, int l, boolean flag) {
-		method389(flag, j - getTextWidth(s) / 2, i, s, l);
+	public void drawCenteredString(String string, int x, int y, int color, boolean shadow) {
+		drawShadowedString(string, x - getTextWidth(string) / 2, y, color, shadow);
 	}
 
 	public int getTextWidth(String s) {
@@ -192,36 +192,36 @@ public final class RSFont extends RSDrawingArea {
 
 	}
 
-	public void method389(boolean flag1, int i, int j, String s, int k) {
+	public void drawShadowedString(String string, int x, int y, int color, boolean shadow) {
 		aBoolean1499 = false;
-		int l = i;
-		if (s == null)
+		int l = x;
+		if (string == null)
 			return;
-		k -= anInt1497;
-		for (int i1 = 0; i1 < s.length(); i1++)
-			if (s.charAt(i1) == '@' && i1 + 4 < s.length()
-					&& s.charAt(i1 + 4) == '@') {
-				int j1 = getColorByName(s.substring(i1 + 1, i1 + 4));
+		y -= anInt1497;
+		for (int i1 = 0; i1 < string.length(); i1++)
+			if (string.charAt(i1) == '@' && i1 + 4 < string.length()
+					&& string.charAt(i1 + 4) == '@') {
+				int j1 = getColorByName(string.substring(i1 + 1, i1 + 4));
 				if (j1 != -1)
-					j = j1;
+					color = j1;
 				i1 += 4;
 			} else {
-				char c = s.charAt(i1);
+				char c = string.charAt(i1);
 				if (c != ' ') {
-					if (flag1)
-						method392(aByteArrayArray1491[c], i + anIntArray1494[c]
-								+ 1, k + anIntArray1495[c] + 1,
+					if (shadow)
+						method392(aByteArrayArray1491[c], x + anIntArray1494[c]
+								+ 1, y + anIntArray1495[c] + 1,
 								anIntArray1492[c], anIntArray1493[c], 0);
-					method392(aByteArrayArray1491[c], i + anIntArray1494[c], k
+					method392(aByteArrayArray1491[c], x + anIntArray1494[c], y
 							+ anIntArray1495[c], anIntArray1492[c],
-							anIntArray1493[c], j);
+							anIntArray1493[c], color);
 				}
-				i += anIntArray1496[c];
+				x += anIntArray1496[c];
 			}
 		if (aBoolean1499)
 			RSDrawingArea.drawHorizontalLine(l,
-					k
-							+ (int) ((double) anInt1497 * 0.69999999999999996D), i - l, 0x800000);
+					y
+							+ (int) ((double) anInt1497 * 0.69999999999999996D), x - l, 0x800000);
 	}
 
 	public void method390(int i, int j, String s, int k, int i1) {

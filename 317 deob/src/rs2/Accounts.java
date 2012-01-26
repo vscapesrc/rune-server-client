@@ -11,7 +11,6 @@ import rs2.sign.signlink;
 
 public class Accounts {
 
-	public static int total = 0;
 	public static Account[] accounts;
 
 	public static class Account {
@@ -47,7 +46,7 @@ public class Accounts {
 		if (accounts == null || accounts.length == 0) {
 			return null;
 		}
-		for (int index = 0; index < total; index++) {
+		for (int index = 0; index < accounts.length; index++) {
 			if (accounts[index].name.equalsIgnoreCase(name)) {
 				return accounts[index];
 			}
@@ -60,34 +59,16 @@ public class Accounts {
 	 * @param name
 	 * @return
 	 */
-	public static boolean exists(Account account) {
+	public static boolean exists(String name) {
 		if (accounts == null || accounts.length == 0) {
 			return false;
 		}
-		for (int index = 0; index < total; index++) {
-			if (accounts[index].name.equalsIgnoreCase(account.name)) {
+		for (int index = 0; index < accounts.length; index++) {
+			if (accounts[index].name.equalsIgnoreCase(name)) {
 				return true;
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Edits an existing account.
-	 * @param name
-	 * @param account
-	 */
-	public static void edit(Account account) {
-		if (accounts == null || accounts.length == 0 || !exists(account)) {
-			return;
-		}
-		for (int index = 0; index < total; index++) {
-			if (accounts[index].name.equalsIgnoreCase(account.name)) {
-				accounts[index] = account;
-				break;
-			}
-		}
-		writeAccounts();
 	}
 
 	/**
@@ -96,43 +77,78 @@ public class Accounts {
 	 */
 	public static void add(String name, String password) {
 		Account account = new Account(name, password);
-		if (exists(account)) {
+		if (exists(name)) {
 			return;
 		}
 		if (accounts != null) {
 			Account[] old = accounts;
-			accounts = new Account[total + 1];
-			for (int index = 0; index < total; index++) {
-				accounts[index] = old[index];
+			accounts = new Account[old.length + 1];
+			for (int index = 0; index < accounts.length; index++) {
+				if (index < old.length) {
+					accounts[index] = old[index];
+				} else {
+					accounts[index] = account;
+				}
 			}
-			accounts[total] = account;
 		} else {
 			accounts = new Account[1];
 			accounts[0] = account;
 		}
-		total++;
+	}
+
+	/**
+	 * Removes the account for a given name.
+	 * @param name
+	 */
+	public static void remove(Account account) {
+		if (accounts == null || accounts.length == 0) {
+			return;
+		}
+		for (int index = 0; index < accounts.length; index++) {
+			if (accounts[index] == account) {
+				accounts[index] = null;
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Edits an existing account.
+	 * @param name
+	 * @param account
+	 */
+	public static void edit(Account account) {
+		if (accounts == null || accounts.length == 0 || !exists(account.name)) {
+			return;
+		}
+		for (int index = 0; index < accounts.length; index++) {
+			if (accounts[index].name.equalsIgnoreCase(account.name)) {
+				accounts[index] = account;
+				break;
+			}
+		}
+		write();
 	}
 
 	/**
 	 * Clears the stores accounts.
 	 */
 	public static void clear() {
-		total = 0;
 		accounts = null;
 	}
 
 	/**
 	 * Writes the accounts file.
 	 */
-	public static void writeAccounts() {
+	public static void write() {
 		try {
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(signlink.getDirectory() + "accounts.dat"));
-			out.writeShort(total);
-			if (getAccounts() != null && total > 0) {
+			out.writeShort(accounts.length);
+			if (getAccounts() != null && accounts.length > 0) {
 				out.writeByte(1);
-				for (int index = 0; index < total; index++) {
-					out.writeUTF(getAccounts()[index].name);
-					out.writeUTF(getAccounts()[index].password);
+				for (int index = 0; index < accounts.length; index++) {
+					out.writeUTF(getAccounts()[index] == null ? "" : getAccounts()[index].name);
+					out.writeUTF(getAccounts()[index] == null ? "" : getAccounts()[index].password);
 				}
 			}
 			out.writeByte(0);
@@ -145,7 +161,7 @@ public class Accounts {
 	/**
 	 * Reads the accounts file.
 	 */
-	public static void readAccounts() {
+	public static void read() {
 		File file = new File(signlink.getDirectory() + "accounts.dat");
 		if (!file.exists()) {
 			return;

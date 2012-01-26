@@ -8,16 +8,16 @@ public final class NPC extends Entity {
 
 	private Model method450() {
 		if (super.anim >= 0 && super.anInt1529 == 0) {
-			int k = Sequence.anims[super.anim].anIntArray353[super.anInt1527];
+			int k = Sequence.getSeq(super.anim).anIntArray353[super.anInt1527];
 			int i1 = -1;
 			if (super.anInt1517 >= 0 && super.anInt1517 != super.anInt1511)
-				i1 = Sequence.anims[super.anInt1517].anIntArray353[super.anInt1518];
+				i1 = Sequence.getSeq(super.anInt1517).anIntArray353[super.anInt1518];
 			return desc.method164(i1, k,
-					Sequence.anims[super.anim].anIntArray357);
+					Sequence.getSeq(super.anim).anIntArray357);
 		}
 		int l = -1;
 		if (super.anInt1517 >= 0)
-			l = Sequence.anims[super.anInt1517].anIntArray353[super.anInt1518];
+			l = Sequence.getSeq(super.anInt1517).anIntArray353[super.anInt1518];
 		return desc.method164(-1, l, null);
 	}
 

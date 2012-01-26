@@ -8,14 +8,29 @@ public final class Sequence {
 
 	public static void unpackConfig(CacheArchive streamLoader) {
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData("seq.dat"));
-		int length = stream.getShort();
+		total = stream.getShort();
 		if (anims == null)
-			anims = new Sequence[length];
-		for (int j = 0; j < length; j++) {
+			anims = new Sequence[total];
+		for (int j = 0; j < total; j++) {
 			if (anims[j] == null)
 				anims[j] = new Sequence();
 			anims[j].readValues(stream);
 		}
+	}
+
+	/**
+	 * Returns the sequence for a given id.
+	 * @param id
+	 * @return
+	 */
+	public static Sequence getSeq(int id) {
+		if (id > total - 1) {
+			return anims[808];
+		}
+		if (anims[id] == null) {
+			return anims[808];
+		}
+		return anims[id];
 	}
 
 	public int method258(int i) {
@@ -113,6 +128,7 @@ public final class Sequence {
 		anInt365 = 2;
 	}
 
+	public static int total;
 	public static Sequence anims[];
 	public int anInt352;
 	public int anIntArray353[];

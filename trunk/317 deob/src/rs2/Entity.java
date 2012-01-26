@@ -5,7 +5,7 @@ import rs2.config.Sequence;
 public class Entity extends Animable {
 
 	public final void setPos(int i, int j, boolean flag) {
-		if (anim != -1 && Sequence.anims[anim].anInt364 == 1)
+		if (anim != -1 && Sequence.getSeq(anim).anInt364 == 1)
 			anim = -1;
 		if (!flag) {
 			int k = i - smallX[0];
@@ -76,7 +76,7 @@ public class Entity extends Animable {
 			j++;
 			k--;
 		}
-		if (anim != -1 && Sequence.anims[anim].anInt364 == 1)
+		if (anim != -1 && Sequence.getSeq(anim).anInt364 == 1)
 			anim = -1;
 		if (smallXYIndex < 9)
 			smallXYIndex++;

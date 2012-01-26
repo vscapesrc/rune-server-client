@@ -31,7 +31,7 @@ public final class SpotAnim {
 			else if (i == 2) {
 				anInt406 = stream.getShort();
 				if (Sequence.anims != null)
-					aAnimation_407 = Sequence.anims[anInt406];
+					aAnimation_407 = Sequence.getSeq(anInt406);
 			} else if (i == 4)
 				anInt410 = stream.getShort();
 			else if (i == 5)

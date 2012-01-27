@@ -3,7 +3,9 @@ package rs2;
 import rs2.config.SpotAnim;
 
 final class Animable_Sub4 extends Animable {
-
+	/**
+	 * 
+	 */
 	public void method455(int i, int j, int k, int l) {
 		if (!aBoolean1579) {
 			double d = l - anInt1580;

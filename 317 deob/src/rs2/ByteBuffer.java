@@ -9,7 +9,9 @@ import java.math.BigInteger;
 import rs2.sign.signlink;
 
 public final class ByteBuffer extends NodeSub {
-
+	/**
+	 * 
+	 */
 	public static ByteBuffer create() {
 		synchronized (nodeList) {
 			ByteBuffer stream = null;

@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import rs2.cryption.MD5;
 import rs2.sign.signlink;
 
 public class Accounts {

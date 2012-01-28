@@ -1,4 +1,4 @@
-package rs2;
+package rs2.util;
 
 // Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
 // Jad home page: http://www.kpdus.com/jad.html
@@ -6,7 +6,7 @@ package rs2;
 
 import rs2.sign.signlink;
 
-public final class TextClass {
+public final class TextUtils {
 
 	public static long longForName(String s) {
 		long l = 0L;

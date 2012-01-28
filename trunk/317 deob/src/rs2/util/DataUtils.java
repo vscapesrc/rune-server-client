@@ -1,4 +1,4 @@
-package rs2;
+package rs2.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;

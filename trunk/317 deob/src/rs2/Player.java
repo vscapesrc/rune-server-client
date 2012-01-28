@@ -5,6 +5,7 @@ import rs2.config.NPCDef;
 import rs2.config.IdentityKit;
 import rs2.config.ItemDef;
 import rs2.config.SpotAnim;
+import rs2.util.TextUtils;
 
 public final class Player extends Entity {
 
@@ -128,7 +129,7 @@ public final class Player extends Entity {
 		super.anInt1505 = buffer.getShort();
 		if (super.anInt1505 == 65535)
 			super.anInt1505 = -1;
-		name = TextClass.fixName(TextClass.nameForLong(buffer.getLong()));
+		name = TextUtils.fixName(TextUtils.nameForLong(buffer.getLong()));
 		combatLevel = buffer.getUByte();
 		skill = buffer.getShort();
 		visible = true;

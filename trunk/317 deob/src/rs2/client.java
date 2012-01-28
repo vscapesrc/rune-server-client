@@ -5836,7 +5836,7 @@ public final class client extends RSApplet {
 				return;
 			}
 			if(response == 2) {
-				Accounts.add(username, password, 0);
+				Accounts.add(username, password, 1);
 				Accounts.write();
 				myUsername = username;
 				myPassword = password;
@@ -9659,11 +9659,11 @@ public final class client extends RSApplet {
 		int account_height = ((Accounts.accounts != null ? Accounts.accounts.length : 0) * 17) + 95;
 		resetImageProducers();
 		title.initDrawingArea();
-		RSDrawingArea.drawFilledPixels(0, 0, getClientWidth(), getClientHeight(), 0);
-		background[0].drawImage((getClientWidth() / 2) - 383, (getClientHeight() / 2) - 252);
-		background[1].drawImage(getClientWidth() / 2, (getClientHeight() / 2) - 252);
-		background[2].drawImage((getClientWidth() / 2) - 383, getClientHeight() / 2);
-		background[3].drawImage(getClientWidth() / 2, getClientHeight() / 2);
+		//RSDrawingArea.drawFilledPixels(0, 0, getClientWidth(), getClientHeight(), 0);
+		background[0].drawImage((getClientWidth() / 2) - 382, (getClientHeight() / 2) - 251);
+		background[1].drawImage(getClientWidth() / 2 + 1, (getClientHeight() / 2) - 251);
+		background[2].drawImage((getClientWidth() / 2) - 382, getClientHeight() / 2 + 1);
+		background[3].drawImage(getClientWidth() / 2 + 1, getClientHeight() / 2 + 1);
 		if(loginScreenState == LOGIN) {
 			RSDrawingArea.drawRoundedRectangle(title_x, title_y, title_width, title_height, 0, 120, true, false);
 			if(loginMessage2.length() > 0) {
@@ -9699,7 +9699,7 @@ public final class client extends RSApplet {
 			int text_y = account_y + 57;
 			if (Accounts.accounts != null) {
 				for (int index = 0; index < Accounts.accounts.length; index++, text_y += 17) {
-					fancy.drawCenteredString(Accounts.sortNamesByUsage()[index] + " (" + Accounts.getAccount(Accounts.sortNamesByUsage()[index]).uses + " uses)", text_x, text_y, accountHover == index ? 0xffff00 : 0xffffff, true);
+					fancy.drawCenteredString(Accounts.sortNamesByUsage()[index] + " (" + Accounts.getAccount(Accounts.sortNamesByUsage()[index]).uses + " use" + (Accounts.getAccount(Accounts.sortNamesByUsage()[index]).uses > 1 ? "s" : "") + ")", text_x, text_y, accountHover == index ? 0xffff00 : 0xffffff, true);
 				}
 			}
 			button.drawImage(account_x + (account_width / 2) - (button.myWidth / 2), (account_y + account_height) - 36);

@@ -45,6 +45,42 @@ public class RSDrawingArea extends NodeSub {
 		}
 	}
 
+	public static void drawRoundedRectangle(int x, int y, int width,
+			int height, int color, int alpha, boolean filled, boolean shadowed) {
+		if (shadowed)
+			drawRoundedRectangle(x + 1, y + 1, width, height, 0, alpha, filled,
+					false);
+		if (alpha == -1) {
+			if (filled) {
+				drawHorizontalLine(y + 1, color, width - 4, x + 2);
+				drawHorizontalLine(y + height - 2, color, width - 4, x + 2);
+				drawFilledPixels(height - 4, y + 2, x + 1, color, width - 2);
+			}
+			drawHorizontalLine(y, color, width - 4, x + 2);
+			drawHorizontalLine(y + height - 1, color, width - 4, x + 2);
+			drawVerticalLine(x, y + 2, height - 4, color);
+			drawVerticalLine(x + width - 1, y + 2, height - 4, color);
+			drawFilledPixels(x + 1, y + 1, 1, 1, color);
+			drawFilledPixels(x + width - 2, y + 1, 1, 1, color);
+			drawFilledPixels(x + width - 2, y + height - 2, 1, 1, color);
+			drawFilledPixels(x + 1, y + height - 2, 1, 1, color);
+		} else if (alpha != -1) {
+			if (filled) {
+				method340(color, width - 4, y + 1, alpha, x + 2);
+				method340(color, width - 4, y + height - 2, alpha, x + 2);
+				method335(color, y + 2, width - 2, height - 4, alpha, x + 1);
+			}
+			method340(color, width - 4, y, alpha, x + 2);
+			method340(color, width - 4, y + height - 1, alpha, x + 2);
+			method342(color, x, alpha, y + 2, height - 4);
+			method342(color, x + width - 1, alpha, y + 2, height - 4);
+			method335(color, y + 1, 1, 1, alpha, x + 1);
+			method335(color, y + 1, 1, 1, alpha, x + width - 2);
+			method335(color, y + height - 2, 1, 1, alpha, x + 1);
+			method335(color, y + height - 2, 1, 1, alpha, x + width - 2);
+		}
+	}
+
 	public static void method335(int i, int j, int k, int l, int i1, int k1) {
 		if (k1 < startX) {
 			k -= startX - k1;

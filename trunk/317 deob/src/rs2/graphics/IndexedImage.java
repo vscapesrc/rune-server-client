@@ -137,42 +137,41 @@ public final class IndexedImage extends RSDrawingArea {
 		}
 	}
 
-	public void drawImage(int i, int k) {
-		i += anInt1454;
-		k += anInt1455;
-		int l = i + k * RSDrawingArea.width;
+	public void drawImage(int x, int y) {
+		x += anInt1454;
+		y += anInt1455;
+		int l = x + y * RSDrawingArea.width;
 		int i1 = 0;
-		int j1 = anInt1453;
-		int k1 = anInt1452;
-		int l1 = RSDrawingArea.width - k1;
+		int height = anInt1453;
+		int width = anInt1452;
+		int l1 = RSDrawingArea.width - width;
 		int i2 = 0;
-		if (k < RSDrawingArea.startY) {
-			int j2 = RSDrawingArea.startY - k;
-			j1 -= j2;
-			k = RSDrawingArea.startY;
-			i1 += j2 * k1;
+		if (y < RSDrawingArea.startY) {
+			int j2 = RSDrawingArea.startY - y;
+			height -= j2;
+			y = RSDrawingArea.startY;
+			i1 += j2 * width;
 			l += j2 * RSDrawingArea.width;
 		}
-		if (k + j1 > RSDrawingArea.endY)
-			j1 -= (k + j1) - RSDrawingArea.endY;
-		if (i < RSDrawingArea.startX) {
-			int k2 = RSDrawingArea.startX - i;
-			k1 -= k2;
-			i = RSDrawingArea.startX;
+		if (y + height > RSDrawingArea.endY)
+			height -= (y + height) - RSDrawingArea.endY;
+		if (x < RSDrawingArea.startX) {
+			int k2 = RSDrawingArea.startX - x;
+			width -= k2;
+			x = RSDrawingArea.startX;
 			i1 += k2;
 			l += k2;
 			i2 += k2;
 			l1 += k2;
 		}
-		if (i + k1 > RSDrawingArea.endX) {
-			int l2 = (i + k1) - RSDrawingArea.endX;
-			k1 -= l2;
+		if (x + width > RSDrawingArea.endX) {
+			int l2 = (x + width) - RSDrawingArea.endX;
+			width -= l2;
 			i2 += l2;
 			l1 += l2;
 		}
-		if (!(k1 <= 0 || j1 <= 0)) {
-			method362(j1, RSDrawingArea.pixels, aByteArray1450, l1, l, k1, i1,
-					anIntArray1451, i2);
+		if (!(width <= 0 || height <= 0)) {
+			method362(height, RSDrawingArea.pixels, aByteArray1450, l1, l, width, i1, anIntArray1451, i2);
 		}
 	}
 

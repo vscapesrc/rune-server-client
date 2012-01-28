@@ -304,85 +304,50 @@ public final class RSImage extends RSDrawingArea {
 		}
 	}
 
-	public void drawSprite1(int i, int j) {
-		int k = 128;// was parameter
-		i += anInt1442;
-		j += anInt1443;
-		int i1 = i + j * RSDrawingArea.width;
+	public void drawImage(int x, int y) {
+		drawImage(x, y, 256);
+	}
+
+	public void drawImage(int x, int y, int alpha) {
+		int k = alpha;// was parameter
+		x += anInt1442;
+		y += anInt1443;
+		int i1 = x + y * RSDrawingArea.width;
 		int j1 = 0;
-		int k1 = myHeight;
-		int l1 = myWidth;
-		int i2 = RSDrawingArea.width - l1;
+		int height = myHeight;
+		int width = myWidth;
+		int i2 = RSDrawingArea.width - width;
 		int j2 = 0;
-		if (j < RSDrawingArea.startY) {
-			int k2 = RSDrawingArea.startY - j;
-			k1 -= k2;
-			j = RSDrawingArea.startY;
-			j1 += k2 * l1;
+		if (y < RSDrawingArea.startY) {
+			int k2 = RSDrawingArea.startY - y;
+			height -= k2;
+			y = RSDrawingArea.startY;
+			j1 += k2 * width;
 			i1 += k2 * RSDrawingArea.width;
 		}
-		if (j + k1 > RSDrawingArea.endY)
-			k1 -= (j + k1) - RSDrawingArea.endY;
-		if (i < RSDrawingArea.startX) {
-			int l2 = RSDrawingArea.startX - i;
-			l1 -= l2;
-			i = RSDrawingArea.startX;
+		if (y + height > RSDrawingArea.endY)
+			height -= (y + height) - RSDrawingArea.endY;
+		if (x < RSDrawingArea.startX) {
+			int l2 = RSDrawingArea.startX - x;
+			width -= l2;
+			x = RSDrawingArea.startX;
 			j1 += l2;
 			i1 += l2;
 			j2 += l2;
 			i2 += l2;
 		}
-		if (i + l1 > RSDrawingArea.endX) {
-			int i3 = (i + l1) - RSDrawingArea.endX;
-			l1 -= i3;
+		if (x + width > RSDrawingArea.endX) {
+			int i3 = (x + width) - RSDrawingArea.endX;
+			width -= i3;
 			j2 += i3;
 			i2 += i3;
 		}
-		if (!(l1 <= 0 || k1 <= 0)) {
-			method351(j1, l1, RSDrawingArea.pixels, myPixels, j2, k1, i2, k, i1);
+		if (!(width <= 0 || height <= 0)) {
+			method351(j1, width, RSDrawingArea.pixels, myPixels, j2, height, i2, k, i1);
 		}
 	}
 
-	public void drawImage(int i, int k) {
-		i += anInt1442;
-		k += anInt1443;
-		int l = i + k * RSDrawingArea.width;
-		int i1 = 0;
-		int j1 = myHeight;
-		int k1 = myWidth;
-		int l1 = RSDrawingArea.width - k1;
-		int i2 = 0;
-		if (k < RSDrawingArea.startY) {
-			int j2 = RSDrawingArea.startY - k;
-			j1 -= j2;
-			k = RSDrawingArea.startY;
-			i1 += j2 * k1;
-			l += j2 * RSDrawingArea.width;
-		}
-		if (k + j1 > RSDrawingArea.endY)
-			j1 -= (k + j1) - RSDrawingArea.endY;
-		if (i < RSDrawingArea.startX) {
-			int k2 = RSDrawingArea.startX - i;
-			k1 -= k2;
-			i = RSDrawingArea.startX;
-			i1 += k2;
-			l += k2;
-			i2 += k2;
-			l1 += k2;
-		}
-		if (i + k1 > RSDrawingArea.endX) {
-			int l2 = (i + k1) - RSDrawingArea.endX;
-			k1 -= l2;
-			i2 += l2;
-			l1 += l2;
-		}
-		if (!(k1 <= 0 || j1 <= 0)) {
-			method349(RSDrawingArea.pixels, myPixels, i1, l, k1, j1, l1, i2);
-		}
-	}
-
-	private void method349(int ai[], int ai1[], int j, int k, int l, int i1,
-			int j1, int k1) {
+	private void method349(int ai[], int ai1[], int j, int k, int l, int i1, int j1, int k1) {
 		int i;// was parameter
 		int l1 = -(l >> 2);
 		l = -(l & 3);
@@ -597,8 +562,70 @@ public final class RSImage extends RSDrawingArea {
 			i1 += l;
 			k1 += j1;
 		}
-
 	}
+
+	public void drawARGBImage(int xPos, int yPos) {
+		drawARGBSprite(xPos, yPos, 256);
+	}
+
+	public void drawARGBSprite(int xPos, int yPos, int alpha) {
+		int alphaValue = alpha;
+		xPos += anInt1442;
+		yPos += anInt1443;
+		int i1 = xPos + yPos * RSDrawingArea.width;
+		int j1 = 0;
+		int spriteHeight = myHeight;
+		int spriteWidth = myWidth;
+		int i2 = RSDrawingArea.width - spriteWidth;
+		int j2 = 0;
+		if (yPos < RSDrawingArea.startY) {
+			int k2 = RSDrawingArea.startY - yPos;
+			spriteHeight -= k2;
+			yPos = RSDrawingArea.startY;
+			j1 += k2 * spriteWidth;
+			i1 += k2 * RSDrawingArea.width;
+		}
+		if (yPos + spriteHeight > RSDrawingArea.endY)
+			spriteHeight -= (yPos + spriteHeight) - RSDrawingArea.endY;
+			if (xPos < RSDrawingArea.startX) {
+			int l2 = RSDrawingArea.startX - xPos;
+			spriteWidth -= l2;
+			xPos = RSDrawingArea.startX;
+			j1 += l2;
+			i1 += l2;
+			j2 += l2;
+			i2 += l2;
+		}
+		if (xPos + spriteWidth > RSDrawingArea.endX) {
+			int i3 = (xPos + spriteWidth) - RSDrawingArea.endX;
+			spriteWidth -= i3;
+			j2 += i3;
+			i2 += i3;
+		}
+		if (!(spriteWidth <= 0 || spriteHeight <= 0)) {
+			renderARGBPixels(spriteWidth, spriteHeight, myPixels, RSDrawingArea.pixels, i1, alphaValue, j1, j2, i2);
+		}
+	}
+
+    private void renderARGBPixels(int spriteWidth, int spriteHeight, int spritePixels[], int renderAreaPixels[], int pixel, int alphaValue, int i, int l, int j1) {
+    	int pixelLevel;
+    	int alphaLevel;
+    	for (int k2 = -spriteHeight; k2 < 0; k2++) {
+    		for (int l2 = -spriteWidth; l2 < 0; l2++) {
+    			alphaValue = ((myPixels[i] >> 24) & 255);
+    			alphaLevel = 256 - alphaValue;
+    			pixelLevel = spritePixels[i++];
+    			if (pixelLevel != 0) {
+    				int pixelValue = renderAreaPixels[pixel];
+    				renderAreaPixels[pixel++] = ((pixelLevel & 0xff00ff) * alphaValue + (pixelValue & 0xff00ff) * alphaLevel & 0xff00ff00) + ((pixelLevel & 0xff00) * alphaValue + (pixelValue & 0xff00) * alphaLevel & 0xff0000) >> 8;
+    			} else {
+    				pixel++;
+    			}
+    		}
+    		pixel += j1;
+    		i += l;
+    	}
+    }
 
 	public int myPixels[];
 	public int myWidth;

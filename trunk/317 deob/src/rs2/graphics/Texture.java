@@ -262,8 +262,7 @@ public final class Texture extends RSDrawingArea {
 		return (j << 16) + (k << 8) + l;
 	}
 
-	public static void method374(int i, int j, int k, int l, int i1, int j1,
-			int k1, int l1, int i2) {
+	public static void method374(int i, int j, int k, int l, int i1, int j1, int k1, int l1, int i2) {
 		int j2 = 0;
 		int k2 = 0;
 		if (j != i) {
@@ -310,8 +309,10 @@ public final class Texture extends RSDrawingArea {
 					k -= j;
 					j -= i;
 					for (i = anIntArray1472[i]; --j >= 0; i += RSDrawingArea.width) {
-						method375(RSDrawingArea.pixels, i, j1 >> 16, l >> 16,
-								i2 >> 7, k1 >> 7);
+						try {
+							method375(RSDrawingArea.pixels, i, j1 >> 16, l >> 16, i2 >> 7, k1 >> 7);
+						} catch (Exception e) {
+						}
 						j1 += j3;
 						l += j2;
 						i2 += k3;
@@ -319,8 +320,10 @@ public final class Texture extends RSDrawingArea {
 					}
 
 					while (--k >= 0) {
-						method375(RSDrawingArea.pixels, i, j1 >> 16, i1 >> 16,
-								i2 >> 7, l1 >> 7);
+						try {
+							method375(RSDrawingArea.pixels, i, j1 >> 16, i1 >> 16, i2 >> 7, l1 >> 7);
+						} catch (Exception e) {
+						}
 						j1 += j3;
 						i1 += l2;
 						i2 += k3;
@@ -332,8 +335,10 @@ public final class Texture extends RSDrawingArea {
 				k -= j;
 				j -= i;
 				for (i = anIntArray1472[i]; --j >= 0; i += RSDrawingArea.width) {
-					method375(RSDrawingArea.pixels, i, l >> 16, j1 >> 16,
-							k1 >> 7, i2 >> 7);
+					try {
+						method375(RSDrawingArea.pixels, i, l >> 16, j1 >> 16, k1 >> 7, i2 >> 7);
+					} catch (Exception e) {
+					}
 					j1 += j3;
 					l += j2;
 					i2 += k3;
@@ -341,8 +346,10 @@ public final class Texture extends RSDrawingArea {
 				}
 
 				while (--k >= 0) {
-					method375(RSDrawingArea.pixels, i, i1 >> 16, j1 >> 16,
-							l1 >> 7, i2 >> 7);
+					try {
+						method375(RSDrawingArea.pixels, i, i1 >> 16, j1 >> 16, l1 >> 7, i2 >> 7);
+					} catch (Exception e) {
+					}
 					j1 += j3;
 					i1 += l2;
 					i2 += k3;
@@ -371,8 +378,10 @@ public final class Texture extends RSDrawingArea {
 				j -= k;
 				k -= i;
 				for (i = anIntArray1472[i]; --k >= 0; i += RSDrawingArea.width) {
-					method375(RSDrawingArea.pixels, i, i1 >> 16, l >> 16,
-							l1 >> 7, k1 >> 7);
+					try {
+						method375(RSDrawingArea.pixels, i, i1 >> 16, l >> 16, l1 >> 7, k1 >> 7);
+					} catch (Exception e) {
+					}
 					i1 += j3;
 					l += j2;
 					l1 += k3;
@@ -380,8 +389,10 @@ public final class Texture extends RSDrawingArea {
 				}
 
 				while (--j >= 0) {
-					method375(RSDrawingArea.pixels, i, j1 >> 16, l >> 16,
-							i2 >> 7, k1 >> 7);
+					try {
+						method375(RSDrawingArea.pixels, i, j1 >> 16, l >> 16, i2 >> 7, k1 >> 7);
+					} catch (Exception e) {
+					}
 					j1 += l2;
 					l += j2;
 					i2 += i3;
@@ -393,8 +404,10 @@ public final class Texture extends RSDrawingArea {
 			j -= k;
 			k -= i;
 			for (i = anIntArray1472[i]; --k >= 0; i += RSDrawingArea.width) {
-				method375(RSDrawingArea.pixels, i, l >> 16, i1 >> 16, k1 >> 7,
-						l1 >> 7);
+				try {
+					method375(RSDrawingArea.pixels, i, l >> 16, i1 >> 16, k1 >> 7, l1 >> 7);
+				} catch (Exception e) {
+				}
 				i1 += j3;
 				l += j2;
 				l1 += k3;
@@ -402,8 +415,10 @@ public final class Texture extends RSDrawingArea {
 			}
 
 			while (--j >= 0) {
-				method375(RSDrawingArea.pixels, i, l >> 16, j1 >> 16, k1 >> 7,
-						i2 >> 7);
+				try {
+					method375(RSDrawingArea.pixels, i, l >> 16, j1 >> 16, k1 >> 7, i2 >> 7);
+				} catch (Exception e) {
+				}
 				j1 += l2;
 				l += j2;
 				i2 += i3;
@@ -440,8 +455,10 @@ public final class Texture extends RSDrawingArea {
 					i -= k;
 					k -= j;
 					for (j = anIntArray1472[j]; --k >= 0; j += RSDrawingArea.width) {
-						method375(RSDrawingArea.pixels, j, l >> 16, i1 >> 16,
-								k1 >> 7, l1 >> 7);
+						try {
+							method375(RSDrawingArea.pixels, j, l >> 16, i1 >> 16, k1 >> 7, l1 >> 7);
+						} catch (Exception e) {
+						}
 						l += j2;
 						i1 += l2;
 						k1 += k2;
@@ -449,8 +466,10 @@ public final class Texture extends RSDrawingArea {
 					}
 
 					while (--i >= 0) {
-						method375(RSDrawingArea.pixels, j, l >> 16, j1 >> 16,
-								k1 >> 7, i2 >> 7);
+						try {
+							method375(RSDrawingArea.pixels, j, l >> 16, j1 >> 16, k1 >> 7, i2 >> 7);
+						} catch (Exception e) {
+						}
 						l += j2;
 						j1 += j3;
 						k1 += k2;
@@ -462,8 +481,10 @@ public final class Texture extends RSDrawingArea {
 				i -= k;
 				k -= j;
 				for (j = anIntArray1472[j]; --k >= 0; j += RSDrawingArea.width) {
-					method375(RSDrawingArea.pixels, j, i1 >> 16, l >> 16,
-							l1 >> 7, k1 >> 7);
+					try {
+						method375(RSDrawingArea.pixels, j, i1 >> 16, l >> 16, l1 >> 7, k1 >> 7);
+					} catch (Exception e) {
+					}
 					l += j2;
 					i1 += l2;
 					k1 += k2;
@@ -471,8 +492,10 @@ public final class Texture extends RSDrawingArea {
 				}
 
 				while (--i >= 0) {
-					method375(RSDrawingArea.pixels, j, j1 >> 16, l >> 16,
-							i2 >> 7, k1 >> 7);
+					try {
+						method375(RSDrawingArea.pixels, j, j1 >> 16, l >> 16, i2 >> 7, k1 >> 7);
+					} catch (Exception e) {
+					}
 					l += j2;
 					j1 += j3;
 					k1 += k2;
@@ -501,8 +524,10 @@ public final class Texture extends RSDrawingArea {
 				k -= i;
 				i -= j;
 				for (j = anIntArray1472[j]; --i >= 0; j += RSDrawingArea.width) {
-					method375(RSDrawingArea.pixels, j, j1 >> 16, i1 >> 16,
-							i2 >> 7, l1 >> 7);
+					try {
+						method375(RSDrawingArea.pixels, j, j1 >> 16, i1 >> 16, i2 >> 7, l1 >> 7);
+					} catch (Exception e) {
+					}
 					j1 += j2;
 					i1 += l2;
 					i2 += k2;
@@ -510,8 +535,10 @@ public final class Texture extends RSDrawingArea {
 				}
 
 				while (--k >= 0) {
-					method375(RSDrawingArea.pixels, j, l >> 16, i1 >> 16,
-							k1 >> 7, l1 >> 7);
+					try {
+						method375(RSDrawingArea.pixels, j, l >> 16, i1 >> 16, k1 >> 7, l1 >> 7);
+					} catch (Exception e) {
+					}
 					l += j3;
 					i1 += l2;
 					k1 += k3;
@@ -523,8 +550,10 @@ public final class Texture extends RSDrawingArea {
 			k -= i;
 			i -= j;
 			for (j = anIntArray1472[j]; --i >= 0; j += RSDrawingArea.width) {
-				method375(RSDrawingArea.pixels, j, i1 >> 16, j1 >> 16, l1 >> 7,
-						i2 >> 7);
+				try {
+					method375(RSDrawingArea.pixels, j, i1 >> 16, j1 >> 16, l1 >> 7, i2 >> 7);
+				} catch (Exception e) {
+				}
 				j1 += j2;
 				i1 += l2;
 				i2 += k2;
@@ -532,8 +561,10 @@ public final class Texture extends RSDrawingArea {
 			}
 
 			while (--k >= 0) {
-				method375(RSDrawingArea.pixels, j, i1 >> 16, l >> 16, l1 >> 7,
-						k1 >> 7);
+				try {
+					method375(RSDrawingArea.pixels, j, i1 >> 16, l >> 16, l1 >> 7, k1 >> 7);
+				} catch (Exception e) {
+				}
 				l += j3;
 				i1 += l2;
 				k1 += k3;
@@ -569,8 +600,10 @@ public final class Texture extends RSDrawingArea {
 				j -= i;
 				i -= k;
 				for (k = anIntArray1472[k]; --i >= 0; k += RSDrawingArea.width) {
-					method375(RSDrawingArea.pixels, k, i1 >> 16, j1 >> 16,
-							l1 >> 7, i2 >> 7);
+					try {
+						method375(RSDrawingArea.pixels, k, i1 >> 16, j1 >> 16, l1 >> 7, i2 >> 7);
+					} catch (Exception e) {
+					}
 					i1 += l2;
 					j1 += j3;
 					l1 += i3;
@@ -578,8 +611,10 @@ public final class Texture extends RSDrawingArea {
 				}
 
 				while (--j >= 0) {
-					method375(RSDrawingArea.pixels, k, i1 >> 16, l >> 16,
-							l1 >> 7, k1 >> 7);
+					try {
+						method375(RSDrawingArea.pixels, k, i1 >> 16, l >> 16, l1 >> 7, k1 >> 7);
+					} catch (Exception e) {
+					}
 					i1 += l2;
 					l += j2;
 					l1 += i3;
@@ -591,8 +626,10 @@ public final class Texture extends RSDrawingArea {
 			j -= i;
 			i -= k;
 			for (k = anIntArray1472[k]; --i >= 0; k += RSDrawingArea.width) {
-				method375(RSDrawingArea.pixels, k, j1 >> 16, i1 >> 16, i2 >> 7,
-						l1 >> 7);
+				try {
+					method375(RSDrawingArea.pixels, k, j1 >> 16, i1 >> 16, i2 >> 7, l1 >> 7);
+				} catch (Exception e) {
+				}
 				i1 += l2;
 				j1 += j3;
 				l1 += i3;
@@ -600,8 +637,10 @@ public final class Texture extends RSDrawingArea {
 			}
 
 			while (--j >= 0) {
-				method375(RSDrawingArea.pixels, k, l >> 16, i1 >> 16, k1 >> 7,
-						l1 >> 7);
+				try {
+					method375(RSDrawingArea.pixels, k, l >> 16, i1 >> 16, k1 >> 7, l1 >> 7);
+				} catch (Exception e) {
+				}
 				i1 += l2;
 				l += j2;
 				l1 += i3;
@@ -630,8 +669,10 @@ public final class Texture extends RSDrawingArea {
 			i -= j;
 			j -= k;
 			for (k = anIntArray1472[k]; --j >= 0; k += RSDrawingArea.width) {
-				method375(RSDrawingArea.pixels, k, l >> 16, j1 >> 16, k1 >> 7,
-						i2 >> 7);
+				try {
+					method375(RSDrawingArea.pixels, k, l >> 16, j1 >> 16, k1 >> 7, i2 >> 7);
+				} catch (Exception e) {
+				}
 				l += l2;
 				j1 += j3;
 				k1 += i3;
@@ -639,8 +680,10 @@ public final class Texture extends RSDrawingArea {
 			}
 
 			while (--i >= 0) {
-				method375(RSDrawingArea.pixels, k, i1 >> 16, j1 >> 16, l1 >> 7,
-						i2 >> 7);
+				try {
+					method375(RSDrawingArea.pixels, k, i1 >> 16, j1 >> 16, l1 >> 7, i2 >> 7);
+				} catch (Exception e) {
+				}
 				i1 += j2;
 				j1 += j3;
 				l1 += k2;
@@ -652,8 +695,10 @@ public final class Texture extends RSDrawingArea {
 		i -= j;
 		j -= k;
 		for (k = anIntArray1472[k]; --j >= 0; k += RSDrawingArea.width) {
-			method375(RSDrawingArea.pixels, k, j1 >> 16, l >> 16, i2 >> 7,
-					k1 >> 7);
+			try {
+				method375(RSDrawingArea.pixels, k, j1 >> 16, l >> 16, i2 >> 7, k1 >> 7);
+			} catch (Exception e) {
+			}
 			l += l2;
 			j1 += j3;
 			k1 += i3;
@@ -661,8 +706,10 @@ public final class Texture extends RSDrawingArea {
 		}
 
 		while (--i >= 0) {
-			method375(RSDrawingArea.pixels, k, j1 >> 16, i1 >> 16, i2 >> 7,
-					l1 >> 7);
+			try {
+				method375(RSDrawingArea.pixels, k, j1 >> 16, i1 >> 16, i2 >> 7, l1 >> 7);
+			} catch (Exception e) {
+			}
 			i1 += j2;
 			j1 += j3;
 			l1 += k2;
@@ -725,16 +772,11 @@ public final class Texture extends RSDrawingArea {
 				while (--k >= 0) {
 					j = anIntArray1482[j1 >> 8];
 					j1 += l1;
-					j = ((j & 0xff00ff) * l2 >> 8 & 0xff00ff)
-							+ ((j & 0xff00) * l2 >> 8 & 0xff00);
-					ai[i++] = j + ((ai[i] & 0xff00ff) * j2 >> 8 & 0xff00ff)
-							+ ((ai[i] & 0xff00) * j2 >> 8 & 0xff00);
-					ai[i++] = j + ((ai[i] & 0xff00ff) * j2 >> 8 & 0xff00ff)
-							+ ((ai[i] & 0xff00) * j2 >> 8 & 0xff00);
-					ai[i++] = j + ((ai[i] & 0xff00ff) * j2 >> 8 & 0xff00ff)
-							+ ((ai[i] & 0xff00) * j2 >> 8 & 0xff00);
-					ai[i++] = j + ((ai[i] & 0xff00ff) * j2 >> 8 & 0xff00ff)
-							+ ((ai[i] & 0xff00) * j2 >> 8 & 0xff00);
+					j = ((j & 0xff00ff) * l2 >> 8 & 0xff00ff) + ((j & 0xff00) * l2 >> 8 & 0xff00);
+					ai[i++] = j + ((ai[i] & 0xff00ff) * j2 >> 8 & 0xff00ff) + ((ai[i] & 0xff00) * j2 >> 8 & 0xff00);
+					ai[i++] = j + ((ai[i] & 0xff00ff) * j2 >> 8 & 0xff00ff) + ((ai[i] & 0xff00) * j2 >> 8 & 0xff00);
+					ai[i++] = j + ((ai[i] & 0xff00ff) * j2 >> 8 & 0xff00ff) + ((ai[i] & 0xff00) * j2 >> 8 & 0xff00);
+					ai[i++] = j + ((ai[i] & 0xff00ff) * j2 >> 8 & 0xff00ff) + ((ai[i] & 0xff00) * j2 >> 8 & 0xff00);
 				}
 				k = i1 - l & 3;
 				if (k > 0) {

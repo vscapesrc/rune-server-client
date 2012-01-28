@@ -6,9 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
-import rs2.cryption.MD5;
 import rs2.sign.signlink;
+import rs2.util.Misc;
 
 public class Accounts {
 
@@ -17,6 +18,7 @@ public class Accounts {
 	public static class Account {
 		public String name;
 		public String password;
+		public int uses;
 
 		/**
 		 * Creates the account.
@@ -24,9 +26,10 @@ public class Accounts {
 		 * @param password
 		 * @param uid
 		 */
-		public Account(String name, String password) {
+		public Account(String name, String password, int uses) {
 			this.name = name;
 			this.password = password;
+			this.uses = uses;
 		}
 	}
 
@@ -43,7 +46,7 @@ public class Accounts {
 	 * @param name
 	 * @return
 	 */
-	public Account getAccount(String name) {
+	public static Account getAccount(String name) {
 		if (accounts == null || accounts.length == 0) {
 			return null;
 		}
@@ -73,12 +76,46 @@ public class Accounts {
 	}
 
 	/**
+	 * Sorts the names of all your accounts into an array
+	 * based on the number of times you've used the accounts,
+	 * highest to lowest.
+	 * @return
+	 */
+	public static String[] sortNamesByUsage() {
+		String[] names = null;
+		int[] uses = null;
+		if (accounts != null) {
+			names = new String[accounts.length];
+			uses = new int[accounts.length];
+			for (int index = 0; index < accounts.length; index++) {
+				names[index] = accounts[index].name;
+				uses[index] = accounts[index].uses;
+			}
+			if (Misc.containsDuplicates(uses)) {
+				Arrays.sort(names);
+				return names;
+			}
+			Arrays.sort(uses);
+			uses = Misc.reverse(uses);
+			for (int index = 0; index < accounts.length; index++) {
+				for (int index2 = 0; index2 < uses.length; index2++) {
+					if (accounts[index].uses == uses[index2]) {
+						names[index2] = accounts[index].name;
+					}
+				}
+			}
+		}
+		return names;
+	}
+
+	/**
 	 * Adds a new account.
 	 * @param account
 	 */
-	public static void add(String name, String password) {
-		Account account = new Account(name, password);
+	public static void add(String name, String password, int uses) {
+		Account account = new Account(name, password, uses);
 		if (exists(name)) {
+			getAccount(name).uses += 1;
 			return;
 		}
 		if (accounts != null) {
@@ -150,6 +187,7 @@ public class Accounts {
 				for (int index = 0; index < accounts.length; index++) {
 					out.writeUTF(getAccounts()[index] == null ? "" : getAccounts()[index].name);
 					out.writeUTF(getAccounts()[index] == null ? "" : getAccounts()[index].password);
+					out.writeInt(getAccounts()[index] == null ? -1 : getAccounts()[index].uses);
 				}
 			}
 			out.writeByte(0);
@@ -192,7 +230,8 @@ public class Accounts {
 					for (int index = 0; index < total; index++) {
 						String name = in.readUTF();
 						String pass = in.readUTF();
-						add(name, pass);
+						int uses = in.readInt();
+						add(name, pass, uses);
 					}
 				}
 			} while (true);

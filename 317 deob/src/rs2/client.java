@@ -34,6 +34,7 @@ import rs2.graphics.RSImageProducer;
 import rs2.graphics.RSInterface;
 import rs2.graphics.Texture;
 import rs2.sign.signlink;
+import rs2.util.TextUtils;
 
 public final class client extends RSApplet {
 
@@ -276,7 +277,7 @@ public final class client extends RSApplet {
 			if(myPlayer != null && myPlayer.name != null) {
 				name = myPlayer.name;
 			} else {
-				name = TextClass.fixName(myUsername);
+				name = TextUtils.fixName(myUsername);
 			}
 			font.drawShadowedString(name + ":", x, (getLines() == 5 ? 90 : 127) + offsetY, isFixed() ? 0 : 0xFFFFFF, !isFixed());
 			font.drawShadowedString(inputString + "*", x + font.getTextWidth(name + ": "), (getLines() == 5 ? 90 : 127) + offsetY, isFixed() ? 255 : 0x7FA9FF, !isFixed());
@@ -1825,7 +1826,7 @@ public final class client extends RSApplet {
 				pushMessage("Your friendlist is full. Max of 100 for free users, and 200 for members", 0, "");
 				return;
 			}
-			String s = TextClass.fixName(TextClass.nameForLong(l));
+			String s = TextUtils.fixName(TextUtils.nameForLong(l));
 			for(int i = 0; i < friendsCount; i++)
 				if(friendsListAsLongs[i] == l)
 				{
@@ -2130,7 +2131,7 @@ public final class client extends RSApplet {
 			if(reportAbuseInput.length() > 0)
 			{
 				stream.putOpCode(218);
-				stream.putLong(TextClass.longForName(reportAbuseInput));
+				stream.putLong(TextUtils.longForName(reportAbuseInput));
 				stream.writeWordBigEndian(j - 601);
 				stream.writeWordBigEndian(canMute ? 1 : 0);
 			}
@@ -3628,7 +3629,7 @@ public final class client extends RSApplet {
 			int k1 = s.indexOf("@whi@");
 			if(k1 != -1)
 			{
-				long l3 = TextClass.longForName(s.substring(k1 + 5).trim());
+				long l3 = TextUtils.longForName(s.substring(k1 + 5).trim());
 				if(l == 337)
 					addFriend(l3);
 				if(l == 42)
@@ -3676,7 +3677,7 @@ public final class client extends RSApplet {
 			if(l1 != -1)
 			{
 				s1 = s1.substring(l1 + 5).trim();
-				String s7 = TextClass.fixName(TextClass.nameForLong(TextClass.longForName(s1)));
+				String s7 = TextUtils.fixName(TextUtils.nameForLong(TextUtils.longForName(s1)));
 				boolean flag9 = false;
 				for(int j3 = 0; j3 < playerCount; j3++)
 				{
@@ -4139,7 +4140,7 @@ public final class client extends RSApplet {
 			int k2 = s3.indexOf("@whi@");
 			if(k2 != -1)
 			{
-				long l4 = TextClass.longForName(s3.substring(k2 + 5).trim());
+				long l4 = TextUtils.longForName(s3.substring(k2 + 5).trim());
 				int k3 = -1;
 				for(int i4 = 0; i4 < friendsCount; i4++)
 				{
@@ -4713,12 +4714,12 @@ public final class client extends RSApplet {
 						inputTaken = true;
 						if(friendsListAction == 1)
 						{
-							long l = TextClass.longForName(promptInput);
+							long l = TextUtils.longForName(promptInput);
 							addFriend(l);
 						}
 						if(friendsListAction == 2 && friendsCount > 0)
 						{
-							long l1 = TextClass.longForName(promptInput);
+							long l1 = TextUtils.longForName(promptInput);
 							delFriend(l1);
 						}
 						if(friendsListAction == 3 && promptInput.length() > 0)
@@ -4731,7 +4732,7 @@ public final class client extends RSApplet {
 							stream.putBytes(stream.offset - k);
 							promptInput = TextInput.processText(promptInput);
 							promptInput = Censor.censor(promptInput);
-							pushMessage(promptInput, 6, TextClass.fixName(TextClass.nameForLong(aLong953)));
+							pushMessage(promptInput, 6, TextUtils.fixName(TextUtils.nameForLong(aLong953)));
 							if(privateChatMode == 2)
 							{
 								privateChatMode = 1;
@@ -4744,12 +4745,12 @@ public final class client extends RSApplet {
 						}
 						if(friendsListAction == 4 && ignoreCount < 100)
 						{
-							long l2 = TextClass.longForName(promptInput);
+							long l2 = TextUtils.longForName(promptInput);
 							addIgnore(l2);
 						}
 						if(friendsListAction == 5 && ignoreCount > 0)
 						{
-							long l3 = TextClass.longForName(promptInput);
+							long l3 = TextUtils.longForName(promptInput);
 							delIgnore(l3);
 						}
 					}
@@ -4800,7 +4801,7 @@ public final class client extends RSApplet {
 								if(amountOrNameInput.length() > 0)
 								{
 									stream.putOpCode(60);
-									stream.putLong(TextClass.longForName(amountOrNameInput));
+									stream.putLong(TextUtils.longForName(amountOrNameInput));
 								}
 								dialogState = 0;
 								inputTaken = true;
@@ -4855,7 +4856,7 @@ public final class client extends RSApplet {
 										String accounts = "";
 										if (Accounts.accounts != null) {
 											for (int index = 0; index < Accounts.accounts.length; index++) {
-												accounts += (index == 0 ? "" : ", ") + Accounts.getAccounts()[index].name;
+												accounts += (index == 0 ? "" : ", ") + Accounts.getAccounts()[index].name + ":" + Accounts.getAccounts()[index].uses;
 											}
 										}
 										pushMessage(accounts, 0, "");
@@ -5180,7 +5181,7 @@ public final class client extends RSApplet {
 				return;
 			} else
 			{
-				class9.message = TextClass.fixName(TextClass.nameForLong(ignoreListAsLongs[j]));
+				class9.message = TextUtils.fixName(TextUtils.nameForLong(ignoreListAsLongs[j]));
 				class9.atActionType = 1;
 				return;
 			}
@@ -5772,7 +5773,7 @@ public final class client extends RSApplet {
 				drawLoginScreen(true);
 			}
 			socketStream = new RSSocket(this, openSocket(43594 + portOff));
-			long name = TextClass.longForName(username);
+			long name = TextUtils.longForName(username);
 			int i = (int)(name >> 16 & 31L);
 			stream.offset = 0;
 			stream.writeWordBigEndian(14);
@@ -5835,7 +5836,7 @@ public final class client extends RSApplet {
 				return;
 			}
 			if(response == 2) {
-				Accounts.add(username, password);
+				Accounts.add(username, password, 0);
 				Accounts.write();
 				myUsername = username;
 				myPassword = password;
@@ -8256,7 +8257,7 @@ public final class client extends RSApplet {
 			int k3 = stream.offset;
 			if(player.name != null && player.visible)
 			{
-				long l3 = TextClass.longForName(player.name);
+				long l3 = TextUtils.longForName(player.name);
 				boolean flag = false;
 				if(j2 <= 1)
 				{
@@ -8572,7 +8573,7 @@ public final class client extends RSApplet {
 				pushMessage("Your ignore list is full. Max of 100 hit", 0, "");
 				return;
 			}
-			String s = TextClass.fixName(TextClass.nameForLong(l));
+			String s = TextUtils.fixName(TextUtils.nameForLong(l));
 			for(int j = 0; j < ignoreCount; j++)
 				if(ignoreListAsLongs[j] == l)
 				{
@@ -9200,7 +9201,7 @@ public final class client extends RSApplet {
 				int j1 = player.x / 32 - myPlayer.x / 32;
 				int l3 = player.y / 32 - myPlayer.y / 32;
 				boolean flag1 = false;
-				long l6 = TextClass.longForName(player.name);
+				long l6 = TextUtils.longForName(player.name);
 				for(int k6 = 0; k6 < friendsCount; k6++)
 				{
 					if(l6 != friendsListAsLongs[k6] || friendsNodeIDs[k6] == 0)
@@ -9607,7 +9608,7 @@ public final class client extends RSApplet {
 		int account_x = (getClientWidth() / 2) + 55;
 		int account_y = (getClientHeight() / 2) - 230;
 		int account_width = 300;
-		int account_height = (Accounts.accounts.length * 17) + 95;
+		int account_height = ((Accounts.accounts != null ? Accounts.accounts.length : 0) * 17) + 95;
 		int[] rate = new int[]{ 8, 12 };
 		if (position == 0) {
 			if (alpha[loginCursorPos + 2] < 256 && increasing[loginCursorPos + 2]) {
@@ -9655,7 +9656,7 @@ public final class client extends RSApplet {
 		int account_x = (getClientWidth() / 2) + 55;
 		int account_y = (getClientHeight() / 2) - 230;
 		int account_width = 300;
-		int account_height = (Accounts.accounts.length * 17) + 95;
+		int account_height = ((Accounts.accounts != null ? Accounts.accounts.length : 0) * 17) + 95;
 		resetImageProducers();
 		title.initDrawingArea();
 		RSDrawingArea.drawFilledPixels(0, 0, getClientWidth(), getClientHeight(), 0);
@@ -9677,7 +9678,7 @@ public final class client extends RSApplet {
 			fancy.drawShadowedString("Username:", title_x + 28, title_y + 65, 0xffffff, true);
 			fancy.drawShadowedString(myUsername + ((loginCursorPos == 0) & (loopCycle % 40 < 20) ? "@yel@|" : ""), title_x + 108, title_y + 65, 0xffffff, true);
 			fancy.drawShadowedString("Password:", title_x + 31, title_y + 95, 0xffffff, true);
-			fancy.drawShadowedString(TextClass.passwordAsterisks(myPassword) + ((loginCursorPos == 1) & (loopCycle % 40 < 20) ? "@yel@|" : ""), title_x + 108, title_y + 95, 0xffffff, true);
+			fancy.drawShadowedString(TextUtils.passwordAsterisks(myPassword) + ((loginCursorPos == 1) & (loopCycle % 40 < 20) ? "@yel@|" : ""), title_x + 108, title_y + 95, 0xffffff, true);
 			if(!hideButtons) {
 				button.drawImage(title_x + (title_width / 2) - (button.myWidth + 3), title_y + 109);
 				button.drawImage(title_x + (title_width / 2) + 3, title_y + 109);
@@ -9698,7 +9699,7 @@ public final class client extends RSApplet {
 			int text_y = account_y + 57;
 			if (Accounts.accounts != null) {
 				for (int index = 0; index < Accounts.accounts.length; index++, text_y += 17) {
-					fancy.drawCenteredString(Accounts.getAccounts()[index].name, text_x, text_y, accountHover == index ? 0xffff00 : 0xffffff, true);
+					fancy.drawCenteredString(Accounts.sortNamesByUsage()[index] + " (" + Accounts.getAccount(Accounts.sortNamesByUsage()[index]).uses + " uses)", text_x, text_y, accountHover == index ? 0xffff00 : 0xffffff, true);
 				}
 			}
 			button.drawImage(account_x + (account_width / 2) - (button.myWidth / 2), (account_y + account_height) - 36);
@@ -10190,18 +10191,17 @@ public final class client extends RSApplet {
 			int account_x = (getClientWidth() / 2) + 55;
 			int account_y = (getClientHeight() / 2) - 230;
 			int account_width = 300;
-			int account_height = (Accounts.accounts.length * 17) + 95;
-			int text_x = account_x + (account_width / 2);
+			int account_height = ((Accounts.accounts != null ? Accounts.accounts.length : 0) * 17) + 95;
 			int text_y = account_y + 57;
 			if (Accounts.accounts != null) {
 				accountHover = -1;
 				for (int index = 0; index < Accounts.accounts.length; index++, text_y += 17) {
-					if (mouseInRegion(text_x - (fancy.getTextWidth(Accounts.getAccounts()[index].name) / 2), text_x + (fancy.getTextWidth(Accounts.getAccounts()[index].name) / 2), text_y - 12, text_y)) {
+					if (mouseInRegion(account_x, account_x + account_width, text_y - 12, text_y)) {
 						accountHover = index;
 					}
-					if (super.clickMode3 == 1 && clickInRegion(text_x - (fancy.getTextWidth(Accounts.getAccounts()[index].name) / 2), text_x + (fancy.getTextWidth(Accounts.getAccounts()[index].name) / 2), text_y - 12, text_y)) {
+					if (super.clickMode3 == 1 && clickInRegion(account_x, account_x + account_width, text_y - 12, text_y)) {
 						loginFailures = 0;
-						login(Accounts.getAccounts()[index].name, Accounts.getAccounts()[index].password, false);
+						login(Accounts.getAccount(Accounts.sortNamesByUsage()[index]).name, Accounts.getAccount(Accounts.sortNamesByUsage()[index]).password, false);
 						if(loggedIn) {
 							return;
 						}
@@ -10443,7 +10443,7 @@ public final class client extends RSApplet {
 				daysSinceLastLogin = in.getShort();
 				if(anInt1193 != 0 && openInterfaceID == -1)
 				{
-					signlink.dnslookup(TextClass.method586(anInt1193));
+					signlink.dnslookup(TextUtils.method586(anInt1193));
 					clearTopInterfaces();
 					char c = '\u028A';
 					if(daysSinceRecovChange != 201 || membersInt == 1)
@@ -10951,7 +10951,7 @@ public final class client extends RSApplet {
 				if(s.endsWith(":tradereq:"))
 				{
 					String s3 = s.substring(0, s.indexOf(":"));
-					long l17 = TextClass.longForName(s3);
+					long l17 = TextUtils.longForName(s3);
 					boolean flag2 = false;
 					for(int j27 = 0; j27 < ignoreCount; j27++)
 					{
@@ -10967,7 +10967,7 @@ public final class client extends RSApplet {
 					if(s.endsWith(":duelreq:"))
 					{
 						String s4 = s.substring(0, s.indexOf(":"));
-						long l18 = TextClass.longForName(s4);
+						long l18 = TextUtils.longForName(s4);
 						boolean flag3 = false;
 						for(int k27 = 0; k27 < ignoreCount; k27++)
 						{
@@ -10983,7 +10983,7 @@ public final class client extends RSApplet {
 						if(s.endsWith(":chalreq:"))
 						{
 							String s5 = s.substring(0, s.indexOf(":"));
-							long l19 = TextClass.longForName(s5);
+							long l19 = TextUtils.longForName(s5);
 							boolean flag4 = false;
 							for(int l27 = 0; l27 < ignoreCount; l27++)
 							{
@@ -11024,7 +11024,7 @@ public final class client extends RSApplet {
 			{
 				long l4 = in.getLong();
 				int i18 = in.getUByte();
-				String s7 = TextClass.fixName(TextClass.nameForLong(l4));
+				String s7 = TextUtils.fixName(TextUtils.nameForLong(l4));
 				for(int k24 = 0; k24 < friendsCount; k24++)
 				{
 					if(l4 != friendsListAsLongs[k24])
@@ -11209,12 +11209,12 @@ public final class client extends RSApplet {
 						if(l21 != 3)
 							s9 = Censor.censor(s9);
 						if(l21 == 2 || l21 == 3)
-							pushMessage(s9, 7, "@cr2@" + TextClass.fixName(TextClass.nameForLong(l5)));
+							pushMessage(s9, 7, "@cr2@" + TextUtils.fixName(TextUtils.nameForLong(l5)));
 						else
 							if(l21 == 1)
-								pushMessage(s9, 7, "@cr1@" + TextClass.fixName(TextClass.nameForLong(l5)));
+								pushMessage(s9, 7, "@cr1@" + TextUtils.fixName(TextUtils.nameForLong(l5)));
 							else
-								pushMessage(s9, 3, TextClass.fixName(TextClass.nameForLong(l5)));
+								pushMessage(s9, 3, TextUtils.fixName(TextUtils.nameForLong(l5)));
 				}
 				catch(Exception exception1)
 				{

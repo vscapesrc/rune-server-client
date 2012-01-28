@@ -4,11 +4,11 @@ import rs2.Class36;
 import rs2.MRUNodes;
 import rs2.Model;
 import rs2.ByteBuffer;
-import rs2.TextClass;
 import rs2.client;
 import rs2.cache.CacheArchive;
 import rs2.config.NPCDef;
 import rs2.config.ItemDef;
+import rs2.util.TextUtils;
 
 public final class RSInterface {
 
@@ -265,7 +265,7 @@ public final class RSInterface {
 	}
 
 	private static RSImage method207(int i, CacheArchive streamLoader, String s) {
-		long l = (TextClass.method585(s) << 8) + (long) i;
+		long l = (TextUtils.method585(s) << 8) + (long) i;
 		RSImage sprite = (RSImage) aMRUNodes_238.insertFromCache(l);
 		if (sprite != null)
 			return sprite;

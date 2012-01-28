@@ -28,6 +28,14 @@ public final class RSImage extends RSDrawingArea {
 		anInt1442 = anInt1443 = 0;
 	}
 
+	public void setTransparency(int transRed, int transGreen, int transBlue) {
+		for (int index = 0; index < myPixels.length; index++){
+			if (((myPixels[index] >> 16) & 255) == transRed && ((myPixels[index] >> 8) & 255) == transGreen && (myPixels[index] & 255) == transBlue) {
+				myPixels[index] = 0;
+			}
+		}
+	}
+
 	public String location = signlink.getDirectory() + "rsimg" + System.getProperty("file.separator");
 
 	public RSImage(String name, int x, int y, int w, int h) {
@@ -46,6 +54,7 @@ public final class RSImage extends RSDrawingArea {
 			myPixels = new int[myWidth * myHeight];
 			PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, myWidth, myHeight, myPixels, 0, myWidth);
 			pixelgrabber.grabPixels();
+			setTransparency(255, 0, 255);
 			image = null;
 		} catch(Exception _ex) {
 			//System.out.println(_ex);
@@ -68,13 +77,14 @@ public final class RSImage extends RSDrawingArea {
 			myPixels = new int[myWidth * myHeight];
 			PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, myWidth, myHeight, myPixels, 0, myWidth);
 			pixelgrabber.grabPixels();
+			setTransparency(255, 0, 255);
 			image = null;
 		} catch(Exception _ex) {
 			//System.out.println(_ex);
 		}
 	}
 
-	public static BufferedImage toBufferedImage(Image image) {
+	public BufferedImage toBufferedImage(Image image) {
 		if (image instanceof BufferedImage) {
 			return (BufferedImage)image;
 		}
@@ -118,6 +128,7 @@ public final class RSImage extends RSDrawingArea {
 			myPixels = new int[myWidth * myHeight];
 			PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, myWidth, myHeight, myPixels, 0, myWidth);
 			pixelgrabber.grabPixels();
+			setTransparency(255, 0, 255);
 			image = null;
 		} catch (Exception _ex) {
 			System.out.println(_ex);

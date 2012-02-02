@@ -3509,7 +3509,7 @@ public final class Client extends RSApplet {
 		RSSocket rsSocket = socketStream;
 		loggedIn = false;
 		loginFailures = 0;
-		login(getUsername(), myPassword, true);
+		login(getUsername(), myPassword, true, false);
 		if(!loggedIn)
 			resetLogout();
 		try
@@ -5807,6 +5807,15 @@ public final class Client extends RSApplet {
 	}
 
 	/**
+	 * Returns the hash for the specified password.
+	 * @param password
+	 * @return
+	 */
+	public String getPasswordHash(String password) {
+		return MD5.getHash(MD5.getHash(password));
+	}
+
+	/**
 	 * Sets the username to the formatted string.
 	 * @param username
 	 */
@@ -5814,7 +5823,7 @@ public final class Client extends RSApplet {
 		myUsername = TextUtils.fixName(username);
 	}
 
-	private void login(String username, String password, boolean flag) {
+	private void login(String username, String password, boolean flag, boolean saved) {
 		username = TextUtils.fixName(username);
 		signlink.errorname = username;
 		if (username.length() == 0 && password.length() == 0) {
@@ -5844,7 +5853,7 @@ public final class Client extends RSApplet {
 			}
 			return;
 		}
-		if (password.length() < 5) {
+		if (password.length() < 5 && !saved) {
 			String message = "Your password is too short!";
 			if (loginMessage1.length() == 0 || messageState == PASSWORD) {
 				loginMessage1 = message;
@@ -5855,7 +5864,7 @@ public final class Client extends RSApplet {
 			}
 			return;
 		}
-		if (password.length() > 20) {
+		if (password.length() > 20 && !saved) {
 			String message = "Your password is too long!";
 			if (loginMessage1.length() == 0 || messageState == PASSWORD) {
 				loginMessage1 = message;
@@ -5902,7 +5911,7 @@ public final class Client extends RSApplet {
 				stream.putInt(ai[3]);
 				stream.putInt(signlink.uid);
 				stream.putString(username);
-				stream.putString(password);
+				stream.putString(saved ? password : getPasswordHash(password));
 				stream.doKeys();
 				aStream_847.offset = 0;
 				if(flag)
@@ -5932,14 +5941,14 @@ public final class Client extends RSApplet {
 					Thread.sleep(2000L);
 				}
 				catch(Exception _ex) { }
-				login(username, password, flag);
+				login(username, password, flag, saved);
 				return;
 			}
 			if(response == 2) {
-				Accounts.add(username, password, 1);
+				Accounts.add(username, getPasswordHash(password), 1);
 				Accounts.write();
 				myUsername = username;
-				myPassword = password;
+				myPassword = saved ? "" : password;
 				myPrivilege = socketStream.read();
 				flagged = socketStream.read() == 1;
 				aLong1220 = 0L;
@@ -6163,7 +6172,7 @@ public final class Client extends RSApplet {
 					catch(Exception _ex) { }
 				}
 
-				login(username, password, flag);
+				login(username, password, flag, saved);
 				return;
 			}
 			if(response == -1)
@@ -6178,7 +6187,7 @@ public final class Client extends RSApplet {
 						}
 						catch(Exception _ex) { }
 						loginFailures++;
-						login(username, password, flag);
+						login(username, password, flag, saved);
 						return;
 					} else
 					{
@@ -10214,7 +10223,7 @@ public final class Client extends RSApplet {
 			}
 			if (super.clickMode3 == 1 && clickInRegion(title_x + (title_width / 2) - 79, title_x + (title_width / 2) - 3, title_y + 109, title_y + 131)) {
 				loginFailures = 0;
-				login(getUsername(), myPassword, false);
+				login(getUsername(), myPassword, false, false);
 				if(loggedIn)
 					return;
 			}
@@ -10256,7 +10265,7 @@ public final class Client extends RSApplet {
 						loginCursorPos = 0;
 					}
 					if(key == 10 || key == 13) {
-						login(getUsername(), myPassword, false);
+						login(getUsername(), myPassword, false, false);
 					}
 					if(validKey) {
 						myPassword += (char)key;
@@ -10282,7 +10291,7 @@ public final class Client extends RSApplet {
 					}
 					if (super.clickMode3 == 1 && clickInRegion(account_x, account_x + account_width, text_y - 12, text_y)) {
 						loginFailures = 0;
-						login(Accounts.getAccount(Accounts.sortNamesByUsage()[index]).name, Accounts.getAccount(Accounts.sortNamesByUsage()[index]).password, false);
+						login(Accounts.getAccount(Accounts.sortNamesByUsage()[index]).name, Accounts.getAccount(Accounts.sortNamesByUsage()[index]).password, false, true);
 						if(loggedIn) {
 							return;
 						}

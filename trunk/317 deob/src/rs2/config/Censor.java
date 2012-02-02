@@ -1,12 +1,12 @@
 package rs2.config;
 
 import rs2.ByteBuffer;
-import rs2.Constants;
-import rs2.cache.CacheArchive;
+import rs2.cache.JagexArchive;
+import rs2.constants.Constants;
 
 public final class Censor {
 
-	public static void loadConfig(CacheArchive archive) {
+	public static void loadConfig(JagexArchive archive) {
 		ByteBuffer fragment = new ByteBuffer(archive.getData("fragmentsenc.txt"));
 		ByteBuffer bad = new ByteBuffer(archive.getData("badenc.txt"));
 		ByteBuffer domain = new ByteBuffer(archive.getData("domainenc.txt"));

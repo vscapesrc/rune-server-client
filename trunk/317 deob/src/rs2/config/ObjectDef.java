@@ -3,34 +3,34 @@ package rs2.config;
 import rs2.Class36;
 import rs2.MRUNodes;
 import rs2.Model;
-import rs2.OnDemandFetcher;
 import rs2.ByteBuffer;
-import rs2.client;
-import rs2.cache.CacheArchive;
+import rs2.Client;
+import rs2.cache.JagexArchive;
+import rs2.resource.ResourceProvider;
 
 public final class ObjectDef {
 
-	public static ObjectDef getObject(int i) {
+	public static ObjectDef getDef(int i) {
 		for (int j = 0; j < 20; j++)
 			if (cache[j].type == i)
 				return cache[j];
 
 		cacheIndex = (cacheIndex + 1) % 20;
-		ObjectDef class46 = cache[cacheIndex];
+		ObjectDef def = cache[cacheIndex];
 		stream.offset = streamIndices[i];
-		class46.type = i;
-		class46.setDefaults();
-		class46.readValues(stream);
-		return class46;
+		def.type = i;
+		def.setDefaults();
+		def.readValues(stream);
+		return def;
 	}
 
 	private void setDefaults() {
-		anIntArray773 = null;
+		models = null;
 		anIntArray776 = null;
 		name = null;
 		description = null;
-		modifiedModelColors = null;
-		originalModelColors = null;
+		oldColors = null;
+		newColors = null;
 		anInt744 = 1;
 		anInt761 = 1;
 		aBoolean767 = true;
@@ -63,11 +63,11 @@ public final class ObjectDef {
 		childrenIDs = null;
 	}
 
-	public void method574(OnDemandFetcher class42_sub1) {
-		if (anIntArray773 == null)
+	public void method574(ResourceProvider class42_sub1) {
+		if (models == null)
 			return;
-		for (int j = 0; j < anIntArray773.length; j++)
-			class42_sub1.method560(anIntArray773[j] & 0xffff, 0);
+		for (int j = 0; j < models.length; j++)
+			class42_sub1.method560(models[j] & 0xffff, 0);
 	}
 
 	public static void nullLoader() {
@@ -78,10 +78,10 @@ public final class ObjectDef {
 		stream = null;
 	}
 
-	public static void unpackConfig(CacheArchive streamLoader) {
+	public static void unpackConfig(JagexArchive streamLoader) {
 		stream = new ByteBuffer(streamLoader.getData("loc.dat"));
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData("loc.idx"));
-		int totalObjects = stream.getShort();
+		totalObjects = stream.getShort();
 		streamIndices = new int[totalObjects];
 		int i = 2;
 		for (int j = 0; j < totalObjects; j++) {
@@ -97,19 +97,19 @@ public final class ObjectDef {
 
 	public boolean method577(int i) {
 		if (anIntArray776 == null) {
-			if (anIntArray773 == null)
+			if (models == null)
 				return true;
 			if (i != 10)
 				return true;
 			boolean flag1 = true;
-			for (int k = 0; k < anIntArray773.length; k++)
-				flag1 &= Model.method463(anIntArray773[k] & 0xffff);
+			for (int k = 0; k < models.length; k++)
+				flag1 &= Model.method463(models[k] & 0xffff);
 
 			return flag1;
 		}
 		for (int j = 0; j < anIntArray776.length; j++)
 			if (anIntArray776[j] == i)
-				return Model.method463(anIntArray773[j] & 0xffff);
+				return Model.method463(models[j] & 0xffff);
 
 		return true;
 	}
@@ -137,11 +137,13 @@ public final class ObjectDef {
 	}
 
 	public boolean method579() {
-		if (anIntArray773 == null)
+		if (models == null) {
 			return true;
+		}
 		boolean flag1 = true;
-		for (int i = 0; i < anIntArray773.length; i++)
-			flag1 &= Model.method463(anIntArray773[i] & 0xffff);
+		for (int index = 0; index < models.length; index++) {
+			flag1 &= Model.method463(models[index] & 0xffff);
+		}
 		return flag1;
 	}
 
@@ -152,14 +154,15 @@ public final class ObjectDef {
 			int j = varBit.anInt648;
 			int k = varBit.anInt649;
 			int l = varBit.anInt650;
-			int i1 = client.anIntArray1232[l - k];
+			int i1 = Client.anIntArray1232[l - k];
 			i = clientInstance.variousSettings[j] >> k & i1;
 		} else if (anInt749 != -1)
 			i = clientInstance.variousSettings[anInt749];
-		if (i < 0 || i >= childrenIDs.length || childrenIDs[i] == -1)
+		if (i < 0 || i >= childrenIDs.length || childrenIDs[i] == -1) {
 			return null;
-		else
-			return getObject(childrenIDs[i]);
+		} else {
+			return getDef(childrenIDs[i]);
+		}
 	}
 
 	private Model method581(int j, int k, int l) {
@@ -172,12 +175,12 @@ public final class ObjectDef {
 			Model model_1 = (Model) mruNodes2.insertFromCache(l1);
 			if (model_1 != null)
 				return model_1;
-			if (anIntArray773 == null)
+			if (models == null)
 				return null;
 			boolean flag1 = aBoolean751 ^ (l > 3);
-			int k1 = anIntArray773.length;
+			int k1 = models.length;
 			for (int i2 = 0; i2 < k1; i2++) {
-				int l2 = anIntArray773[i2];
+				int l2 = models[i2];
 				if (flag1)
 					l2 += 0x10000;
 				model = (Model) mruNodes1.insertFromCache(l2);
@@ -210,17 +213,20 @@ public final class ObjectDef {
 			Model model_2 = (Model) mruNodes2.insertFromCache(l1);
 			if (model_2 != null)
 				return model_2;
-			int j2 = anIntArray773[i1];
+			int j2 = models[i1];
 			boolean flag3 = aBoolean751 ^ (l > 3);
-			if (flag3)
+			if (flag3) {
 				j2 += 0x10000;
+			}
 			model = (Model) mruNodes1.insertFromCache(j2);
 			if (model == null) {
 				model = Model.method462(j2 & 0xffff);
-				if (model == null)
+				if (model == null) {
 					return null;
-				if (flag3)
+				}
+				if (flag3) {
 					model.method477();
+				}
 				mruNodes1.removeFromCache(model, j2);
 			}
 		}
@@ -228,182 +234,187 @@ public final class ObjectDef {
 		flag = anInt748 != 128 || anInt772 != 128 || anInt740 != 128;
 		boolean flag2;
 		flag2 = anInt738 != 0 || anInt745 != 0 || anInt783 != 0;
-		Model model_3 = new Model(modifiedModelColors == null,
-				Class36.method532(k), l == 0 && k == -1 && !flag && !flag2,
-				model);
+		Model model_3 = new Model(oldColors == null, Class36.method532(k), l == 0 && k == -1 && !flag && !flag2, model);
 		if (k != -1) {
 			model_3.method469();
 			model_3.method470(k);
 			model_3.anIntArrayArray1658 = null;
 			model_3.anIntArrayArray1657 = null;
 		}
-		while (l-- > 0)
+		while (l-- > 0) {
 			model_3.method473();
-		if (modifiedModelColors != null) {
-			for (int k2 = 0; k2 < modifiedModelColors.length; k2++)
-				model_3.method476(modifiedModelColors[k2],
-						originalModelColors[k2]);
-
 		}
-		if (flag)
+		if (oldColors != null) {
+			for (int k2 = 0; k2 < oldColors.length; k2++) {
+				model_3.changeModelColors(oldColors[k2], newColors[k2]);
+			}
+		}
+		if (flag) {
 			model_3.method478(anInt748, anInt740, anInt772);
-		if (flag2)
+		}
+		if (flag2) {
 			model_3.method475(anInt738, anInt745, anInt783);
-		model_3.method479(64 + aByte737, 768 + aByte742 * 5, -50, -10, -50,
-				!aBoolean769);
-		if (anInt760 == 1)
+		}
+		model_3.method479(64 + aByte737, 768 + aByte742 * 5, -50, -10, -50, !aBoolean769);
+		if (anInt760 == 1) {
 			model_3.anInt1654 = model_3.modelHeight;
+		}
 		mruNodes2.removeFromCache(model_3, l1);
 		return model_3;
 	}
 
 	private void readValues(ByteBuffer stream) {
 		int i = -1;
-		label0: do {
-			int j;
+		start: do {
+			int opcode;
 			do {
-				j = stream.getUByte();
-				if (j == 0)
-					break label0;
-				if (j == 1) {
-					int k = stream.getUByte();
-					if (k > 0)
-						if (anIntArray773 == null || lowMem) {
-							anIntArray776 = new int[k];
-							anIntArray773 = new int[k];
-							for (int k1 = 0; k1 < k; k1++) {
-								anIntArray773[k1] = stream.getShort();
-								anIntArray776[k1] = stream.getUByte();
+				opcode = stream.getUByte();
+				if (opcode == 0) {
+					break start;
+				}
+				if (opcode == 1) {
+					int totalmModels = stream.getUByte();
+					if (totalmModels > 0)
+						if (models == null || lowMem) {
+							anIntArray776 = new int[totalmModels];
+							models = new int[totalmModels];
+							for (int index = 0; index < totalmModels; index++) {
+								models[index] = stream.getShort();
+								anIntArray776[index] = stream.getUByte();
 							}
-
 						} else {
-							stream.offset += k * 3;
+							stream.offset += totalmModels * 3;
 						}
-				} else if (j == 2)
+				} else if (opcode == 2) {
 					name = stream.getString();
-				else if (j == 3)
+				} else if (opcode == 3) {
 					description = stream.getBytes();
-				else if (j == 5) {
-					int l = stream.getUByte();
-					if (l > 0)
-						if (anIntArray773 == null || lowMem) {
+				} else if (opcode == 5) {
+					int totalModels = stream.getUByte();
+					if (totalModels > 0)
+						if (models == null || lowMem) {
 							anIntArray776 = null;
-							anIntArray773 = new int[l];
-							for (int l1 = 0; l1 < l; l1++)
-								anIntArray773[l1] = stream.getShort();
-
+							models = new int[totalModels];
+							for (int index = 0; index < totalModels; index++) {
+								models[index] = stream.getShort();
+							}
 						} else {
-							stream.offset += l * 2;
+							stream.offset += totalModels * 2;
 						}
-				} else if (j == 14)
+				} else if (opcode == 14) {
 					anInt744 = stream.getUByte();
-				else if (j == 15)
+				} else if (opcode == 15) {
 					anInt761 = stream.getUByte();
-				else if (j == 17)
+				} else if (opcode == 17) {
 					aBoolean767 = false;
-				else if (j == 18)
+				} else if (opcode == 18) {
 					aBoolean757 = false;
-				else if (j == 19) {
-					i = stream.getUByte();
-					if (i == 1)
-						hasActions = true;
-				} else if (j == 21)
+				} else if (opcode == 19) {
+					hasActions = stream.getUByte() == 1;
+				} else if (opcode == 21) {
 					aBoolean762 = true;
-				else if (j == 22)
+				} else if (opcode == 22) {
 					aBoolean769 = true;
-				else if (j == 23)
+				} else if (opcode == 23) {
 					aBoolean764 = true;
-				else if (j == 24) {
+				} else if (opcode == 24) {
 					anInt781 = stream.getShort();
-					if (anInt781 == 65535)
+					if (anInt781 == 65535) {
 						anInt781 = -1;
-				} else if (j == 28)
-					anInt775 = stream.getUByte();
-				else if (j == 29)
-					aByte737 = stream.getByte();
-				else if (j == 39)
-					aByte742 = stream.getByte();
-				else if (j >= 30 && j < 39) {
-					if (actions == null)
-						actions = new String[5];
-					actions[j - 30] = stream.getString();
-					if (actions[j - 30].equalsIgnoreCase("hidden"))
-						actions[j - 30] = null;
-				} else if (j == 40) {
-					int i1 = stream.getUByte();
-					modifiedModelColors = new int[i1];
-					originalModelColors = new int[i1];
-					for (int i2 = 0; i2 < i1; i2++) {
-						modifiedModelColors[i2] = stream.getShort();
-						originalModelColors[i2] = stream.getShort();
 					}
-
-				} else if (j == 60)
+				} else if (opcode == 28) {
+					anInt775 = stream.getUByte();
+				} else if (opcode == 29) {
+					aByte737 = stream.getByte();
+				} else if (opcode == 39) {
+					aByte742 = stream.getByte();
+				} else if (opcode >= 30 && opcode < 39) {
+					if (actions == null) {
+						actions = new String[5];
+					}
+					actions[opcode - 30] = stream.getString();
+					if (actions[opcode - 30].equalsIgnoreCase("hidden")) {
+						actions[opcode - 30] = null;
+					}
+				} else if (opcode == 40) {
+					int totalColors = stream.getUByte();
+					oldColors = new int[totalColors];
+					newColors = new int[totalColors];
+					for (int index = 0; index < totalColors; index++) {
+						oldColors[index] = stream.getShort();
+						newColors[index] = stream.getShort();
+					}
+				} else if (opcode == 60) {
 					anInt746 = stream.getShort();
-				else if (j == 62)
+				} else if (opcode == 62) {
 					aBoolean751 = true;
-				else if (j == 64)
+				} else if (opcode == 64) {
 					aBoolean779 = false;
-				else if (j == 65)
+				} else if (opcode == 65) {
 					anInt748 = stream.getShort();
-				else if (j == 66)
+				} else if (opcode == 66) {
 					anInt772 = stream.getShort();
-				else if (j == 67)
+				} else if (opcode == 67) {
 					anInt740 = stream.getShort();
-				else if (j == 68)
+				} else if (opcode == 68) {
 					anInt758 = stream.getShort();
-				else if (j == 69)
+				} else if (opcode == 69) {
 					anInt768 = stream.getUByte();
-				else if (j == 70)
+				} else if (opcode == 70) {
 					anInt738 = stream.getSignedShort();
-				else if (j == 71)
+				} else if (opcode == 71) {
 					anInt745 = stream.getSignedShort();
-				else if (j == 72)
+				} else if (opcode == 72) {
 					anInt783 = stream.getSignedShort();
-				else if (j == 73)
+				} else if (opcode == 73) {
 					aBoolean736 = true;
-				else if (j == 74) {
+				} else if (opcode == 74) {
 					aBoolean766 = true;
 				} else {
-					if (j != 75)
+					if (opcode != 75) {
 						continue;
+					}
 					anInt760 = stream.getUByte();
 				}
-				continue label0;
-			} while (j != 77);
+				continue start;
+			} while (opcode != 77);
 			anInt774 = stream.getShort();
-			if (anInt774 == 65535)
+			if (anInt774 == 65535) {
 				anInt774 = -1;
-			anInt749 = stream.getShort();
-			if (anInt749 == 65535)
-				anInt749 = -1;
-			int j1 = stream.getUByte();
-			childrenIDs = new int[j1 + 1];
-			for (int j2 = 0; j2 <= j1; j2++) {
-				childrenIDs[j2] = stream.getShort();
-				if (childrenIDs[j2] == 65535)
-					childrenIDs[j2] = -1;
 			}
-
+			anInt749 = stream.getShort();
+			if (anInt749 == 65535) {
+				anInt749 = -1;
+			}
+			int totalChildren = stream.getUByte();
+			childrenIDs = new int[totalChildren + 1];
+			for (int index = 0; index <= totalChildren; index++) {
+				childrenIDs[index] = stream.getShort();
+				if (childrenIDs[index] == 65535) {
+					childrenIDs[index] = -1;
+				}
+			}
 		} while (true);
 		if (i == -1) {
-			hasActions = anIntArray773 != null
-					&& (anIntArray776 == null || anIntArray776[0] == 10);
-			if (actions != null)
+			hasActions = models != null && (anIntArray776 == null || anIntArray776[0] == 10);
+			if (actions != null) {
 				hasActions = true;
+			}
 		}
 		if (aBoolean766) {
 			aBoolean767 = false;
 			aBoolean757 = false;
 		}
-		if (anInt760 == -1)
+		if (anInt760 == -1) {
 			anInt760 = aBoolean767 ? 1 : 0;
+		}
 	}
 
 	private ObjectDef() {
 		type = -1;
 	}
 
+	public static int totalObjects;
 	public boolean aBoolean736;
 	private byte aByte737;
 	private int anInt738;
@@ -414,7 +425,7 @@ public final class ObjectDef {
 	public int anInt744;
 	private int anInt745;
 	public int anInt746;
-	private int[] originalModelColors;
+	private int[] newColors;
 	private int anInt748;
 	public int anInt749;
 	private boolean aBoolean751;
@@ -429,14 +440,14 @@ public final class ObjectDef {
 	public int anInt761;
 	public boolean aBoolean762;
 	public boolean aBoolean764;
-	public static client clientInstance;
+	public static Client clientInstance;
 	private boolean aBoolean766;
 	public boolean aBoolean767;
 	public int anInt768;
 	private boolean aBoolean769;
 	private static int cacheIndex;
 	private int anInt772;
-	private int[] anIntArray773;
+	private int[] models;
 	public int anInt774;
 	public int anInt775;
 	private int[] anIntArray776;
@@ -447,7 +458,7 @@ public final class ObjectDef {
 	public int anInt781;
 	private static ObjectDef[] cache;
 	private int anInt783;
-	private int[] modifiedModelColors;
+	private int[] oldColors;
 	public static MRUNodes mruNodes1 = new MRUNodes(500);
 	public String actions[];
 

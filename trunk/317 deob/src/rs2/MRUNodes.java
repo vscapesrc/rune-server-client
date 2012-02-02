@@ -10,7 +10,7 @@ public final class MRUNodes {
 
 	public MRUNodes(int i) {
 		emptyNodeSub = new NodeSub();
-		nodeSubList = new NodeSubList();
+		nodeSubList = new Queue();
 		initialCount = i;
 		spaceLeft = i;
 		nodeCache = new NodeCache();
@@ -28,11 +28,11 @@ public final class MRUNodes {
 		try {
 			if (spaceLeft == 0) {
 				NodeSub nodeSub_1 = nodeSubList.popTail();
-				nodeSub_1.unlink();
+				nodeSub_1.remove();
 				nodeSub_1.unlinkSub();
 				if (nodeSub_1 == emptyNodeSub) {
 					NodeSub nodeSub_2 = nodeSubList.popTail();
-					nodeSub_2.unlink();
+					nodeSub_2.remove();
 					nodeSub_2.unlinkSub();
 				}
 			} else {
@@ -42,7 +42,7 @@ public final class MRUNodes {
 			nodeSubList.insertHead(nodeSub);
 			return;
 		} catch (RuntimeException runtimeexception) {
-			signlink.reporterror("47547, " + nodeSub + ", " + l + ", "
+			signlink.reportError("47547, " + nodeSub + ", " + l + ", "
 					+ (byte) 2 + ", " + runtimeexception.toString());
 		}
 		throw new RuntimeException();
@@ -52,7 +52,7 @@ public final class MRUNodes {
 		do {
 			NodeSub nodeSub = nodeSubList.popTail();
 			if (nodeSub != null) {
-				nodeSub.unlink();
+				nodeSub.remove();
 				nodeSub.unlinkSub();
 			} else {
 				spaceLeft = initialCount;
@@ -65,5 +65,5 @@ public final class MRUNodes {
 	private final int initialCount;
 	private int spaceLeft;
 	private final NodeCache nodeCache;
-	private final NodeSubList nodeSubList;
+	private final Queue nodeSubList;
 }

@@ -32,7 +32,7 @@ final class NodeCache {
 	public void removeFromCache(Node node, long l) {
 		try {
 			if (node.next != null)
-				node.unlink();
+				node.remove();
 			Node node_1 = cache[(int) (l & (long) (size - 1))];
 			node.next = node_1.next;
 			node.prev = node_1;
@@ -41,7 +41,7 @@ final class NodeCache {
 			node.id = l;
 			return;
 		} catch (RuntimeException runtimeexception) {
-			signlink.reporterror("91499, " + node + ", " + l + ", " + (byte) 7
+			signlink.reportError("91499, " + node + ", " + l + ", " + (byte) 7
 					+ ", " + runtimeexception.toString());
 		}
 		throw new RuntimeException();

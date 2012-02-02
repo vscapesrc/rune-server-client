@@ -4,8 +4,8 @@ import rs2.Class36;
 import rs2.MRUNodes;
 import rs2.Model;
 import rs2.ByteBuffer;
-import rs2.client;
-import rs2.cache.CacheArchive;
+import rs2.Client;
+import rs2.cache.JagexArchive;
 
 public final class NPCDef {
 
@@ -51,7 +51,7 @@ public final class NPCDef {
 					aclass30_sub2_sub4_sub6s);
 		if (anIntArray76 != null) {
 			for (int k = 0; k < anIntArray76.length; k++)
-				model.method476(anIntArray76[k], anIntArray70[k]);
+				model.changeModelColors(anIntArray76[k], anIntArray70[k]);
 
 		}
 		return model;
@@ -64,7 +64,7 @@ public final class NPCDef {
 			int k = varBit.anInt648;
 			int l = varBit.anInt649;
 			int i1 = varBit.anInt650;
-			int j1 = client.anIntArray1232[i1 - l];
+			int j1 = Client.anIntArray1232[i1 - l];
 			j = clientInstance.variousSettings[k] >> l & j1;
 		} else if (anInt59 != -1)
 			j = clientInstance.variousSettings[anInt59];
@@ -74,7 +74,7 @@ public final class NPCDef {
 			return getNPC(childrenIDs[j]);
 	}
 
-	public static void unpackConfig(CacheArchive streamLoader) {
+	public static void unpackConfig(JagexArchive streamLoader) {
 		stream = new ByteBuffer(streamLoader.getData("npc.dat"));
 		ByteBuffer stream2 = new ByteBuffer(streamLoader.getData("npc.idx"));
 		int totalNPCs = stream2.getShort();
@@ -127,7 +127,7 @@ public final class NPCDef {
 						aclass30_sub2_sub4_sub6s);
 			if (anIntArray76 != null) {
 				for (int k1 = 0; k1 < anIntArray76.length; k1++)
-					model.method476(anIntArray76[k1], anIntArray70[k1]);
+					model.changeModelColors(anIntArray76[k1], anIntArray70[k1]);
 
 			}
 			model.method469();
@@ -281,7 +281,7 @@ public final class NPCDef {
 	public long type;
 	public int anInt79;
 	private static NPCDef[] cache;
-	public static client clientInstance;
+	public static Client clientInstance;
 	public int anInt83;
 	public boolean aBoolean84;
 	private int anInt85;

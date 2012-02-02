@@ -87,7 +87,7 @@ public final class ByteBuffer extends NodeSub {
 			buffer[offset++] = (byte) (int) (l >> 8);
 			buffer[offset++] = (byte) (int) l;
 		} catch (RuntimeException runtimeexception) {
-			signlink.reporterror("14395, " + 5 + ", " + l + ", "
+			signlink.reportError("14395, " + 5 + ", " + l + ", "
 					+ runtimeexception.toString());
 			throw new RuntimeException();
 		}
@@ -345,5 +345,5 @@ public final class ByteBuffer extends NodeSub {
 			0x7fffffff, -1 };
 	public ISAACRandomGen encryption;
 	private static int anInt1412;
-	private static final NodeList nodeList = new NodeList();
+	private static final Deque nodeList = new Deque();
 }

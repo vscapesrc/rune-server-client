@@ -2,11 +2,11 @@ package rs2.config;
 
 import rs2.Class36;
 import rs2.ByteBuffer;
-import rs2.cache.CacheArchive;
+import rs2.cache.JagexArchive;
 
 public final class Sequence {
 
-	public static void unpackConfig(CacheArchive streamLoader) {
+	public static void unpackConfig(JagexArchive streamLoader) {
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData("seq.dat"));
 		total = stream.getShort();
 		if (anims == null)

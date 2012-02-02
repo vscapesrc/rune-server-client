@@ -4,9 +4,9 @@ package rs2;
 // Jad home page: http://www.kpdus.com/jad.html
 // Decompiler options: packimports(3) 
 
-final class NodeSubList {
+public final class Queue {
 
-	public NodeSubList() {
+	public Queue() {
 		head = new NodeSub();
 		head.prevNodeSub = head;
 		head.nextNodeSub = head;

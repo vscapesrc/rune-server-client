@@ -78,7 +78,7 @@ public class RSApplet extends Applet
 		getGameComponent().addFocusListener(this);
 		if(mainFrame != null)
 			mainFrame.addWindowListener(this);
-		drawLoadingText(0, "Loading...");
+		displayProgress("Loading...", 0);
 		startUp();
 		int i = 0;
 		int j = 256;
@@ -243,17 +243,17 @@ public class RSApplet extends Applet
 		int rotation = event.getWheelRotation();
 		handleInterfaceScrolling(event);
 		if(mouseX > 0 && mouseX < 512 && mouseY > 503 - 165 && mouseY < 503 - 25) {
-			int scrollPos = client.anInt1089;
+			int scrollPos = Client.anInt1089;
 			scrollPos -= rotation * 30;		
 			if(scrollPos < 0) {
 				scrollPos = 0;
 			}
-			if(scrollPos > client.anInt1211 - 110) {
-				scrollPos = client.anInt1211 - 110;
+			if(scrollPos > Client.anInt1211 - 110) {
+				scrollPos = Client.anInt1211 - 110;
 			}
-			if(client.anInt1089 != scrollPos) {
-				client.anInt1089 = scrollPos;
-				client.inputTaken = true;
+			if(Client.anInt1089 != scrollPos) {
+				Client.anInt1089 = scrollPos;
+				Client.inputTaken = true;
 			}
 		}
 	}
@@ -268,55 +268,55 @@ public class RSApplet extends Applet
 		int offsetY = 0;
 		int childID = 0;
 		/* Tab interface scrolling */
-		int tabInterfaceID = client.tabInterfaceIDs[client.tabID];
+		int tabInterfaceID = Client.tabInterfaceIDs[Client.tabID];
 		if (tabInterfaceID != -1) {
-			RSInterface tab = RSInterface.interfaceCache[tabInterfaceID];
+			RSInterface tab = RSInterface.cache[tabInterfaceID];
 			offsetX = 765 - 218;
 			offsetY = 503 - 298;
 			for (int index = 0; index < tab.children.length; index++) {
-				if (RSInterface.interfaceCache[tab.children[index]].scrollMax > 0) {
+				if (RSInterface.cache[tab.children[index]].scrollMax > 0) {
 					childID = index;
 					positionX = tab.childX[index];
 					positionY = tab.childY[index];
-					width = RSInterface.interfaceCache[tab.children[index]].width;
-					height = RSInterface.interfaceCache[tab.children[index]].height;
+					width = RSInterface.cache[tab.children[index]].width;
+					height = RSInterface.cache[tab.children[index]].height;
 					break;
 				}
 			}
 			if (mouseX > offsetX + positionX && mouseY > offsetY + positionY && mouseX < offsetX + positionX + width && mouseY < offsetY + positionY + height) {
-				if (RSInterface.interfaceCache[tab.children[childID]].scrollPosition > 0) {
-					RSInterface.interfaceCache[tab.children[childID]].scrollPosition += rotation * 30;
+				if (RSInterface.cache[tab.children[childID]].scrollPosition > 0) {
+					RSInterface.cache[tab.children[childID]].scrollPosition += rotation * 30;
 					return;
 				} else {
 					if (rotation > 0) {
-						RSInterface.interfaceCache[tab.children[childID]].scrollPosition += rotation * 30;
+						RSInterface.cache[tab.children[childID]].scrollPosition += rotation * 30;
 						return;
 					}
 				}
 			}
 		}
 		/* Main interface scrolling */
-		if (client.openInterfaceID != -1) {
-			RSInterface rsi = RSInterface.interfaceCache[client.openInterfaceID];
+		if (Client.openInterfaceID != -1) {
+			RSInterface rsi = RSInterface.cache[Client.openInterfaceID];
 			offsetX = 4;
 			offsetY = 4;
 			for (int index = 0; index < rsi.children.length; index++) {
-				if (RSInterface.interfaceCache[rsi.children[index]].scrollMax > 0) {
+				if (RSInterface.cache[rsi.children[index]].scrollMax > 0) {
 					childID = index;
 					positionX = rsi.childX[index];
 					positionY = rsi.childY[index];
-					width = RSInterface.interfaceCache[rsi.children[index]].width;
-					height = RSInterface.interfaceCache[rsi.children[index]].height;
+					width = RSInterface.cache[rsi.children[index]].width;
+					height = RSInterface.cache[rsi.children[index]].height;
 					break;
 				}
 			}
 			if (mouseX > offsetX + positionX && mouseY > offsetY + positionY && mouseX < offsetX + positionX + width && mouseY < offsetY + positionY + height) {
-				if (RSInterface.interfaceCache[rsi.children[childID]].scrollPosition > 0) {
-					RSInterface.interfaceCache[rsi.children[childID]].scrollPosition += rotation * 30;
+				if (RSInterface.cache[rsi.children[childID]].scrollPosition > 0) {
+					RSInterface.cache[rsi.children[childID]].scrollPosition += rotation * 30;
 					return;
 				} else {
 					if (rotation > 0) {
-						RSInterface.interfaceCache[rsi.children[childID]].scrollPosition += rotation * 30;
+						RSInterface.cache[rsi.children[childID]].scrollPosition += rotation * 30;
 						return;
 					}
 				}
@@ -580,7 +580,7 @@ public class RSApplet extends Applet
 		thread.setPriority(i);
 	}
 
-	void drawLoadingText(int percentage, String loadingText) {
+	void displayProgress(String loadingText, int percentage) {
 		boolean createdByApplet = (isApplet && myWidth == 765);
 		while(graphics == null) {
 			graphics = (createdByApplet ? this : mainFrame).getGraphics();

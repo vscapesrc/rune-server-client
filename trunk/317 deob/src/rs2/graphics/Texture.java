@@ -1,6 +1,6 @@
 package rs2.graphics;
 
-import rs2.cache.CacheArchive;
+import rs2.cache.JagexArchive;
 
 // Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
 // Jad home page: http://www.kpdus.com/jad.html
@@ -62,7 +62,7 @@ public final class Texture extends RSDrawingArea {
 		}
 	}
 
-	public static void method368(CacheArchive streamLoader) {
+	public static void method368(JagexArchive streamLoader) {
 		anInt1473 = 0;
 		for (int j = 0; j < 50; j++)
 			try {

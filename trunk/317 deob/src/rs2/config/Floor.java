@@ -1,11 +1,11 @@
 package rs2.config;
 
 import rs2.ByteBuffer;
-import rs2.cache.CacheArchive;
+import rs2.cache.JagexArchive;
 
 public final class Floor {
 
-	public static void unpackConfig(CacheArchive streamLoader) {
+	public static void unpackConfig(JagexArchive streamLoader) {
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData("flo.dat"));
 		int cacheSize = stream.getShort();
 		if (cache == null)

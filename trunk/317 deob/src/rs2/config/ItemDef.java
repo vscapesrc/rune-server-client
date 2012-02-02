@@ -3,7 +3,7 @@ package rs2.config;
 import rs2.MRUNodes;
 import rs2.Model;
 import rs2.ByteBuffer;
-import rs2.cache.CacheArchive;
+import rs2.cache.JagexArchive;
 import rs2.graphics.RSDrawingArea;
 import rs2.graphics.RSImage;
 import rs2.graphics.Texture;
@@ -35,7 +35,7 @@ public final class ItemDef {
 		return flag;
 	}
 
-	public static void unpackConfig(CacheArchive streamLoader) {
+	public static void unpackConfig(JagexArchive streamLoader) {
 		stream = new ByteBuffer(streamLoader.getData("obj.dat"));
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData("obj.idx"));
 		totalItems = stream.getShort();
@@ -69,7 +69,7 @@ public final class ItemDef {
 		}
 		if (modifiedModelColors != null) {
 			for (int i1 = 0; i1 < modifiedModelColors.length; i1++)
-				model.method476(modifiedModelColors[i1],
+				model.changeModelColors(modifiedModelColors[i1],
 						originalModelColors[i1]);
 
 		}
@@ -126,7 +126,7 @@ public final class ItemDef {
 			model.method475(0, aByte154, 0);
 		if (modifiedModelColors != null) {
 			for (int i1 = 0; i1 < modifiedModelColors.length; i1++)
-				model.method476(modifiedModelColors[i1],
+				model.changeModelColors(modifiedModelColors[i1],
 						originalModelColors[i1]);
 
 		}
@@ -174,7 +174,7 @@ public final class ItemDef {
 		team = 0;
 	}
 
-	public static ItemDef getItem(int i) {
+	public static ItemDef getDef(int i) {
 		for (int j = 0; j < 10; j++)
 			if (cache[j].id == i)
 				return cache[j];
@@ -199,7 +199,7 @@ public final class ItemDef {
 	}
 
 	private void toNote() {
-		ItemDef itemDef = getItem(certTemplateID);
+		ItemDef itemDef = getDef(certTemplateID);
 		modelID = itemDef.modelID;
 		modelZoom = itemDef.modelZoom;
 		modelRotation1 = itemDef.modelRotation1;
@@ -210,7 +210,7 @@ public final class ItemDef {
 		modelOffset2 = itemDef.modelOffset2;
 		modifiedModelColors = itemDef.modifiedModelColors;
 		originalModelColors = itemDef.originalModelColors;
-		ItemDef itemDef_1 = getItem(certID);
+		ItemDef itemDef_1 = getDef(certID);
 		name = itemDef_1.name;
 		membersObject = itemDef_1.membersObject;
 		value = itemDef_1.value;
@@ -228,13 +228,13 @@ public final class ItemDef {
 			RSImage sprite = (RSImage) mruNodes1.insertFromCache(i);
 			if (sprite != null && sprite.anInt1445 != j
 					&& sprite.anInt1445 != -1) {
-				sprite.unlink();
+				sprite.remove();
 				sprite = null;
 			}
 			if (sprite != null)
 				return sprite;
 		}
-		ItemDef itemDef = getItem(i);
+		ItemDef itemDef = getDef(i);
 		if (itemDef.stackIDs == null)
 			j = -1;
 		if (j > 1) {
@@ -245,7 +245,7 @@ public final class ItemDef {
 					i1 = itemDef.stackIDs[j1];
 
 			if (i1 != -1)
-				itemDef = getItem(i1);
+				itemDef = getDef(i1);
 		}
 		Model model = itemDef.method201(1);
 		if (model == null)
@@ -358,7 +358,7 @@ public final class ItemDef {
 					j = stackIDs[k];
 
 			if (j != -1)
-				return getItem(j).method201(1);
+				return getDef(j).method201(1);
 		}
 		Model model = (Model) mruNodes2.insertFromCache(id);
 		if (model != null)
@@ -370,7 +370,7 @@ public final class ItemDef {
 			model.method478(anInt167, anInt191, anInt192);
 		if (modifiedModelColors != null) {
 			for (int l = 0; l < modifiedModelColors.length; l++)
-				model.method476(modifiedModelColors[l], originalModelColors[l]);
+				model.changeModelColors(modifiedModelColors[l], originalModelColors[l]);
 
 		}
 		model.method479(64 + anInt196, 768 + anInt184, -50, -10, -50, true);
@@ -387,14 +387,14 @@ public final class ItemDef {
 					j = stackIDs[k];
 
 			if (j != -1)
-				return getItem(j).method202(1);
+				return getDef(j).method202(1);
 		}
 		Model model = Model.method462(modelID);
 		if (model == null)
 			return null;
 		if (modifiedModelColors != null) {
 			for (int l = 0; l < modifiedModelColors.length; l++)
-				model.method476(modifiedModelColors[l], originalModelColors[l]);
+				model.changeModelColors(modifiedModelColors[l], originalModelColors[l]);
 
 		}
 		return model;

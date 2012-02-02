@@ -4,8 +4,8 @@ import rs2.Class36;
 import rs2.MRUNodes;
 import rs2.Model;
 import rs2.ByteBuffer;
-import rs2.client;
-import rs2.cache.CacheArchive;
+import rs2.Client;
+import rs2.cache.JagexArchive;
 import rs2.config.NPCDef;
 import rs2.config.ItemDef;
 import rs2.util.TextUtils;
@@ -21,20 +21,20 @@ public final class RSInterface {
 		invStackSizes[j] = k;
 	}
 
-	public static void unpack(CacheArchive streamLoader,
-			RSFont textDrawingAreas[], CacheArchive streamLoader_1) {
+	public static void unpack(JagexArchive streamLoader,
+			RSFont textDrawingAreas[], JagexArchive streamLoader_1) {
 		aMRUNodes_238 = new MRUNodes(50000);
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData("data"));
 		int i = -1;
 		int j = stream.getShort();
-		interfaceCache = new RSInterface[j];
+		cache = new RSInterface[j];
 		while (stream.offset < stream.buffer.length) {
 			int k = stream.getShort();
 			if (k == 65535) {
 				i = stream.getShort();
 				k = stream.getShort();
 			}
-			RSInterface rsInterface = interfaceCache[k] = new RSInterface();
+			RSInterface rsInterface = cache[k] = new RSInterface();
 			rsInterface.id = k;
 			rsInterface.parentID = i;
 			rsInterface.type = stream.getUByte();
@@ -168,19 +168,16 @@ public final class RSInterface {
 				int l = stream.getUByte();
 				if (l != 0) {
 					rsInterface.anInt233 = 1;
-					rsInterface.mediaID = (l - 1 << 8)
-							+ stream.getUByte();
+					rsInterface.mediaID = (l - 1 << 8) + stream.getUByte();
 				}
 				l = stream.getUByte();
 				if (l != 0) {
 					rsInterface.anInt255 = 1;
-					rsInterface.anInt256 = (l - 1 << 8)
-							+ stream.getUByte();
+					rsInterface.anInt256 = (l - 1 << 8) + stream.getUByte();
 				}
 				l = stream.getUByte();
 				if (l != 0)
-					rsInterface.anInt257 = (l - 1 << 8)
-							+ stream.getUByte();
+					rsInterface.anInt257 = (l - 1 << 8) + stream.getUByte();
 				else
 					rsInterface.anInt257 = -1;
 				l = stream.getUByte();
@@ -189,9 +186,9 @@ public final class RSInterface {
 							+ stream.getUByte();
 				else
 					rsInterface.anInt258 = -1;
-				rsInterface.anInt269 = stream.getShort();
-				rsInterface.anInt270 = stream.getShort();
-				rsInterface.anInt271 = stream.getShort();
+				rsInterface.modelZoom = stream.getShort();
+				rsInterface.modelRotation1 = stream.getShort();
+				rsInterface.modelRotation2 = stream.getShort();
 			}
 			if (rsInterface.type == 7) {
 				rsInterface.inv = new int[rsInterface.width
@@ -254,9 +251,9 @@ public final class RSInterface {
 		if (i == 2)
 			model = NPCDef.getNPC(j).method160();
 		if (i == 3)
-			model = client.myPlayer.method453();
+			model = Client.myPlayer.method453();
 		if (i == 4)
-			model = ItemDef.getItem(j).method202(50);
+			model = ItemDef.getDef(j).method202(50);
 		if (i == 5)
 			model = null;
 		if (model != null)
@@ -264,7 +261,7 @@ public final class RSInterface {
 		return model;
 	}
 
-	private static RSImage method207(int i, CacheArchive streamLoader, String s) {
+	private static RSImage method207(int i, JagexArchive streamLoader, String s) {
 		long l = (TextUtils.method585(s) << 8) + (long) i;
 		RSImage sprite = (RSImage) aMRUNodes_238.insertFromCache(l);
 		if (sprite != null)
@@ -316,7 +313,7 @@ public final class RSInterface {
 	public RSImage sprite1;
 	public int anInt208;
 	public RSImage sprites[];
-	public static RSInterface interfaceCache[];
+	public static RSInterface cache[];
 	public int anIntArray212[];
 	public int anInt214;
 	public int spritesX[];
@@ -371,9 +368,9 @@ public final class RSInterface {
 	public boolean aBoolean266;
 	public int height;
 	public boolean aBoolean268;
-	public int anInt269;
-	public int anInt270;
-	public int anInt271;
+	public int modelZoom;
+	public int modelRotation1;
+	public int modelRotation2;
 	public int childY[];
 
 }

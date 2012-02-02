@@ -1,8 +1,4 @@
-package rs2;
-
-// Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
+package rs2.resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -12,11 +8,14 @@ import java.net.Socket;
 import java.util.zip.CRC32;
 import java.util.zip.GZIPInputStream;
 
-import rs2.cache.CacheArchive;
+import rs2.ByteBuffer;
+import rs2.Deque;
+import rs2.Queue;
+import rs2.Client;
+import rs2.cache.JagexArchive;
 import rs2.sign.signlink;
 
-public final class OnDemandFetcher extends OnDemandFetcherParent implements
-		Runnable {
+public final class ResourceProvider extends ModelProvider implements Runnable {
 
 	private boolean crcMatches(int i, int j, byte abyte0[]) {
 		if (abyte0 == null || abyte0.length < 2)
@@ -29,78 +28,76 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 		return l == i && i1 == j;
 	}
 
-	private void readData() {
+	private void handleResponse() {
 		try {
-			int j = inputStream.available();
-			if (expectedSize == 0 && j >= 6) {
+			int available = in.available();
+			if (expectedSize == 0 && available >= 6) {
 				waiting = true;
-				for (int k = 0; k < 6; k += inputStream
-						.read(ioBuffer, k, 6 - k))
-					;
-				int l = ioBuffer[0] & 0xff;
-				int j1 = ((ioBuffer[1] & 0xff) << 8) + (ioBuffer[2] & 0xff);
-				int l1 = ((ioBuffer[3] & 0xff) << 8) + (ioBuffer[4] & 0xff);
-				int i2 = ioBuffer[5] & 0xff;
+				for (int index = 0; index < 6; index += in.read(ioBuffer, index, 6 - index));
+				int type = ioBuffer[0] & 0xff;
+				int id = ((ioBuffer[1] & 0xff) << 8) + (ioBuffer[2] & 0xff);
+				int length = ((ioBuffer[3] & 0xff) << 8) + (ioBuffer[4] & 0xff);
+				int blockNum = ioBuffer[5] & 0xff;
 				current = null;
-				for (OnDemandData onDemandData = (OnDemandData) requested
-						.reverseGetFirst(); onDemandData != null; onDemandData = (OnDemandData) requested
-						.reverseGetNext()) {
-					if (onDemandData.dataType == l && onDemandData.ID == j1)
-						current = onDemandData;
-					if (current != null)
-						onDemandData.loopCycle = 0;
+				for (Resource resource = (Resource) requested.head(); resource != null; resource = (Resource) requested.next()) {
+					if (resource.type == type && resource.id == id) {
+						current = resource;
+					}
+					if (current != null) {
+						resource.requestAge = 0;
+					}
 				}
-
 				if (current != null) {
-					loopCycle = 0;
-					if (l1 == 0) {
-						signlink.reporterror("Rej: " + l + "," + j1);
-						current.buffer = null;
-						if (current.incomplete)
-							synchronized (aClass19_1358) {
-								aClass19_1358.insertHead(current);
+					connectionIdleTicks = 0;
+					if (length == 0) {
+						signlink.reportError("Rej: " + type + "," + id);
+						current.data = null;
+						if (current.incomplete) {
+							synchronized (completed) {
+								completed.append(current);
 							}
-						else
-							current.unlink();
+						} else {
+							current.remove();
+						}
 						current = null;
 					} else {
-						if (current.buffer == null && i2 == 0)
-							current.buffer = new byte[l1];
-						if (current.buffer == null && i2 != 0)
-							throw new IOException("missing start of file");
-					}
-				}
-				completedSize = i2 * 500;
-				expectedSize = 500;
-				if (expectedSize > l1 - i2 * 500)
-					expectedSize = l1 - i2 * 500;
-			}
-			if (expectedSize > 0 && j >= expectedSize) {
-				waiting = true;
-				byte abyte0[] = ioBuffer;
-				int i1 = 0;
-				if (current != null) {
-					abyte0 = current.buffer;
-					i1 = completedSize;
-				}
-				for (int k1 = 0; k1 < expectedSize; k1 += inputStream.read(
-						abyte0, k1 + i1, expectedSize - k1))
-					;
-				if (expectedSize + completedSize >= abyte0.length
-						&& current != null) {
-					if (clientInstance.decompressors[0] != null)
-						clientInstance.decompressors[current.dataType + 1]
-								.method234(abyte0.length, abyte0, current.ID);
-					if (!current.incomplete && current.dataType == 3) {
-						current.incomplete = true;
-						current.dataType = 93;
-					}
-					if (current.incomplete)
-						synchronized (aClass19_1358) {
-							aClass19_1358.insertHead(current);
+						if (current.data == null && blockNum == 0) {
+							current.data = new byte[length];
 						}
-					else
-						current.unlink();
+						if (current.data == null && blockNum != 0) {
+							throw new IOException("missing start of file");
+						}
+					}
+				}
+				completedSize = blockNum * 500;
+				expectedSize = 500;
+				if (expectedSize > length - blockNum * 500)
+					expectedSize = length - blockNum * 500;
+			}
+			if (expectedSize > 0 && available >= expectedSize) {
+				waiting = true;
+				byte data[] = ioBuffer;
+				int read = 0;
+				if (current != null) {
+					data = current.data;
+					read = completedSize;
+				}
+				for (int index = 0; index < expectedSize; index += in.read(data, index + read, expectedSize - index));
+				if (expectedSize + completedSize >= data.length && current != null) {
+					if (client.jagCache[0] != null) {
+						client.jagCache[current.type + 1].put(data.length, data, current.id);
+					}
+					if (!current.incomplete && current.type == 3) {
+						current.incomplete = true;
+						current.type = 93;
+					}
+					if (current.incomplete) {
+						synchronized (completed) {
+							completed.append(current);
+						}
+					} else {
+						current.remove();
+					}
 				}
 				expectedSize = 0;
 			}
@@ -110,15 +107,14 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 			} catch (Exception _ex) {
 			}
 			socket = null;
-			inputStream = null;
-			outputStream = null;
+			in = null;
+			out = null;
 			expectedSize = 0;
 		}
 	}
 
-	public void start(CacheArchive streamLoader, client client1) {
-		String as[] = { "model_version", "anim_version", "midi_version",
-				"map_version" };
+	public void start(JagexArchive streamLoader, Client client1) {
+		String as[] = { "model_version", "anim_version", "midi_version", "map_version" };
 		for (int i = 0; i < 4; i++) {
 			byte abyte0[] = streamLoader.getData(as[i]);
 			int j = abyte0.length / 2;
@@ -178,9 +174,9 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 		for (int k2 = 0; k2 < j1; k2++)
 			anIntArray1348[k2] = stream2.getUByte();
 
-		clientInstance = client1;
+		client = client1;
 		running = true;
-		clientInstance.startRunnable(this, 2);
+		client.startRunnable(this, 2);
 	}
 
 	public int getNodeCount() {
@@ -207,32 +203,32 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 		return versions[j].length;
 	}
 
-	private void closeRequest(OnDemandData onDemandData) {
+	private void closeRequest(Resource onDemandData) {
 		try {
 			if (socket == null) {
 				long l = System.currentTimeMillis();
 				if (l - openSocketTime < 4000L)
 					return;
 				openSocketTime = l;
-				socket = clientInstance.openSocket(43594 + client.portOff);
-				inputStream = socket.getInputStream();
-				outputStream = socket.getOutputStream();
-				outputStream.write(15);
+				socket = client.openSocket(43594 + Client.portOff);
+				in = socket.getInputStream();
+				out = socket.getOutputStream();
+				out.write(15);
 				for (int j = 0; j < 8; j++)
-					inputStream.read();
+					in.read();
 
-				loopCycle = 0;
+				connectionIdleTicks = 0;
 			}
-			ioBuffer[0] = (byte) onDemandData.dataType;
-			ioBuffer[1] = (byte) (onDemandData.ID >> 8);
-			ioBuffer[2] = (byte) onDemandData.ID;
+			ioBuffer[0] = (byte) onDemandData.type;
+			ioBuffer[1] = (byte) (onDemandData.id >> 8);
+			ioBuffer[2] = (byte) onDemandData.id;
 			if (onDemandData.incomplete)
 				ioBuffer[3] = 2;
-			else if (!clientInstance.loggedIn)
+			else if (!client.loggedIn)
 				ioBuffer[3] = 1;
 			else
 				ioBuffer[3] = 0;
-			outputStream.write(ioBuffer, 0, 4);
+			out.write(ioBuffer, 0, 4);
 			writeLoopCycle = 0;
 			anInt1349 = -10000;
 			return;
@@ -243,8 +239,8 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 		} catch (Exception _ex) {
 		}
 		socket = null;
-		inputStream = null;
-		outputStream = null;
+		in = null;
+		out = null;
 		expectedSize = 0;
 		anInt1349++;
 	}
@@ -259,18 +255,18 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 		if (versions[i][j] == 0)
 			return;
 		synchronized (nodeSubList) {
-			for (OnDemandData onDemandData = (OnDemandData) nodeSubList
-					.reverseGetFirst(); onDemandData != null; onDemandData = (OnDemandData) nodeSubList
+			for (Resource onDemandData = (Resource) nodeSubList
+					.reverseGetFirst(); onDemandData != null; onDemandData = (Resource) nodeSubList
 					.reverseGetNext())
-				if (onDemandData.dataType == i && onDemandData.ID == j)
+				if (onDemandData.type == i && onDemandData.id == j)
 					return;
 
-			OnDemandData onDemandData_1 = new OnDemandData();
-			onDemandData_1.dataType = i;
-			onDemandData_1.ID = j;
+			Resource onDemandData_1 = new Resource();
+			onDemandData_1.type = i;
+			onDemandData_1.id = j;
 			onDemandData_1.incomplete = true;
 			synchronized (aClass19_1370) {
-				aClass19_1370.insertHead(onDemandData_1);
+				aClass19_1370.append(onDemandData_1);
 			}
 			nodeSubList.insertHead(onDemandData_1);
 		}
@@ -285,7 +281,7 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 			while (running) {
 				onDemandCycle++;
 				int i = 20;
-				if (anInt1332 == 0 && clientInstance.decompressors[0] != null)
+				if (anInt1332 == 0 && client.jagCache[0] != null)
 					i = 50;
 				try {
 					Thread.sleep(i);
@@ -301,56 +297,56 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 					if (uncompletedCount == 0 && j >= 5)
 						break;
 					method568();
-					if (inputStream != null)
-						readData();
+					if (in != null)
+						handleResponse();
 				}
 
 				boolean flag = false;
-				for (OnDemandData onDemandData = (OnDemandData) requested
-						.reverseGetFirst(); onDemandData != null; onDemandData = (OnDemandData) requested
-						.reverseGetNext())
+				for (Resource onDemandData = (Resource) requested
+						.head(); onDemandData != null; onDemandData = (Resource) requested
+						.next())
 					if (onDemandData.incomplete) {
 						flag = true;
-						onDemandData.loopCycle++;
-						if (onDemandData.loopCycle > 50) {
-							onDemandData.loopCycle = 0;
+						onDemandData.requestAge++;
+						if (onDemandData.requestAge > 50) {
+							onDemandData.requestAge = 0;
 							closeRequest(onDemandData);
 						}
 					}
 
 				if (!flag) {
-					for (OnDemandData onDemandData_1 = (OnDemandData) requested
-							.reverseGetFirst(); onDemandData_1 != null; onDemandData_1 = (OnDemandData) requested
-							.reverseGetNext()) {
+					for (Resource onDemandData_1 = (Resource) requested
+							.head(); onDemandData_1 != null; onDemandData_1 = (Resource) requested
+							.next()) {
 						flag = true;
-						onDemandData_1.loopCycle++;
-						if (onDemandData_1.loopCycle > 50) {
-							onDemandData_1.loopCycle = 0;
+						onDemandData_1.requestAge++;
+						if (onDemandData_1.requestAge > 50) {
+							onDemandData_1.requestAge = 0;
 							closeRequest(onDemandData_1);
 						}
 					}
 
 				}
 				if (flag) {
-					loopCycle++;
-					if (loopCycle > 750) {
+					connectionIdleTicks++;
+					if (connectionIdleTicks > 750) {
 						try {
 							socket.close();
 						} catch (Exception _ex) {
 						}
 						socket = null;
-						inputStream = null;
-						outputStream = null;
+						in = null;
+						out = null;
 						expectedSize = 0;
 					}
 				} else {
-					loopCycle = 0;
+					connectionIdleTicks = 0;
 					statusString = "";
 				}
-				if (clientInstance.loggedIn
+				if (client.loggedIn
 						&& socket != null
-						&& outputStream != null
-						&& (anInt1332 > 0 || clientInstance.decompressors[0] == null)) {
+						&& out != null
+						&& (anInt1332 > 0 || client.jagCache[0] == null)) {
 					writeLoopCycle++;
 					if (writeLoopCycle > 500) {
 						writeLoopCycle = 0;
@@ -359,20 +355,20 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 						ioBuffer[2] = 0;
 						ioBuffer[3] = 10;
 						try {
-							outputStream.write(ioBuffer, 0, 4);
+							out.write(ioBuffer, 0, 4);
 						} catch (IOException _ex) {
-							loopCycle = 5000;
+							connectionIdleTicks = 5000;
 						}
 					}
 				}
 			}
 		} catch (Exception exception) {
-			signlink.reporterror("od_ex " + exception.getMessage());
+			signlink.reportError("od_ex " + exception.getMessage());
 		}
 	}
 
 	public void method560(int i, int j) {
-		if (clientInstance.decompressors[0] == null)
+		if (client.jagCache[0] == null)
 			return;
 		if (versions[j][i] == 0)
 			return;
@@ -380,31 +376,31 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 			return;
 		if (anInt1332 == 0)
 			return;
-		OnDemandData onDemandData = new OnDemandData();
-		onDemandData.dataType = j;
-		onDemandData.ID = i;
+		Resource onDemandData = new Resource();
+		onDemandData.type = j;
+		onDemandData.id = i;
 		onDemandData.incomplete = false;
 		synchronized (aClass19_1344) {
-			aClass19_1344.insertHead(onDemandData);
+			aClass19_1344.append(onDemandData);
 		}
 	}
 
-	public OnDemandData getNextNode() {
-		OnDemandData onDemandData;
-		synchronized (aClass19_1358) {
-			onDemandData = (OnDemandData) aClass19_1358.popHead();
+	public Resource getNextNode() {
+		Resource onDemandData;
+		synchronized (completed) {
+			onDemandData = (Resource) completed.popHead();
 		}
 		if (onDemandData == null)
 			return null;
 		synchronized (nodeSubList) {
 			onDemandData.unlinkSub();
 		}
-		if (onDemandData.buffer == null)
+		if (onDemandData.data == null)
 			return onDemandData;
 		int i = 0;
 		try {
 			GZIPInputStream gzipinputstream = new GZIPInputStream(
-					new ByteArrayInputStream(onDemandData.buffer));
+					new ByteArrayInputStream(onDemandData.data));
 			do {
 				if (i == gzipInputBuffer.length)
 					throw new RuntimeException("buffer overflow!");
@@ -417,8 +413,8 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 		} catch (IOException _ex) {
 			throw new RuntimeException("error unzipping");
 		}
-		onDemandData.buffer = new byte[i];
-		System.arraycopy(gzipInputBuffer, 0, onDemandData.buffer, 0, i);
+		onDemandData.data = new byte[i];
+		System.arraycopy(gzipInputBuffer, 0, onDemandData.data, 0, i);
 
 		return onDemandData;
 	}
@@ -439,11 +435,11 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 	}
 
 	public void method563(byte byte0, int i, int j) {
-		if (clientInstance.decompressors[0] == null)
+		if (client.jagCache[0] == null)
 			return;
 		if (versions[i][j] == 0)
 			return;
-		byte abyte0[] = clientInstance.decompressors[i + 1].decompress(j);
+		byte abyte0[] = client.jagCache[i + 1].get(j);
 		if (crcMatches(versions[i][j], crcs[i][j], abyte0))
 			return;
 		fileStatus[i][j] = byte0;
@@ -462,23 +458,23 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 	private void handleFailed() {
 		uncompletedCount = 0;
 		completedCount = 0;
-		for (OnDemandData onDemandData = (OnDemandData) requested
-				.reverseGetFirst(); onDemandData != null; onDemandData = (OnDemandData) requested
-				.reverseGetNext())
+		for (Resource onDemandData = (Resource) requested
+				.head(); onDemandData != null; onDemandData = (Resource) requested
+				.next())
 			if (onDemandData.incomplete)
 				uncompletedCount++;
 			else
 				completedCount++;
 
 		while (uncompletedCount < 10) {
-			OnDemandData onDemandData_1 = (OnDemandData) aClass19_1368
+			Resource onDemandData_1 = (Resource) aClass19_1368
 					.popHead();
 			if (onDemandData_1 == null)
 				break;
-			if (fileStatus[onDemandData_1.dataType][onDemandData_1.ID] != 0)
+			if (fileStatus[onDemandData_1.type][onDemandData_1.id] != 0)
 				filesLoaded++;
-			fileStatus[onDemandData_1.dataType][onDemandData_1.ID] = 0;
-			requested.insertHead(onDemandData_1);
+			fileStatus[onDemandData_1.type][onDemandData_1.id] = 0;
+			requested.append(onDemandData_1);
 			uncompletedCount++;
 			closeRequest(onDemandData_1);
 			waiting = true;
@@ -492,29 +488,29 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 	}
 
 	private void checkReceived() {
-		OnDemandData onDemandData;
+		Resource onDemandData;
 		synchronized (aClass19_1370) {
-			onDemandData = (OnDemandData) aClass19_1370.popHead();
+			onDemandData = (Resource) aClass19_1370.popHead();
 		}
 		while (onDemandData != null) {
 			waiting = true;
 			byte abyte0[] = null;
-			if (clientInstance.decompressors[0] != null)
-				abyte0 = clientInstance.decompressors[onDemandData.dataType + 1]
-						.decompress(onDemandData.ID);
-			if (!crcMatches(versions[onDemandData.dataType][onDemandData.ID],
-					crcs[onDemandData.dataType][onDemandData.ID], abyte0))
+			if (client.jagCache[0] != null)
+				abyte0 = client.jagCache[onDemandData.type + 1]
+						.get(onDemandData.id);
+			if (!crcMatches(versions[onDemandData.type][onDemandData.id],
+					crcs[onDemandData.type][onDemandData.id], abyte0))
 				abyte0 = null;
 			synchronized (aClass19_1370) {
 				if (abyte0 == null) {
-					aClass19_1368.insertHead(onDemandData);
+					aClass19_1368.append(onDemandData);
 				} else {
-					onDemandData.buffer = abyte0;
-					synchronized (aClass19_1358) {
-						aClass19_1358.insertHead(onDemandData);
+					onDemandData.data = abyte0;
+					synchronized (completed) {
+						completed.append(onDemandData);
 					}
 				}
-				onDemandData = (OnDemandData) aClass19_1370.popHead();
+				onDemandData = (Resource) aClass19_1370.popHead();
 			}
 		}
 	}
@@ -523,14 +519,14 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 		while (uncompletedCount == 0 && completedCount < 10) {
 			if (anInt1332 == 0)
 				break;
-			OnDemandData onDemandData;
+			Resource onDemandData;
 			synchronized (aClass19_1344) {
-				onDemandData = (OnDemandData) aClass19_1344.popHead();
+				onDemandData = (Resource) aClass19_1344.popHead();
 			}
 			while (onDemandData != null) {
-				if (fileStatus[onDemandData.dataType][onDemandData.ID] != 0) {
-					fileStatus[onDemandData.dataType][onDemandData.ID] = 0;
-					requested.insertHead(onDemandData);
+				if (fileStatus[onDemandData.type][onDemandData.id] != 0) {
+					fileStatus[onDemandData.type][onDemandData.id] = 0;
+					requested.append(onDemandData);
 					closeRequest(onDemandData);
 					waiting = true;
 					if (filesLoaded < totalFiles)
@@ -542,7 +538,7 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 						return;
 				}
 				synchronized (aClass19_1344) {
-					onDemandData = (OnDemandData) aClass19_1344.popHead();
+					onDemandData = (Resource) aClass19_1344.popHead();
 				}
 			}
 			for (int j = 0; j < 4; j++) {
@@ -551,11 +547,11 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 				for (int l = 0; l < k; l++)
 					if (abyte0[l] == anInt1332) {
 						abyte0[l] = 0;
-						OnDemandData onDemandData_1 = new OnDemandData();
-						onDemandData_1.dataType = j;
-						onDemandData_1.ID = l;
+						Resource onDemandData_1 = new Resource();
+						onDemandData_1.type = j;
+						onDemandData_1.id = l;
 						onDemandData_1.incomplete = false;
-						requested.insertHead(onDemandData_1);
+						requested.append(onDemandData_1);
 						closeRequest(onDemandData_1);
 						waiting = true;
 						if (filesLoaded < totalFiles)
@@ -577,26 +573,26 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 		return anIntArray1348[i] == 1;
 	}
 
-	public OnDemandFetcher() {
-		requested = new NodeList();
+	public ResourceProvider() {
+		requested = new Deque();
 		statusString = "";
 		crc32 = new CRC32();
 		ioBuffer = new byte[500];
 		fileStatus = new byte[4][];
-		aClass19_1344 = new NodeList();
+		aClass19_1344 = new Deque();
 		running = true;
 		waiting = false;
-		aClass19_1358 = new NodeList();
+		completed = new Deque();
 		gzipInputBuffer = new byte[65000];
-		nodeSubList = new NodeSubList();
+		nodeSubList = new Queue();
 		versions = new int[4][];
 		crcs = new int[4][];
-		aClass19_1368 = new NodeList();
-		aClass19_1370 = new NodeList();
+		aClass19_1368 = new Deque();
+		aClass19_1370 = new Deque();
 	}
 
 	private int totalFiles;
-	private final NodeList requested;
+	private final Deque requested;
 	private int anInt1332;
 	public String statusString;
 	private int writeLoopCycle;
@@ -606,8 +602,8 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 	private final byte[] ioBuffer;
 	public int onDemandCycle;
 	private final byte[][] fileStatus;
-	private client clientInstance;
-	private final NodeList aClass19_1344;
+	private Client client;
+	private final Deque aClass19_1344;
 	private int completedSize;
 	private int expectedSize;
 	private int[] anIntArray1348;
@@ -615,23 +611,23 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements
 	private int[] mapIndices2;
 	private int filesLoaded;
 	private boolean running;
-	private OutputStream outputStream;
+	private OutputStream out;
 	private int[] mapIndices4;
 	private boolean waiting;
-	private final NodeList aClass19_1358;
+	private final Deque completed;
 	private final byte[] gzipInputBuffer;
 	private int[] anIntArray1360;
-	private final NodeSubList nodeSubList;
-	private InputStream inputStream;
+	private final Queue nodeSubList;
+	private InputStream in;
 	private Socket socket;
 	private final int[][] versions;
 	private final int[][] crcs;
 	private int uncompletedCount;
 	private int completedCount;
-	private final NodeList aClass19_1368;
-	private OnDemandData current;
-	private final NodeList aClass19_1370;
+	private final Deque aClass19_1368;
+	private Resource current;
+	private final Deque aClass19_1370;
 	private int[] mapIndices1;
 	private byte[] modelIndices;
-	private int loopCycle;
+	private int connectionIdleTicks;
 }

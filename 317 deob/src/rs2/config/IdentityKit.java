@@ -2,11 +2,11 @@ package rs2.config;
 
 import rs2.Model;
 import rs2.ByteBuffer;
-import rs2.cache.CacheArchive;
+import rs2.cache.JagexArchive;
 
 public final class IdentityKit {
 
-	public static void unpackConfig(CacheArchive streamLoader) {
+	public static void unpackConfig(JagexArchive streamLoader) {
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData("idk.dat"));
 		length = stream.getShort();
 		if (cache == null)
@@ -71,7 +71,7 @@ public final class IdentityKit {
 		for (int j = 0; j < 6; j++) {
 			if (anIntArray659[j] == 0)
 				break;
-			model.method476(anIntArray659[j], anIntArray660[j]);
+			model.changeModelColors(anIntArray659[j], anIntArray660[j]);
 		}
 
 		return model;
@@ -98,7 +98,7 @@ public final class IdentityKit {
 		for (int l = 0; l < 6; l++) {
 			if (anIntArray659[l] == 0)
 				break;
-			model.method476(anIntArray659[l], anIntArray660[l]);
+			model.changeModelColors(anIntArray659[l], anIntArray660[l]);
 		}
 
 		return model;

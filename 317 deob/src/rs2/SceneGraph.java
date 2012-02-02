@@ -2,6 +2,7 @@ package rs2;
 import rs2.config.Floor;
 import rs2.config.ObjectDef;
 import rs2.graphics.Texture;
+import rs2.resource.ResourceProvider;
 
 final class SceneGraph {
 
@@ -421,7 +422,7 @@ label5:
 		return k;
 	}
 
-	public static void method173(ByteBuffer stream, OnDemandFetcher class42_sub1)
+	public static void method173(ByteBuffer stream, ResourceProvider class42_sub1)
 	{
 label0:
 		{
@@ -432,7 +433,7 @@ label0:
 				if(j == 0)
 					break label0;
 				i += j;
-				ObjectDef class46 = ObjectDef.getObject(i);
+				ObjectDef class46 = ObjectDef.getDef(i);
 				class46.method574(class42_sub1);
 				do
 				{
@@ -483,7 +484,7 @@ label0:
 		int i2 = anIntArrayArrayArray129[k][l + 1][i + 1];
 		int j2 = anIntArrayArrayArray129[k][l][i + 1];
 		int k2 = k1 + l1 + i2 + j2 >> 2;
-		ObjectDef class46 = ObjectDef.getObject(i1);
+		ObjectDef class46 = ObjectDef.getDef(i1);
 		int l2 = l + (i << 7) + (i1 << 14) + 0x40000000;
 		if(!class46.hasActions)
 			l2 += 0x80000000;
@@ -765,7 +766,7 @@ label0:
 			int i4 = 16;
 			int k4 = worldController.method300(k, l, i);
 			if(k4 > 0)
-				i4 = ObjectDef.getObject(k4 >> 14 & 0x7fff).anInt775;
+				i4 = ObjectDef.getDef(k4 >> 14 & 0x7fff).anInt775;
 			Object obj13;
 			if(class46.anInt781 == -1 && class46.childrenIDs == null)
 				obj13 = class46.method578(4, 0, k1, l1, i2, j2, -1);
@@ -835,7 +836,7 @@ label0:
 
 	public static boolean method178(int i, int j)
 	{
-		ObjectDef class46 = ObjectDef.getObject(i);
+		ObjectDef class46 = ObjectDef.getDef(i);
 		if(j == 11)
 			j = 10;
 		if(j >= 5 && j <= 8)
@@ -996,7 +997,7 @@ label0:
 					int i4 = k3 & 3;
 					if(j3 == i && i3 >= i1 && i3 < i1 + 8 && l2 >= k && l2 < k + 8)
 					{
-						ObjectDef class46 = ObjectDef.getObject(l1);
+						ObjectDef class46 = ObjectDef.getDef(l1);
 						int j4 = j + Class4.method157(j1, class46.anInt761, i3 & 7, l2 & 7, class46.anInt744);
 						int k4 = k1 + Class4.method158(l2 & 7, class46.anInt761, j1, class46.anInt744, i3 & 7);
 						if(j4 > 0 && k4 > 0 && j4 < 103 && k4 < 103)
@@ -1073,7 +1074,7 @@ label0:
 		int j2 = ai[l][i1 + 1][j + 1];
 		int k2 = ai[l][i1][j + 1];
 		int l2 = l1 + i2 + j2 + k2 >> 2;
-		ObjectDef class46 = ObjectDef.getObject(j1);
+		ObjectDef class46 = ObjectDef.getDef(j1);
 		int i3 = i1 + (j << 7) + (j1 << 14) + 0x40000000;
 		if(!class46.hasActions)
 			i3 += 0x80000000;
@@ -1239,7 +1240,7 @@ label0:
 			int j4 = 16;
 			int l4 = worldController.method300(k1, i1, j);
 			if(l4 > 0)
-				j4 = ObjectDef.getObject(l4 >> 14 & 0x7fff).anInt775;
+				j4 = ObjectDef.getDef(l4 >> 14 & 0x7fff).anInt775;
 			Object obj13;
 			if(class46.anInt781 == -1 && class46.childrenIDs == null)
 				obj13 = class46.method578(4, 0, l1, i2, j2, k2, -1);
@@ -1315,7 +1316,7 @@ label0:
 		int i_262_ = i_258_ + i_250_;
 		if (i_261_ > 0 && i_262_ > 0 && i_261_ < 103 && i_262_ < 103)
 		  {
-			ObjectDef class46 = ObjectDef.getObject (i_252_);
+			ObjectDef class46 = ObjectDef.getDef (i_252_);
 			if (i_260_ != 22 || !lowMem || class46.hasActions
 					|| class46.aBoolean736)
 			  {

@@ -40,9 +40,9 @@ public final class Player extends Entity {
 			}
 		}
 		if (aModel_1714 != null) {
-			if (client.loopCycle >= anInt1708)
+			if (Client.loopCycle >= anInt1708)
 				aModel_1714 = null;
-			if (client.loopCycle >= anInt1707 && client.loopCycle < anInt1708) {
+			if (Client.loopCycle >= anInt1707 && Client.loopCycle < anInt1708) {
 				Model model_1 = aModel_1714;
 				model_1.method475(anInt1711 - super.x, anInt1712 - anInt1709,
 						anInt1713 - super.y);
@@ -95,7 +95,7 @@ public final class Player extends Entity {
 				break;
 			}
 			if (equipment[j] >= 512 && equipment[j] - 512 < ItemDef.totalItems) {
-				int l1 = ItemDef.getItem(equipment[j] - 512).team;
+				int l1 = ItemDef.getDef(equipment[j] - 512).team;
 				if (l1 != 0)
 					team = l1;
 			}
@@ -103,7 +103,7 @@ public final class Player extends Entity {
 
 		for (int l = 0; l < 5; l++) {
 			int j1 = buffer.getUByte();
-			if (j1 < 0 || j1 >= client.anIntArrayArray1003[l].length)
+			if (j1 < 0 || j1 >= Client.anIntArrayArray1003[l].length)
 				j1 = 0;
 			anIntArray1700[l] = j1;
 		}
@@ -194,7 +194,7 @@ public final class Player extends Entity {
 					k2 = j1;
 				if (k2 >= 256 && k2 < 512 && !IdentityKit.cache[k2 - 256].method537())
 					flag = true;
-				if (k2 >= 512 && !ItemDef.getItem(k2 - 512).method195(gender))
+				if (k2 >= 512 && !ItemDef.getDef(k2 - 512).method195(gender))
 					flag = true;
 			}
 
@@ -220,7 +220,7 @@ public final class Player extends Entity {
 						aclass30_sub2_sub4_sub6s[j2++] = model_3;
 				}
 				if (i3 >= 512) {
-					Model model_4 = ItemDef.getItem(i3 - 512)
+					Model model_4 = ItemDef.getDef(i3 - 512)
 							.method196(gender);
 					if (model_4 != null)
 						aclass30_sub2_sub4_sub6s[j2++] = model_4;
@@ -230,11 +230,11 @@ public final class Player extends Entity {
 			model_1 = new Model(j2, aclass30_sub2_sub4_sub6s);
 			for (int j3 = 0; j3 < 5; j3++)
 				if (anIntArray1700[j3] != 0) {
-					model_1.method476(client.anIntArrayArray1003[j3][0],
-							client.anIntArrayArray1003[j3][anIntArray1700[j3]]);
+					model_1.changeModelColors(Client.anIntArrayArray1003[j3][0],
+							Client.anIntArrayArray1003[j3][anIntArray1700[j3]]);
 					if (j3 == 1)
-						model_1.method476(client.anIntArray1204[0],
-								client.anIntArray1204[anIntArray1700[j3]]);
+						model_1.changeModelColors(Client.anIntArray1204[0],
+								Client.anIntArray1204[anIntArray1700[j3]]);
 				}
 
 			model_1.method469();
@@ -260,7 +260,7 @@ public final class Player extends Entity {
 		return visible;
 	}
 
-	public int privelage;
+	public int rights;
 
 	public Model method453() {
 		if (!visible)
@@ -272,7 +272,7 @@ public final class Player extends Entity {
 			int j = equipment[i];
 			if (j >= 256 && j < 512 && !IdentityKit.cache[j - 256].method539())
 				flag = true;
-			if (j >= 512 && !ItemDef.getItem(j - 512).method192(gender))
+			if (j >= 512 && !ItemDef.getDef(j - 512).method192(gender))
 				flag = true;
 		}
 
@@ -288,7 +288,7 @@ public final class Player extends Entity {
 					aclass30_sub2_sub4_sub6s[k++] = model_1;
 			}
 			if (i1 >= 512) {
-				Model model_2 = ItemDef.getItem(i1 - 512).method194(gender);
+				Model model_2 = ItemDef.getDef(i1 - 512).method194(gender);
 				if (model_2 != null)
 					aclass30_sub2_sub4_sub6s[k++] = model_2;
 			}
@@ -297,11 +297,11 @@ public final class Player extends Entity {
 		Model model = new Model(k, aclass30_sub2_sub4_sub6s);
 		for (int j1 = 0; j1 < 5; j1++)
 			if (anIntArray1700[j1] != 0) {
-				model.method476(client.anIntArrayArray1003[j1][0],
-						client.anIntArrayArray1003[j1][anIntArray1700[j1]]);
+				model.changeModelColors(Client.anIntArrayArray1003[j1][0],
+						Client.anIntArrayArray1003[j1][anIntArray1700[j1]]);
 				if (j1 == 1)
-					model.method476(client.anIntArray1204[0],
-							client.anIntArray1204[anIntArray1700[j1]]);
+					model.changeModelColors(Client.anIntArray1204[0],
+							Client.anIntArray1204[anIntArray1700[j1]]);
 			}
 
 		return model;

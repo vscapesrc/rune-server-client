@@ -1064,7 +1064,7 @@ final class WorldController {
 	}
 
 	private void method314(Ground class30_sub3, boolean flag) {
-		aClass19_477.insertHead(class30_sub3);
+		aClass19_477.append(class30_sub3);
 		do {
 			Ground class30_sub3_1;
 			do {
@@ -1298,25 +1298,25 @@ final class WorldController {
 						Ground class30_sub3_17 = aclass30_sub3[i + 1][j];
 						if (class30_sub3_17 != null
 								&& class30_sub3_17.aBoolean1323)
-							aClass19_477.insertHead(class30_sub3_17);
+							aClass19_477.append(class30_sub3_17);
 					}
 					if (j < anInt454 && (k4 & 2) != 0) {
 						Ground class30_sub3_18 = aclass30_sub3[i][j + 1];
 						if (class30_sub3_18 != null
 								&& class30_sub3_18.aBoolean1323)
-							aClass19_477.insertHead(class30_sub3_18);
+							aClass19_477.append(class30_sub3_18);
 					}
 					if (i > anInt453 && (k4 & 1) != 0) {
 						Ground class30_sub3_19 = aclass30_sub3[i - 1][j];
 						if (class30_sub3_19 != null
 								&& class30_sub3_19.aBoolean1323)
-							aClass19_477.insertHead(class30_sub3_19);
+							aClass19_477.append(class30_sub3_19);
 					}
 					if (j > anInt454 && (k4 & 8) != 0) {
 						Ground class30_sub3_20 = aclass30_sub3[i][j - 1];
 						if (class30_sub3_20 != null
 								&& class30_sub3_20.aBoolean1323)
-							aClass19_477.insertHead(class30_sub3_20);
+							aClass19_477.append(class30_sub3_20);
 					}
 				}
 			}
@@ -1428,10 +1428,10 @@ final class WorldController {
 							for (int l8 = class28_3.anInt525; l8 <= class28_3.anInt526; l8++) {
 								Ground class30_sub3_22 = aclass30_sub3[k7][l8];
 								if (class30_sub3_22.anInt1325 != 0)
-									aClass19_477.insertHead(class30_sub3_22);
+									aClass19_477.append(class30_sub3_22);
 								else if ((k7 != i || l8 != j)
 										&& class30_sub3_22.aBoolean1323)
-									aClass19_477.insertHead(class30_sub3_22);
+									aClass19_477.append(class30_sub3_22);
 							}
 
 						}
@@ -1551,27 +1551,27 @@ final class WorldController {
 			if (k < anInt437 - 1) {
 				Ground class30_sub3_12 = groundArray[k + 1][i][j];
 				if (class30_sub3_12 != null && class30_sub3_12.aBoolean1323)
-					aClass19_477.insertHead(class30_sub3_12);
+					aClass19_477.append(class30_sub3_12);
 			}
 			if (i < anInt453) {
 				Ground class30_sub3_13 = aclass30_sub3[i + 1][j];
 				if (class30_sub3_13 != null && class30_sub3_13.aBoolean1323)
-					aClass19_477.insertHead(class30_sub3_13);
+					aClass19_477.append(class30_sub3_13);
 			}
 			if (j < anInt454) {
 				Ground class30_sub3_14 = aclass30_sub3[i][j + 1];
 				if (class30_sub3_14 != null && class30_sub3_14.aBoolean1323)
-					aClass19_477.insertHead(class30_sub3_14);
+					aClass19_477.append(class30_sub3_14);
 			}
 			if (i > anInt453) {
 				Ground class30_sub3_15 = aclass30_sub3[i - 1][j];
 				if (class30_sub3_15 != null && class30_sub3_15.aBoolean1323)
-					aClass19_477.insertHead(class30_sub3_15);
+					aClass19_477.append(class30_sub3_15);
 			}
 			if (j > anInt454) {
 				Ground class30_sub3_16 = aclass30_sub3[i][j - 1];
 				if (class30_sub3_16 != null && class30_sub3_16.aBoolean1323)
-					aClass19_477.insertHead(class30_sub3_16);
+					aClass19_477.append(class30_sub3_16);
 			}
 		} while (true);
 	}
@@ -2194,7 +2194,7 @@ final class WorldController {
 	private static Class47[][] aClass47ArrayArray474;
 	private static int anInt475;
 	private static final Class47[] aClass47Array476 = new Class47[500];
-	private static NodeList aClass19_477 = new NodeList();
+	private static Deque aClass19_477 = new Deque();
 	private static final int[] anIntArray478 = { 19, 55, 38, 155, 255, 110,
 			137, 205, 76 };
 	private static final int[] anIntArray479 = { 160, 192, 80, 96, 0, 144, 80,

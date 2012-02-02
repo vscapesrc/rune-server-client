@@ -6,7 +6,7 @@ package rs2;
 
 public class Node {
 
-	public final void unlink() {
+	public final void remove() {
 		if (next == null) {
 		} else {
 			next.prev = prev;

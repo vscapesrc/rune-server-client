@@ -11,10 +11,22 @@ import java.util.Arrays;
 import rs2.sign.signlink;
 import rs2.util.Misc;
 
+/**
+ * This class handles all account information.
+ * Accounts are read from and written to accounts.dat in the cache location.
+ * @author Galkon
+ */
 public class Accounts {
 
+	/**
+	 * The array of accounts.
+	 */
 	public static Account[] accounts;
 
+	/**
+	 * This class handles individual account data.
+	 * @author Galkon
+	 */
 	public static class Account {
 		public String name;
 		public String password;
@@ -68,8 +80,10 @@ public class Accounts {
 			return false;
 		}
 		for (int index = 0; index < accounts.length; index++) {
-			if (accounts[index].name.equalsIgnoreCase(name)) {
-				return true;
+			if (accounts[index] != null) {
+				if (accounts[index].name.equalsIgnoreCase(name)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -88,8 +102,13 @@ public class Accounts {
 			names = new String[accounts.length];
 			uses = new int[accounts.length];
 			for (int index = 0; index < accounts.length; index++) {
-				names[index] = accounts[index].name;
-				uses[index] = accounts[index].uses;
+				if (accounts[index] != null) {
+					names[index] = accounts[index].name;
+					uses[index] = accounts[index].uses;
+				} else {
+					names[index] = "";
+					uses[index] = 0;
+				}
 			}
 			if (Misc.containsDuplicates(uses)) {
 				Arrays.sort(names);
@@ -122,6 +141,10 @@ public class Accounts {
 			Account[] old = accounts;
 			accounts = new Account[old.length + 1];
 			for (int index = 0; index < accounts.length; index++) {
+				if (accounts[index] == null) {
+					accounts[index] = account;
+					break;
+				}
 				if (index < old.length) {
 					accounts[index] = old[index];
 				} else {

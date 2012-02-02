@@ -2,6 +2,7 @@ package rs2;
 
 import rs2.graphics.RSDrawingArea;
 import rs2.graphics.Texture;
+import rs2.resource.ModelProvider;
 
 public final class Model extends Animable {
 
@@ -29,7 +30,7 @@ public final class Model extends Animable {
 	}
 
 	public static void method459(int i,
-			OnDemandFetcherParent onDemandFetcherParent) {
+			ModelProvider onDemandFetcherParent) {
 		aClass21Array1661 = new Class21[i];
 		aOnDemandFetcherParent_1662 = onDemandFetcherParent;
 	}
@@ -1060,7 +1061,7 @@ public final class Model extends Animable {
 
 	}
 
-	public void method476(int i, int j) {
+	public void changeModelColors(int i, int j) {
 		for (int k = 0; k < anInt1630; k++)
 			if (anIntArray1640[k] == i)
 				anIntArray1640[k] = j;
@@ -1910,7 +1911,7 @@ public final class Model extends Animable {
 	public boolean aBoolean1659;
 	Class33 aClass33Array1660[];
 	private static Class21[] aClass21Array1661;
-	private static OnDemandFetcherParent aOnDemandFetcherParent_1662;
+	private static ModelProvider aOnDemandFetcherParent_1662;
 	private static boolean[] aBooleanArray1663 = new boolean[4096];
 	private static boolean[] aBooleanArray1664 = new boolean[4096];
 	private static int[] anIntArray1665 = new int[4096];

@@ -1,11 +1,11 @@
 package rs2.config;
 
 import rs2.ByteBuffer;
-import rs2.cache.CacheArchive;
+import rs2.cache.JagexArchive;
 
 public final class Varp {
 
-	public static void unpackConfig(CacheArchive streamLoader) {
+	public static void unpackConfig(JagexArchive streamLoader) {
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData("varp.dat"));
 		anInt702 = 0;
 		int cacheSize = stream.getShort();

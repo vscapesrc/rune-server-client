@@ -1,17 +1,14 @@
 package rs2.graphics;
 
-// Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
-
 import java.util.Random;
 
 import rs2.ByteBuffer;
-import rs2.cache.CacheArchive;
+import rs2.Client;
+import rs2.cache.JagexArchive;
 
 public final class RSFont extends RSDrawingArea {
 
-	public RSFont(boolean flag, String s, CacheArchive streamLoader) {
+	public RSFont(boolean flag, String s, JagexArchive streamLoader) {
 		aByteArrayArray1491 = new byte[256][];
 		anIntArray1492 = new int[256];
 		anIntArray1493 = new int[256];
@@ -78,26 +75,42 @@ public final class RSFont extends RSDrawingArea {
 		drawBasicString(s, i - method384(s), k, j);
 	}
 
-	public void drawText(int i, String s, int k, int l) {
-		drawBasicString(s, l - method384(s) / 2, k, i);
+	public void drawText(String string, int x, int y, int color) {
+		drawBasicString(string, x - method384(string) / 2, y, color);
 	}
 
 	public void drawCenteredString(String string, int x, int y, int color, boolean shadow) {
 		drawShadowedString(string, x - getTextWidth(string) / 2, y, color, shadow);
 	}
 
-	public int getTextWidth(String s) {
-		if (s == null)
+	public int getTextWidth(String text) {
+		if (text == null)
 			return 0;
-		int j = 0;
-		for (int k = 0; k < s.length(); k++)
-			if (s.charAt(k) == '@' && k + 4 < s.length()
-					&& s.charAt(k + 4) == '@')
-				k += 4;
-			else
-				j += anIntArray1496[s.charAt(k)];
+		int width = 0;
+		for (int index = 0; index < text.length(); index++) {
+			if (text.charAt(index) == '@' && index + 4 < text.length() && text.charAt(index + 4) == '@') {
+				index += 4;
+			} else {
+				width += anIntArray1496[text.charAt(index)];
+			}
+		}
+		return width;
+	}
 
-		return j;
+	public int getTextHeight() {
+		if (this == Client.instance.small) {
+			return 8;
+		}
+		if (this == Client.instance.regular) {
+			return 10;
+		}
+		if (this == Client.instance.bold) {
+			return 10;
+		}
+		if (this == Client.instance.fancy) {
+			return 11;
+		}
+		return 10;
 	}
 
 	public int method384(String s) {

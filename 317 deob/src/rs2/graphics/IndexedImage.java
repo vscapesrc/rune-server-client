@@ -1,7 +1,7 @@
 package rs2.graphics;
 
 import rs2.ByteBuffer;
-import rs2.cache.CacheArchive;
+import rs2.cache.JagexArchive;
 
 // Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
 // Jad home page: http://www.kpdus.com/jad.html
@@ -9,7 +9,7 @@ import rs2.cache.CacheArchive;
 
 public final class IndexedImage extends RSDrawingArea {
 
-	public IndexedImage(CacheArchive streamLoader, String s, int i) {
+	public IndexedImage(JagexArchive streamLoader, String s, int i) {
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData(s + ".dat"));
 		ByteBuffer stream_1 = new ByteBuffer(streamLoader.getData("index.dat"));
 		stream_1.offset = stream.getShort();

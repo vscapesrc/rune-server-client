@@ -3,11 +3,11 @@ package rs2.config;
 import rs2.MRUNodes;
 import rs2.Model;
 import rs2.ByteBuffer;
-import rs2.cache.CacheArchive;
+import rs2.cache.JagexArchive;
 
 public final class SpotAnim {
 
-	public static void unpackConfig(CacheArchive streamLoader) {
+	public static void unpackConfig(JagexArchive streamLoader) {
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData("spotanim.dat"));
 		int length = stream.getShort();
 		if (cache == null)
@@ -61,7 +61,7 @@ public final class SpotAnim {
 			return null;
 		for (int i = 0; i < 6; i++)
 			if (anIntArray408[0] != 0)
-				model.method476(anIntArray408[i], anIntArray409[i]);
+				model.changeModelColors(anIntArray408[i], anIntArray409[i]);
 
 		aMRUNodes_415.removeFromCache(model, anInt404);
 		return model;

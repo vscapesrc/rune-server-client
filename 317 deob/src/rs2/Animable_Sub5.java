@@ -9,7 +9,7 @@ final class Animable_Sub5 extends Animable {
 	public Model getRotatedModel() {
 		int j = -1;
 		if (aAnimation_1607 != null) {
-			int k = client.loopCycle - anInt1608;
+			int k = Client.loopCycle - anInt1608;
 			if (k > 100 && aAnimation_1607.anInt356 > 0)
 				k = 100;
 			while (k > aAnimation_1607.method258(anInt1599)) {
@@ -23,7 +23,7 @@ final class Animable_Sub5 extends Animable {
 				aAnimation_1607 = null;
 				break;
 			}
-			anInt1608 = client.loopCycle - k;
+			anInt1608 = Client.loopCycle - k;
 			if (aAnimation_1607 != null)
 				j = aAnimation_1607.anIntArray353[anInt1599];
 		}
@@ -31,7 +31,7 @@ final class Animable_Sub5 extends Animable {
 		if (anIntArray1600 != null)
 			class46 = method457();
 		else
-			class46 = ObjectDef.getObject(anInt1610);
+			class46 = ObjectDef.getDef(anInt1610);
 		if (class46 == null) {
 			return null;
 		} else {
@@ -47,14 +47,14 @@ final class Animable_Sub5 extends Animable {
 			int k = varBit.anInt648;
 			int l = varBit.anInt649;
 			int i1 = varBit.anInt650;
-			int j1 = client.anIntArray1232[i1 - l];
+			int j1 = Client.anIntArray1232[i1 - l];
 			i = clientInstance.variousSettings[k] >> l & j1;
 		} else if (anInt1602 != -1)
 			i = clientInstance.variousSettings[anInt1602];
 		if (i < 0 || i >= anIntArray1600.length || anIntArray1600[i] == -1)
 			return null;
 		else
-			return ObjectDef.getObject(anIntArray1600[i]);
+			return ObjectDef.getDef(anIntArray1600[i]);
 	}
 
 	public Animable_Sub5(int i, int j, int k, int l, int i1, int j1, int k1,
@@ -69,14 +69,14 @@ final class Animable_Sub5 extends Animable {
 		if (l1 != -1) {
 			aAnimation_1607 = Sequence.getSeq(l1);
 			anInt1599 = 0;
-			anInt1608 = client.loopCycle;
+			anInt1608 = Client.loopCycle;
 			if (flag && aAnimation_1607.anInt356 != -1) {
 				anInt1599 = (int) (Math.random() * (double) aAnimation_1607.anInt352);
 				anInt1608 -= (int) (Math.random() * (double) aAnimation_1607
 						.method258(anInt1599));
 			}
 		}
-		ObjectDef class46 = ObjectDef.getObject(anInt1610);
+		ObjectDef class46 = ObjectDef.getDef(anInt1610);
 		anInt1601 = class46.anInt774;
 		anInt1602 = class46.anInt749;
 		anIntArray1600 = class46.childrenIDs;
@@ -92,7 +92,7 @@ final class Animable_Sub5 extends Animable {
 	private final int anInt1606;
 	private Sequence aAnimation_1607;
 	private int anInt1608;
-	public static client clientInstance;
+	public static Client clientInstance;
 	private final int anInt1610;
 	private final int anInt1611;
 	private final int anInt1612;

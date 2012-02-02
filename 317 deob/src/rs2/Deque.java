@@ -4,17 +4,17 @@ package rs2;
 // Jad home page: http://www.kpdus.com/jad.html
 // Decompiler options: packimports(3) 
 
-final class NodeList {
+public final class Deque {
 
-	public NodeList() {
+	public Deque() {
 		head = new Node();
 		head.prev = head;
 		head.next = head;
 	}
 
-	public void insertHead(Node node) {
+	public void append(Node node) {
 		if (node.next != null)
-			node.unlink();
+			node.remove();
 		node.next = head.next;
 		node.prev = head;
 		node.next.prev = node;
@@ -23,7 +23,7 @@ final class NodeList {
 
 	public void insertTail(Node node) {
 		if (node.next != null)
-			node.unlink();
+			node.remove();
 		node.next = head;
 		node.prev = head.prev;
 		node.next.prev = node;
@@ -35,12 +35,12 @@ final class NodeList {
 		if (node == head) {
 			return null;
 		} else {
-			node.unlink();
+			node.remove();
 			return node;
 		}
 	}
 
-	public Node reverseGetFirst() {
+	public Node head() {
 		Node node = head.prev;
 		if (node == head) {
 			current = null;
@@ -62,7 +62,7 @@ final class NodeList {
 		}
 	}
 
-	public Node reverseGetNext() {
+	public Node next() {
 		Node node = current;
 		if (node == head) {
 			current = null;
@@ -90,7 +90,7 @@ final class NodeList {
 			Node node = head.prev;
 			if (node == head)
 				return;
-			node.unlink();
+			node.remove();
 		} while (true);
 	}
 

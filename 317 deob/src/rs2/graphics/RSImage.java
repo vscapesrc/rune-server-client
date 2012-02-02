@@ -16,21 +16,27 @@ import java.awt.image.PixelGrabber;
 import javax.swing.ImageIcon;
 
 import rs2.ByteBuffer;
-import rs2.cache.CacheArchive;
+import rs2.cache.JagexArchive;
 import rs2.sign.signlink;
 
 public final class RSImage extends RSDrawingArea {
 
-	public RSImage(int i, int j) {
-		myPixels = new int[i * j];
-		myWidth = anInt1444 = i;
-		myHeight = anInt1445 = j;
+	public RSImage(int width, int height) {
+		myPixels = new int[width * height];
+		myWidth = anInt1444 = width;
+		myHeight = anInt1445 = height;
 		anInt1442 = anInt1443 = 0;
 	}
 
-	public void setTransparency(int transRed, int transGreen, int transBlue) {
+	/**
+	 * Sets pixels with the specified RGB values to have an opacity level of 0.
+	 * @param red
+	 * @param green
+	 * @param blue
+	 */
+	public void setTransparency(int red, int green, int blue) {
 		for (int index = 0; index < myPixels.length; index++){
-			if (((myPixels[index] >> 16) & 255) == transRed && ((myPixels[index] >> 8) & 255) == transGreen && (myPixels[index] & 255) == transBlue) {
+			if (((myPixels[index] >> 16) & 255) == red && ((myPixels[index] >> 8) & 255) == green && (myPixels[index] & 255) == blue) {
 				myPixels[index] = 0;
 			}
 		}
@@ -155,7 +161,7 @@ public final class RSImage extends RSDrawingArea {
 		}
 	}
 
-	public RSImage(CacheArchive streamLoader, String s, int i) {
+	public RSImage(JagexArchive streamLoader, String s, int i) {
 		ByteBuffer stream = new ByteBuffer(streamLoader.getData(s + ".dat"));
 		ByteBuffer stream_1 = new ByteBuffer(streamLoader.getData("index.dat"));
 		stream_1.offset = stream.getShort();
@@ -309,7 +315,6 @@ public final class RSImage extends RSDrawingArea {
 	}
 
 	public void drawImage(int x, int y, int alpha) {
-		int k = alpha;// was parameter
 		x += anInt1442;
 		y += anInt1443;
 		int i1 = x + y * RSDrawingArea.width;
@@ -343,7 +348,7 @@ public final class RSImage extends RSDrawingArea {
 			i2 += i3;
 		}
 		if (!(width <= 0 || height <= 0)) {
-			method351(j1, width, RSDrawingArea.pixels, myPixels, j2, height, i2, k, i1);
+			renderAlphaPixels(j1, width, RSDrawingArea.pixels, myPixels, j2, height, i2, alpha, i1);
 		}
 	}
 
@@ -389,7 +394,7 @@ public final class RSImage extends RSDrawingArea {
 
 	}
 
-	private void method351(int i, int j, int ai[], int ai1[], int l, int i1,
+	private void renderAlphaPixels(int i, int j, int ai[], int ai1[], int l, int i1,
 			int j1, int k1, int l1) {
 		int k;// was parameter
 		int j2 = 256 - k1;
@@ -484,42 +489,41 @@ public final class RSImage extends RSDrawingArea {
 		}
 	}
 
-	public void method354(IndexedImage background, int i, int j) {
+	public void method354(IndexedImage image, int i, int j) {
 		j += anInt1442;
 		i += anInt1443;
 		int k = j + i * RSDrawingArea.width;
 		int l = 0;
-		int i1 = myHeight;
-		int j1 = myWidth;
-		int k1 = RSDrawingArea.width - j1;
+		int height = myHeight;
+		int width = myWidth;
+		int k1 = RSDrawingArea.width - width;
 		int l1 = 0;
 		if (i < RSDrawingArea.startY) {
 			int i2 = RSDrawingArea.startY - i;
-			i1 -= i2;
+			height -= i2;
 			i = RSDrawingArea.startY;
-			l += i2 * j1;
+			l += i2 * width;
 			k += i2 * RSDrawingArea.width;
 		}
-		if (i + i1 > RSDrawingArea.endY)
-			i1 -= (i + i1) - RSDrawingArea.endY;
+		if (i + height > RSDrawingArea.endY)
+			height -= (i + height) - RSDrawingArea.endY;
 		if (j < RSDrawingArea.startX) {
 			int j2 = RSDrawingArea.startX - j;
-			j1 -= j2;
+			width -= j2;
 			j = RSDrawingArea.startX;
 			l += j2;
 			k += j2;
 			l1 += j2;
 			k1 += j2;
 		}
-		if (j + j1 > RSDrawingArea.endX) {
-			int k2 = (j + j1) - RSDrawingArea.endX;
-			j1 -= k2;
+		if (j + width > RSDrawingArea.endX) {
+			int k2 = (j + width) - RSDrawingArea.endX;
+			width -= k2;
 			l1 += k2;
 			k1 += k2;
 		}
-		if (!(j1 <= 0 || i1 <= 0)) {
-			method355(myPixels, j1, background.aByteArray1450, i1,
-					RSDrawingArea.pixels, 0, k1, k, l1, l);
+		if (!(width <= 0 || height <= 0)) {
+			method355(myPixels, width, image.aByteArray1450, height, RSDrawingArea.pixels, 0, k1, k, l1, l);
 		}
 	}
 
@@ -610,8 +614,8 @@ public final class RSImage extends RSDrawingArea {
     private void renderARGBPixels(int spriteWidth, int spriteHeight, int spritePixels[], int renderAreaPixels[], int pixel, int alphaValue, int i, int l, int j1) {
     	int pixelLevel;
     	int alphaLevel;
-    	for (int k2 = -spriteHeight; k2 < 0; k2++) {
-    		for (int l2 = -spriteWidth; l2 < 0; l2++) {
+    	for (int height = -spriteHeight; height < 0; height++) {
+    		for (int width = -spriteWidth; width < 0; width++) {
     			alphaValue = ((myPixels[i] >> 24) & 255);
     			alphaLevel = 256 - alphaValue;
     			pixelLevel = spritePixels[i++];

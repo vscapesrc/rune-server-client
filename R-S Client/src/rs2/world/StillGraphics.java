@@ -1,8 +1,11 @@
-package rs2;
+package rs2.world;
 
+import rs2.Animable;
+import rs2.FrameHeader;
+import rs2.Model;
 import rs2.config.SpotAnim;
 
-final class StillGraphics extends Animable {
+public final class StillGraphics extends Animable {
 
 	public StillGraphics(int i, int j, int l, int i1, int j1, int k1, int l1) {
 		aBoolean1567 = false;

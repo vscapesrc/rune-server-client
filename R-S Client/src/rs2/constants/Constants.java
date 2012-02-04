@@ -6,6 +6,11 @@ public class Constants {
 	 * The server address you're connecting to.
 	 */
 	public final static String HOST_ADDRESS = "127.0.0.1";
+
+	/**
+	 * The port you're connecting to.
+	 */
+	public final static int PORT = 43594;
 	
 	/**
 	 * Are we connecting to an update server?
@@ -16,6 +21,17 @@ public class Constants {
 	 * Is the text censor on?
 	 */
 	public final static boolean CENSOR_TEXT = false;
+
+	/**
+	 * The time it takes to idle logout.
+	 * Set to -1 to never idle logout.
+	 */
+	public final static int IDLE_LOGOUT_TIME = -1;
+
+	/**
+	 * The client version (default: 317).
+	 */
+	public final static int CLIENT_VERSION = 317;
 
 	/**
 	 * Prayer headicons.

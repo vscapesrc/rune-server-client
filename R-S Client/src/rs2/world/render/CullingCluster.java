@@ -1,4 +1,4 @@
-package rs2.world;
+package rs2.world.render;
 
 public final class CullingCluster {
 

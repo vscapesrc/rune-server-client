@@ -326,6 +326,10 @@ public final class RSImage extends RSDrawingArea {
 		}
 	}
 
+	public void drawCenteredImage(int x, int y) {
+		drawImage(x - (this.myWidth / 2), y - (this.myHeight / 2));
+	}
+
 	public void drawImage(int x, int y) {
 		drawImage(x, y, 256);
 	}
@@ -429,7 +433,7 @@ public final class RSImage extends RSDrawingArea {
 		}
 	}
 
-	public void drawShape(int i, int j, int ai[], int k, int originalPixels[], int i1, int y, int x, int l1, int i2) {
+	public void shapeImageToPixels(int i, int j, int ai[], int k, int originalPixels[], int i1, int y, int x, int l1, int i2) {
 		try {
 			int j2 = -l1 / 2;
 			int k2 = -i / 2;
@@ -581,6 +585,10 @@ public final class RSImage extends RSDrawingArea {
 			i1 += l;
 			k1 += j1;
 		}
+	}
+
+	public void drawCenteredARGBImage(int x, int y) {
+		drawARGBImage(x - (this.myWidth / 2), y - (this.myHeight / 2));
 	}
 
 	public void drawARGBImage(int xPos, int yPos) {

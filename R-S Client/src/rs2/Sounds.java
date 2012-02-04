@@ -1,9 +1,5 @@
 package rs2;
 
-// Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
-
 final class Sounds {
 
 	private Sounds() {
@@ -12,22 +8,23 @@ final class Sounds {
 
 	public static void unpack(ByteBuffer stream) {
 		aByteArray327 = new byte[0x6baa8];
-		aStream_328 = new ByteBuffer(aByteArray327);
+		buffer = new ByteBuffer(aByteArray327);
 		SoundTrack.initialize();
 		do {
 			int j = stream.getShort();
-			if (j == 65535)
+			if (j == 65535) {
 				return;
-			aSoundsArray325s[j] = new Sounds();
-			aSoundsArray325s[j].method242(stream);
-			anIntArray326[j] = aSoundsArray325s[j].method243();
+			}
+			sounds[j] = new Sounds();
+			sounds[j].method242(stream);
+			anIntArray326[j] = sounds[j].method243();
 		} while (true);
 	}
 
-	public static ByteBuffer method241(int i, int j) {
-		if (aSoundsArray325s[j] != null) {
-			Sounds sounds = aSoundsArray325s[j];
-			return sounds.method244(i);
+	public static ByteBuffer getSoundBuffer(int i, int id) {
+		if (sounds[id] != null) {
+			Sounds sound = sounds[id];
+			return sound.method244(i);
 		} else {
 			return null;
 		}
@@ -70,22 +67,22 @@ final class Sounds {
 
 	private ByteBuffer method244(int i) {
 		int k = method245(i);
-		aStream_328.offset = 0;
-		aStream_328.putInt(0x52494646);
-		aStream_328.method403(36 + k);
-		aStream_328.putInt(0x57415645);
-		aStream_328.putInt(0x666d7420);
-		aStream_328.method403(16);
-		aStream_328.method400(1);
-		aStream_328.method400(1);
-		aStream_328.method403(22050);
-		aStream_328.method403(22050);
-		aStream_328.method400(1);
-		aStream_328.method400(8);
-		aStream_328.putInt(0x64617461);
-		aStream_328.method403(k);
-		aStream_328.offset += k;
-		return aStream_328;
+		buffer.offset = 0;
+		buffer.putInt(0x52494646);
+		buffer.method403(36 + k);
+		buffer.putInt(0x57415645);
+		buffer.putInt(0x666d7420);
+		buffer.method403(16);
+		buffer.method400(1);
+		buffer.method400(1);
+		buffer.method403(22050);
+		buffer.method403(22050);
+		buffer.method400(1);
+		buffer.method400(8);
+		buffer.putInt(0x64617461);
+		buffer.method403(k);
+		buffer.offset += k;
+		return buffer;
 	}
 
 	private int method245(int i) {
@@ -138,10 +135,10 @@ final class Sounds {
 		return k1;
 	}
 
-	private static final Sounds[] aSoundsArray325s = new Sounds[5000];
+	private static final Sounds[] sounds = new Sounds[5000];
 	public static final int[] anIntArray326 = new int[5000];
 	private static byte[] aByteArray327;
-	private static ByteBuffer aStream_328;
+	private static ByteBuffer buffer;
 	private final SoundTrack[] aClass6Array329;
 	private int anInt330;
 	private int anInt331;

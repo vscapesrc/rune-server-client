@@ -3,22 +3,22 @@ package rs2;
 public final class BZip2InputStream {
 
 	public static int resetAndRead(byte decompressedData[], int fileSize, byte rawData[], int length, int fileStart) {
-		synchronized (archiveInfo) {
-			archiveInfo.rawData = rawData;
-			archiveInfo.fileStart = fileStart;
-			archiveInfo.decompressedData = decompressedData;
-			archiveInfo.anInt569 = 0;
-			archiveInfo.fileLength = length;
-			archiveInfo.fileSize = fileSize;
-			archiveInfo.bitPosition = 0;
-			archiveInfo.current2Bytes = 0;
-			archiveInfo.dummy2 = 0;
-			archiveInfo.dummy3 = 0;
-			archiveInfo.anInt571 = 0;
-			archiveInfo.anInt572 = 0;
-			archiveInfo.anInt579 = 0;
-			readNextFile(archiveInfo);
-			fileSize -= archiveInfo.fileSize;
+		synchronized (bzip2Block) {
+			bzip2Block.rawData = rawData;
+			bzip2Block.fileStart = fileStart;
+			bzip2Block.decompressedData = decompressedData;
+			bzip2Block.anInt569 = 0;
+			bzip2Block.fileLength = length;
+			bzip2Block.fileSize = fileSize;
+			bzip2Block.bitPosition = 0;
+			bzip2Block.current2Bytes = 0;
+			bzip2Block.dummy2 = 0;
+			bzip2Block.dummy3 = 0;
+			bzip2Block.anInt571 = 0;
+			bzip2Block.anInt572 = 0;
+			bzip2Block.anInt579 = 0;
+			readNextFile(bzip2Block);
+			fileSize -= bzip2Block.fileSize;
 			return fileSize;
 		}
 	}
@@ -489,6 +489,6 @@ public final class BZip2InputStream {
 		}
 	}
 
-	private static final BZip2Block archiveInfo = new BZip2Block();
+	private static final BZip2Block bzip2Block = new BZip2Block();
 
 }

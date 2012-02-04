@@ -5,6 +5,19 @@ package rs2.constants;
  * @author Galkon
  */
 public class PacketConstants {
+	
+	/**
+	 * The sent instance.
+	 */
+	public static Sent sent = new Sent();
+
+	/**
+	 * Returns the sent instance.
+	 * @return
+	 */
+	public static Sent getSent() {
+		return sent;
+	}
 
 	/**
 	 * The received instance.
@@ -42,6 +55,7 @@ public class PacketConstants {
 		public final int PACKET_171 = 171;
 		public final int SHOW_STRING_INPUT = 187;
 		public final int PACKET_196 = 196;
+		public final int SET_CHAT_MODES = 206;
 		public final int SET_DIALOG_ID = 218;
 		public final int CLOSE_INTERFACES = 219;
 		public final int PACKET_221 = 221;
@@ -51,6 +65,14 @@ public class PacketConstants {
 		public final int SET_OPEN_AND_OVERLAY_INTERFACES = 248;
 		public final int PACKET_249 = 249;
 		public final int PACKET_254 = 254;
+
+	}
+
+	public static class Sent {
+	
+		public final int SEND_CHAT_MODES = 95;
+		public final int IDLE_LOGOUT = 202;
+		public final int DELETE_FRIEND = 215;
 
 	}
 

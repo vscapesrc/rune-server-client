@@ -35,18 +35,18 @@ public final class RSInterface {
 			}
 			RSInterface rsi = cache[k] = new RSInterface();
 			rsi.id = k;
-			rsi.parentID = i;
+			rsi.parentId = i;
 			rsi.type = buffer.getUByte();
 			rsi.actionType = buffer.getUByte();
 			rsi.contentType = buffer.getShort();
 			rsi.width = buffer.getShort();
 			rsi.height = buffer.getShort();
 			rsi.alpha = (byte) buffer.getUByte();
-			rsi.hoverType = buffer.getUByte();
-			if (rsi.hoverType != 0) {
-				rsi.hoverType = (rsi.hoverType - 1 << 8) + buffer.getUByte();
+			rsi.hoverId = buffer.getUByte();
+			if (rsi.hoverId != 0) {
+				rsi.hoverId = (rsi.hoverId - 1 << 8) + buffer.getUByte();
 			} else {
-				rsi.hoverType = -1;
+				rsi.hoverId = -1;
 			}
 			int requiredmentIndex = buffer.getUByte();
 			if (requiredmentIndex > 0) {
@@ -207,7 +207,6 @@ public final class RSInterface {
 			}
 			if (rsi.type == 8) {
 				rsi.disabledText = buffer.getString();
-				System.out.println(rsi.disabledText);
 			}
 			if (rsi.actionType == 1 || rsi.actionType == 4 || rsi.actionType == 5 || rsi.actionType == 6) {
 				rsi.tooltip = buffer.getString();
@@ -333,13 +332,13 @@ public final class RSInterface {
 	public int valueIndexArray[][];
 	public boolean filled;
 	public String enabledText;
-	public int hoverType;
+	public int hoverId;
 	public int invSpritePadX;
 	public int disabledColor;
 	public int disabledMediaType;
 	public int disabledMediaId;
 	public boolean deletesTargetSlot;
-	public int parentID;
+	public int parentId;
 	public int spellUsableOn;
 	private static MemCache spriteNodes;
 	public int enabledHoverColor;
@@ -365,9 +364,9 @@ public final class RSInterface {
 	public RSImage enabledSprite;
 	public int scrollMax;
 	public int type;
-	public int anInt263;
+	public int drawOffsetX;
 	private static final MemCache modelNodes = new MemCache(30);
-	public int anInt265;
+	public int drawOffsetY;
 	public boolean showInterface;
 	public int height;
 	public boolean shadowed;

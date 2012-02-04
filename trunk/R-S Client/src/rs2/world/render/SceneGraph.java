@@ -1,4 +1,4 @@
-package rs2.world;
+package rs2.world.render;
 
 import rs2.Animable;
 import rs2.VertexNormal;
@@ -6,6 +6,10 @@ import rs2.Deque;
 import rs2.Model;
 import rs2.graphics.RSDrawingArea;
 import rs2.graphics.Rasterizer;
+import rs2.world.GroundDecoration;
+import rs2.world.InteractableObject;
+import rs2.world.WallDecoration;
+import rs2.world.WallObject;
 import rs2.world.tile.GroundItemTile;
 import rs2.world.tile.PlainTile;
 import rs2.world.tile.ShapedTile;

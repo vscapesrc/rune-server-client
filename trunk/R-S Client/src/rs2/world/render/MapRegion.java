@@ -1,4 +1,4 @@
-package rs2.world;
+package rs2.world.render;
 import rs2.Animable;
 import rs2.ByteBuffer;
 import rs2.Model;
@@ -7,6 +7,7 @@ import rs2.config.ObjectDef;
 import rs2.graphics.Rasterizer;
 import rs2.resource.ResourceProvider;
 import rs2.util.MapUtility;
+import rs2.world.ObjectOnTile;
 import rs2.world.tile.TileSetting;
 
 public final class MapRegion {

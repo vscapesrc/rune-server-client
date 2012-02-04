@@ -63,8 +63,10 @@ public class Accounts {
 			return null;
 		}
 		for (int index = 0; index < accounts.length; index++) {
-			if (accounts[index].name.equalsIgnoreCase(name)) {
-				return accounts[index];
+			if (accounts[index] != null) {
+				if (accounts[index].name.equalsIgnoreCase(name)) {
+					return accounts[index];
+				}
 			}
 		}
 		return null;
@@ -118,8 +120,12 @@ public class Accounts {
 			uses = Misc.reverse(uses);
 			for (int index = 0; index < accounts.length; index++) {
 				for (int index2 = 0; index2 < uses.length; index2++) {
-					if (accounts[index].uses == uses[index2]) {
-						names[index2] = accounts[index].name;
+					if (accounts[index] != null) {
+						if (accounts[index].uses == uses[index2]) {
+							names[index2] = accounts[index].name;
+						}
+					} else {
+						names[index2] = "";
 					}
 				}
 			}
@@ -141,10 +147,6 @@ public class Accounts {
 			Account[] old = accounts;
 			accounts = new Account[old.length + 1];
 			for (int index = 0; index < accounts.length; index++) {
-				if (accounts[index] == null) {
-					accounts[index] = account;
-					break;
-				}
 				if (index < old.length) {
 					accounts[index] = old[index];
 				} else {

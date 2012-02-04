@@ -30,9 +30,9 @@ public final class IndexedImage extends RSDrawingArea {
 		anInt1454 = stream_1.getUByte();
 		anInt1455 = stream_1.getUByte();
 		myWidth = stream_1.getShort();
-		anInt1453 = stream_1.getShort();
+		myHeight = stream_1.getShort();
 		int i1 = stream_1.getUByte();
-		int j1 = myWidth * anInt1453;
+		int j1 = myWidth * myHeight;
 		myPixels = new byte[j1];
 		if (i1 == 0) {
 			for (int k1 = 0; k1 < j1; k1++)
@@ -42,7 +42,7 @@ public final class IndexedImage extends RSDrawingArea {
 		}
 		if (i1 == 1) {
 			for (int l1 = 0; l1 < myWidth; l1++) {
-				for (int i2 = 0; i2 < anInt1453; i2++)
+				for (int i2 = 0; i2 < myHeight; i2++)
 					myPixels[l1 + i2 * myWidth] = stream
 							.getByte();
 
@@ -56,7 +56,7 @@ public final class IndexedImage extends RSDrawingArea {
 		anInt1457 /= 2;
 		byte abyte0[] = new byte[anInt1456 * anInt1457];
 		int i = 0;
-		for (int j = 0; j < anInt1453; j++) {
+		for (int j = 0; j < myHeight; j++) {
 			for (int k = 0; k < myWidth; k++)
 				abyte0[(k + anInt1454 >> 1) + (j + anInt1455 >> 1) * anInt1456] = myPixels[i++];
 
@@ -64,17 +64,17 @@ public final class IndexedImage extends RSDrawingArea {
 
 		myPixels = abyte0;
 		myWidth = anInt1456;
-		anInt1453 = anInt1457;
+		myHeight = anInt1457;
 		anInt1454 = 0;
 		anInt1455 = 0;
 	}
 
 	public void method357() {
-		if (myWidth == anInt1456 && anInt1453 == anInt1457)
+		if (myWidth == anInt1456 && myHeight == anInt1457)
 			return;
 		byte abyte0[] = new byte[anInt1456 * anInt1457];
 		int i = 0;
-		for (int j = 0; j < anInt1453; j++) {
+		for (int j = 0; j < myHeight; j++) {
 			for (int k = 0; k < myWidth; k++)
 				abyte0[k + anInt1454 + (j + anInt1455) * anInt1456] = myPixels[i++];
 
@@ -82,15 +82,15 @@ public final class IndexedImage extends RSDrawingArea {
 
 		myPixels = abyte0;
 		myWidth = anInt1456;
-		anInt1453 = anInt1457;
+		myHeight = anInt1457;
 		anInt1454 = 0;
 		anInt1455 = 0;
 	}
 
 	public void method358() {
-		byte abyte0[] = new byte[myWidth * anInt1453];
+		byte abyte0[] = new byte[myWidth * myHeight];
 		int j = 0;
-		for (int k = 0; k < anInt1453; k++) {
+		for (int k = 0; k < myHeight; k++) {
 			for (int l = myWidth - 1; l >= 0; l--)
 				abyte0[j++] = myPixels[l + k * myWidth];
 
@@ -101,16 +101,16 @@ public final class IndexedImage extends RSDrawingArea {
 	}
 
 	public void method359() {
-		byte abyte0[] = new byte[myWidth * anInt1453];
+		byte abyte0[] = new byte[myWidth * myHeight];
 		int i = 0;
-		for (int j = anInt1453 - 1; j >= 0; j--) {
+		for (int j = myHeight - 1; j >= 0; j--) {
 			for (int k = 0; k < myWidth; k++)
 				abyte0[i++] = myPixels[k + j * myWidth];
 
 		}
 
 		myPixels = abyte0;
-		anInt1455 = anInt1457 - anInt1453 - anInt1455;
+		anInt1455 = anInt1457 - myHeight - anInt1455;
 	}
 
 	public void method360(int i, int j, int k) {
@@ -142,7 +142,7 @@ public final class IndexedImage extends RSDrawingArea {
 		y += anInt1455;
 		int l = x + y * RSDrawingArea.width;
 		int i1 = 0;
-		int height = anInt1453;
+		int height = myHeight;
 		int width = myWidth;
 		int l1 = RSDrawingArea.width - width;
 		int i2 = 0;
@@ -220,7 +220,7 @@ public final class IndexedImage extends RSDrawingArea {
 	public byte myPixels[];
 	public final int[] anIntArray1451;
 	public int myWidth;
-	public int anInt1453;
+	public int myHeight;
 	public int anInt1454;
 	public int anInt1455;
 	public int anInt1456;

@@ -1,53 +1,53 @@
 package rs2;
 
-public final class FrameHeader {
+public final class FrameReader {
 
 	public static void method528(int i) {
-		frameHeader = new FrameHeader[i + 1];
+		frameReader = new FrameReader[i + 1];
 		aBooleanArray643 = new boolean[i + 1];
 		for (int index = 0; index < i + 1; index++) {
 			aBooleanArray643[index] = true;
 		}
 	}
 
-	public static void method529(byte data[]) {
-		ByteBuffer buffer = new ByteBuffer(data);
+	public static void readSequence(byte data[]) {
+		JagexBuffer buffer = new JagexBuffer(data);
 		buffer.offset = data.length - 8;
-		int i = buffer.getShort();
-		int j = buffer.getShort();
-		int k = buffer.getShort();
-		int l = buffer.getShort();
+		int i = buffer.getUnsignedShort();
+		int j = buffer.getUnsignedShort();
+		int k = buffer.getUnsignedShort();
+		int l = buffer.getUnsignedShort();
 		int i1 = 0;
-		ByteBuffer stream_1 = new ByteBuffer(data);
+		JagexBuffer stream_1 = new JagexBuffer(data);
 		stream_1.offset = i1;
 		i1 += i + 2;
-		ByteBuffer stream_2 = new ByteBuffer(data);
+		JagexBuffer stream_2 = new JagexBuffer(data);
 		stream_2.offset = i1;
 		i1 += j;
-		ByteBuffer stream_3 = new ByteBuffer(data);
+		JagexBuffer stream_3 = new JagexBuffer(data);
 		stream_3.offset = i1;
 		i1 += k;
-		ByteBuffer stream_4 = new ByteBuffer(data);
+		JagexBuffer stream_4 = new JagexBuffer(data);
 		stream_4.offset = i1;
 		i1 += l;
-		ByteBuffer stream_5 = new ByteBuffer(data);
+		JagexBuffer stream_5 = new JagexBuffer(data);
 		stream_5.offset = i1;
 		SkinList skinList = new SkinList(stream_5);
-		int k1 = stream_1.getShort();
+		int k1 = stream_1.getUnsignedShort();
 		int ai[] = new int[500];
 		int ai1[] = new int[500];
 		int ai2[] = new int[500];
 		int ai3[] = new int[500];
 		for (int index = 0; index < k1; index++) {
-			int i2 = stream_1.getShort();
-			FrameHeader frame = frameHeader[i2] = new FrameHeader();
-			frame.anInt636 = stream_4.getUByte();
+			int i2 = stream_1.getUnsignedShort();
+			FrameReader frame = frameReader[i2] = new FrameReader();
+			frame.delay = stream_4.getUnsignedByte();
 			frame.skinList = skinList;
-			int j2 = stream_1.getUByte();
+			int j2 = stream_1.getUnsignedByte();
 			int k2 = -1;
 			int l2 = 0;
 			for (int i3 = 0; i3 < j2; i3++) {
-				int j3 = stream_2.getUByte();
+				int j3 = stream_2.getUnsignedByte();
 				if (j3 > 0) {
 					if (skinList.anIntArray342[i3] != 0) {
 						for (int l3 = i3 - 1; l3 > k2; l3--) {
@@ -68,17 +68,17 @@ public final class FrameHeader {
 						c = '\200';
 					}
 					if ((j3 & 1) != 0) {
-						ai1[l2] = stream_3.method421();
+						ai1[l2] = stream_3.getUnsignedSmart();
 					} else {
 						ai1[l2] = c;
 					}
 					if ((j3 & 2) != 0) {
-						ai2[l2] = stream_3.method421();
+						ai2[l2] = stream_3.getUnsignedSmart();
 					} else {
 						ai2[l2] = c;
 					}
 					if ((j3 & 4) != 0) {
-						ai3[l2] = stream_3.method421();
+						ai3[l2] = stream_3.getUnsignedSmart();
 					} else {
 						ai3[l2] = c;
 					}
@@ -104,14 +104,14 @@ public final class FrameHeader {
 	}
 
 	public static void nullLoader() {
-		frameHeader = null;
+		frameReader = null;
 	}
 
-	public static FrameHeader method531(int id) {
-		if (frameHeader == null) {
+	public static FrameReader getFrames(int id) {
+		if (frameReader == null) {
 			return null;
 		} else {
-			return frameHeader[id];
+			return frameReader[id];
 		}
 	}
 
@@ -119,11 +119,11 @@ public final class FrameHeader {
 		return i == -1;
 	}
 
-	private FrameHeader() {
+	private FrameReader() {
 	}
 
-	private static FrameHeader[] frameHeader;
-	public int anInt636;
+	private static FrameReader[] frameReader;
+	public int delay;
 	public SkinList skinList;
 	public int anInt638;
 	public int anIntArray639[];

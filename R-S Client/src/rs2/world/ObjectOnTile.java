@@ -4,7 +4,7 @@ import rs2.Animable;
 import rs2.Client;
 import rs2.Model;
 import rs2.config.Sequence;
-import rs2.config.ObjectDef;
+import rs2.config.ObjectDefinitions;
 import rs2.config.VarBit;
 
 public final class ObjectOnTile extends Animable {
@@ -30,11 +30,11 @@ public final class ObjectOnTile extends Animable {
 			if (sequence != null)
 				j = sequence.frames[frame];
 		}
-		ObjectDef def;
+		ObjectDefinitions def;
 		if (anIntArray1600 != null)
 			def = method457();
 		else
-			def = ObjectDef.getDef(objectId);
+			def = ObjectDefinitions.getDefinition(objectId);
 		if (def == null) {
 			return null;
 		} else {
@@ -42,7 +42,7 @@ public final class ObjectOnTile extends Animable {
 		}
 	}
 
-	private ObjectDef method457() {
+	private ObjectDefinitions method457() {
 		int i = -1;
 		if (anInt1601 != -1) {
 			VarBit varBit = VarBit.cache[anInt1601];
@@ -56,7 +56,7 @@ public final class ObjectOnTile extends Animable {
 		if (i < 0 || i >= anIntArray1600.length || anIntArray1600[i] == -1)
 			return null;
 		else
-			return ObjectDef.getDef(anIntArray1600[i]);
+			return ObjectDefinitions.getDefinition(anIntArray1600[i]);
 	}
 
 	public ObjectOnTile(int i, int j, int k, int l, int i1, int j1, int k1, int animationId, boolean randomize) {
@@ -76,8 +76,8 @@ public final class ObjectOnTile extends Animable {
 				delay -= (int) (Math.random() * (double) sequence.method258(frame));
 			}
 		}
-		ObjectDef def = ObjectDef.getDef(objectId);
-		anInt1601 = def.anInt774;
+		ObjectDefinitions def = ObjectDefinitions.getDefinition(objectId);
+		anInt1601 = def.varBitChild;
 		anInt1602 = def.anInt749;
 		anIntArray1600 = def.childrenIDs;
 	}

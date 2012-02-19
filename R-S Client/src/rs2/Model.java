@@ -43,22 +43,22 @@ public final class Model extends Animable {
 			class21.modelTextureTriangleCount = 0;
 			return;
 		}
-		ByteBuffer stream = new ByteBuffer(abyte0);
+		JagexBuffer stream = new JagexBuffer(abyte0);
 		stream.offset = abyte0.length - 18;
 		ModelHeader class21_1 = aClass21Array1661[j] = new ModelHeader();
 		class21_1.modelData = abyte0;
-		class21_1.modelVerticeCount = stream.getShort();
-		class21_1.modelTriangleCount = stream.getShort();
-		class21_1.modelTextureTriangleCount = stream.getUByte();
-		int k = stream.getUByte();
-		int l = stream.getUByte();
-		int i1 = stream.getUByte();
-		int j1 = stream.getUByte();
-		int k1 = stream.getUByte();
-		int l1 = stream.getShort();
-		int i2 = stream.getShort();
-		int j2 = stream.getShort();
-		int k2 = stream.getShort();
+		class21_1.modelVerticeCount = stream.getUnsignedShort();
+		class21_1.modelTriangleCount = stream.getUnsignedShort();
+		class21_1.modelTextureTriangleCount = stream.getUnsignedByte();
+		int k = stream.getUnsignedByte();
+		int l = stream.getUnsignedByte();
+		int i1 = stream.getUnsignedByte();
+		int j1 = stream.getUnsignedByte();
+		int k1 = stream.getUnsignedByte();
+		int l1 = stream.getUnsignedShort();
+		int i2 = stream.getUnsignedShort();
+		int j2 = stream.getUnsignedShort();
+		int k2 = stream.getUnsignedShort();
 		int l2 = 0;
 		class21_1.vertexModOffset = l2;
 		l2 += class21_1.modelVerticeCount;
@@ -138,12 +138,12 @@ public final class Model extends Animable {
 	private Model(int i) {
 		aBoolean1659 = false;
 		ModelHeader class21 = aClass21Array1661[i];
-		anInt1626 = class21.modelVerticeCount;
+		totalVertices = class21.modelVerticeCount;
 		triangleCount = class21.modelTriangleCount;
 		anInt1642 = class21.modelTextureTriangleCount;
-		vertexX = new int[anInt1626];
-		vertexY = new int[anInt1626];
-		vertexZ = new int[anInt1626];
+		vertexX = new int[totalVertices];
+		vertexY = new int[totalVertices];
+		vertexZ = new int[totalVertices];
 		triangleA = new int[triangleCount];
 		triangleB = new int[triangleCount];
 		triangleC = new int[triangleCount];
@@ -151,42 +151,42 @@ public final class Model extends Animable {
 		anIntArray1644 = new int[anInt1642];
 		anIntArray1645 = new int[anInt1642];
 		if (class21.vskinBasePos >= 0)
-			anIntArray1655 = new int[anInt1626];
+			anIntArray1655 = new int[totalVertices];
 		if (class21.drawTypeBasePos >= 0)
 			triangleDrawType = new int[triangleCount];
 		if (class21.facePriorityBasePos >= 0)
-			anIntArray1638 = new int[triangleCount];
+			priorities = new int[triangleCount];
 		else
 			anInt1641 = -class21.facePriorityBasePos - 1;
 		if (class21.alphaBasePos >= 0)
-			anIntArray1639 = new int[triangleCount];
+			alpha = new int[triangleCount];
 		if (class21.tskinBasePos >= 0)
 			anIntArray1656 = new int[triangleCount];
-		anIntArray1640 = new int[triangleCount];
-		ByteBuffer stream = new ByteBuffer(class21.modelData);
+		colors = new int[triangleCount];
+		JagexBuffer stream = new JagexBuffer(class21.modelData);
 		stream.offset = class21.vertexModOffset;
-		ByteBuffer stream_1 = new ByteBuffer(class21.modelData);
+		JagexBuffer stream_1 = new JagexBuffer(class21.modelData);
 		stream_1.offset = class21.vertexXOffset;
-		ByteBuffer stream_2 = new ByteBuffer(class21.modelData);
+		JagexBuffer stream_2 = new JagexBuffer(class21.modelData);
 		stream_2.offset = class21.vertexYOffset;
-		ByteBuffer stream_3 = new ByteBuffer(class21.modelData);
+		JagexBuffer stream_3 = new JagexBuffer(class21.modelData);
 		stream_3.offset = class21.vertexZOffset;
-		ByteBuffer stream_4 = new ByteBuffer(class21.modelData);
+		JagexBuffer stream_4 = new JagexBuffer(class21.modelData);
 		stream_4.offset = class21.vskinBasePos;
 		int k = 0;
 		int l = 0;
 		int i1 = 0;
-		for (int j1 = 0; j1 < anInt1626; j1++) {
-			int k1 = stream.getUByte();
+		for (int j1 = 0; j1 < totalVertices; j1++) {
+			int k1 = stream.getUnsignedByte();
 			int i2 = 0;
 			if ((k1 & 1) != 0)
-				i2 = stream_1.method421();
+				i2 = stream_1.getUnsignedSmart();
 			int k2 = 0;
 			if ((k1 & 2) != 0)
-				k2 = stream_2.method421();
+				k2 = stream_2.getUnsignedSmart();
 			int i3 = 0;
 			if ((k1 & 4) != 0)
-				i3 = stream_3.method421();
+				i3 = stream_3.getUnsignedSmart();
 			vertexX[j1] = k + i2;
 			vertexY[j1] = l + k2;
 			vertexZ[j1] = i1 + i3;
@@ -194,7 +194,7 @@ public final class Model extends Animable {
 			l = vertexY[j1];
 			i1 = vertexZ[j1];
 			if (anIntArray1655 != null)
-				anIntArray1655[j1] = stream_4.getUByte();
+				anIntArray1655[j1] = stream_4.getUnsignedByte();
 		}
 
 		stream.offset = class21.triColourOffset;
@@ -202,16 +202,16 @@ public final class Model extends Animable {
 		stream_2.offset = class21.facePriorityBasePos;
 		stream_3.offset = class21.alphaBasePos;
 		stream_4.offset = class21.tskinBasePos;
-		for (int l1 = 0; l1 < triangleCount; l1++) {
-			anIntArray1640[l1] = stream.getShort();
+		for (int color = 0; color < triangleCount; color++) {
+			colors[color] = stream.getUnsignedShort();
 			if (triangleDrawType != null)
-				triangleDrawType[l1] = stream_1.getUByte();
-			if (anIntArray1638 != null)
-				anIntArray1638[l1] = stream_2.getUByte();
-			if (anIntArray1639 != null)
-				anIntArray1639[l1] = stream_3.getUByte();
+				triangleDrawType[color] = stream_1.getUnsignedByte();
+			if (priorities != null)
+				priorities[color] = stream_2.getUnsignedByte();
+			if (alpha != null)
+				alpha[color] = stream_3.getUnsignedByte();
 			if (anIntArray1656 != null)
-				anIntArray1656[l1] = stream_4.getUByte();
+				anIntArray1656[color] = stream_4.getUnsignedByte();
 		}
 
 		stream.offset = class21.triVPointOffset;
@@ -221,13 +221,13 @@ public final class Model extends Animable {
 		int j3 = 0;
 		int k3 = 0;
 		for (int l3 = 0; l3 < triangleCount; l3++) {
-			int i4 = stream_1.getUByte();
+			int i4 = stream_1.getUnsignedByte();
 			if (i4 == 1) {
-				j2 = stream.method421() + k3;
+				j2 = stream.getUnsignedSmart() + k3;
 				k3 = j2;
-				l2 = stream.method421() + k3;
+				l2 = stream.getUnsignedSmart() + k3;
 				k3 = l2;
-				j3 = stream.method421() + k3;
+				j3 = stream.getUnsignedSmart() + k3;
 				k3 = j3;
 				triangleA[l3] = j2;
 				triangleB[l3] = l2;
@@ -235,7 +235,7 @@ public final class Model extends Animable {
 			}
 			if (i4 == 2) {
 				l2 = j3;
-				j3 = stream.method421() + k3;
+				j3 = stream.getUnsignedSmart() + k3;
 				k3 = j3;
 				triangleA[l3] = j2;
 				triangleB[l3] = l2;
@@ -243,7 +243,7 @@ public final class Model extends Animable {
 			}
 			if (i4 == 3) {
 				j2 = j3;
-				j3 = stream.method421() + k3;
+				j3 = stream.getUnsignedSmart() + k3;
 				k3 = j3;
 				triangleA[l3] = j2;
 				triangleB[l3] = l2;
@@ -253,7 +253,7 @@ public final class Model extends Animable {
 				int k4 = j2;
 				j2 = l2;
 				l2 = k4;
-				j3 = stream.method421() + k3;
+				j3 = stream.getUnsignedSmart() + k3;
 				k3 = j3;
 				triangleA[l3] = j2;
 				triangleB[l3] = l2;
@@ -263,9 +263,9 @@ public final class Model extends Animable {
 
 		stream.offset = class21.textureInfoBasePos;
 		for (int j4 = 0; j4 < anInt1642; j4++) {
-			anIntArray1643[j4] = stream.getShort();
-			anIntArray1644[j4] = stream.getShort();
-			anIntArray1645[j4] = stream.getShort();
+			anIntArray1643[j4] = stream.getUnsignedShort();
+			anIntArray1644[j4] = stream.getUnsignedShort();
+			anIntArray1645[j4] = stream.getUnsignedShort();
 		}
 
 	}
@@ -276,18 +276,18 @@ public final class Model extends Animable {
 		boolean flag1 = false;
 		boolean flag2 = false;
 		boolean flag3 = false;
-		anInt1626 = 0;
+		totalVertices = 0;
 		triangleCount = 0;
 		anInt1642 = 0;
 		anInt1641 = -1;
 		for (int k = 0; k < i; k++) {
 			Model model = aclass30_sub2_sub4_sub6s[k];
 			if (model != null) {
-				anInt1626 += model.anInt1626;
+				totalVertices += model.totalVertices;
 				triangleCount += model.triangleCount;
 				anInt1642 += model.anInt1642;
 				flag |= model.triangleDrawType != null;
-				if (model.anIntArray1638 != null) {
+				if (model.priorities != null) {
 					flag1 = true;
 				} else {
 					if (anInt1641 == -1)
@@ -295,15 +295,15 @@ public final class Model extends Animable {
 					if (anInt1641 != model.anInt1641)
 						flag1 = true;
 				}
-				flag2 |= model.anIntArray1639 != null;
+				flag2 |= model.alpha != null;
 				flag3 |= model.anIntArray1656 != null;
 			}
 		}
 
-		vertexX = new int[anInt1626];
-		vertexY = new int[anInt1626];
-		vertexZ = new int[anInt1626];
-		anIntArray1655 = new int[anInt1626];
+		vertexX = new int[totalVertices];
+		vertexY = new int[totalVertices];
+		vertexZ = new int[totalVertices];
+		anIntArray1655 = new int[totalVertices];
 		triangleA = new int[triangleCount];
 		triangleB = new int[triangleCount];
 		triangleC = new int[triangleCount];
@@ -313,13 +313,13 @@ public final class Model extends Animable {
 		if (flag)
 			triangleDrawType = new int[triangleCount];
 		if (flag1)
-			anIntArray1638 = new int[triangleCount];
+			priorities = new int[triangleCount];
 		if (flag2)
-			anIntArray1639 = new int[triangleCount];
+			alpha = new int[triangleCount];
 		if (flag3)
 			anIntArray1656 = new int[triangleCount];
-		anIntArray1640 = new int[triangleCount];
-		anInt1626 = 0;
+		colors = new int[triangleCount];
+		totalVertices = 0;
 		triangleCount = 0;
 		anInt1642 = 0;
 		int l = 0;
@@ -337,18 +337,18 @@ public final class Model extends Animable {
 							triangleDrawType[triangleCount] = k1;
 						}
 					if (flag1)
-						if (model_1.anIntArray1638 == null)
-							anIntArray1638[triangleCount] = model_1.anInt1641;
+						if (model_1.priorities == null)
+							priorities[triangleCount] = model_1.anInt1641;
 						else
-							anIntArray1638[triangleCount] = model_1.anIntArray1638[j1];
+							priorities[triangleCount] = model_1.priorities[j1];
 					if (flag2)
-						if (model_1.anIntArray1639 == null)
-							anIntArray1639[triangleCount] = 0;
+						if (model_1.alpha == null)
+							alpha[triangleCount] = 0;
 						else
-							anIntArray1639[triangleCount] = model_1.anIntArray1639[j1];
+							alpha[triangleCount] = model_1.alpha[j1];
 					if (flag3 && model_1.anIntArray1656 != null)
 						anIntArray1656[triangleCount] = model_1.anIntArray1656[j1];
-					anIntArray1640[triangleCount] = model_1.anIntArray1640[j1];
+					colors[triangleCount] = model_1.colors[j1];
 					triangleA[triangleCount] = method465(model_1,
 							model_1.triangleA[j1]);
 					triangleB[triangleCount] = method465(model_1,
@@ -381,18 +381,18 @@ public final class Model extends Animable {
 		boolean flag2 = false;
 		boolean flag3 = false;
 		boolean flag4 = false;
-		anInt1626 = 0;
+		totalVertices = 0;
 		triangleCount = 0;
 		anInt1642 = 0;
 		anInt1641 = -1;
 		for (int k = 0; k < i; k++) {
 			Model model = aclass30_sub2_sub4_sub6s[k];
 			if (model != null) {
-				anInt1626 += model.anInt1626;
+				totalVertices += model.totalVertices;
 				triangleCount += model.triangleCount;
 				anInt1642 += model.anInt1642;
 				flag1 |= model.triangleDrawType != null;
-				if (model.anIntArray1638 != null) {
+				if (model.priorities != null) {
 					flag2 = true;
 				} else {
 					if (anInt1641 == -1)
@@ -400,14 +400,14 @@ public final class Model extends Animable {
 					if (anInt1641 != model.anInt1641)
 						flag2 = true;
 				}
-				flag3 |= model.anIntArray1639 != null;
-				flag4 |= model.anIntArray1640 != null;
+				flag3 |= model.alpha != null;
+				flag4 |= model.colors != null;
 			}
 		}
 
-		vertexX = new int[anInt1626];
-		vertexY = new int[anInt1626];
-		vertexZ = new int[anInt1626];
+		vertexX = new int[totalVertices];
+		vertexY = new int[totalVertices];
+		vertexZ = new int[totalVertices];
 		triangleA = new int[triangleCount];
 		triangleB = new int[triangleCount];
 		triangleC = new int[triangleCount];
@@ -420,24 +420,24 @@ public final class Model extends Animable {
 		if (flag1)
 			triangleDrawType = new int[triangleCount];
 		if (flag2)
-			anIntArray1638 = new int[triangleCount];
+			priorities = new int[triangleCount];
 		if (flag3)
-			anIntArray1639 = new int[triangleCount];
+			alpha = new int[triangleCount];
 		if (flag4)
-			anIntArray1640 = new int[triangleCount];
-		anInt1626 = 0;
+			colors = new int[triangleCount];
+		totalVertices = 0;
 		triangleCount = 0;
 		anInt1642 = 0;
 		int i1 = 0;
 		for (int j1 = 0; j1 < i; j1++) {
 			Model model_1 = aclass30_sub2_sub4_sub6s[j1];
 			if (model_1 != null) {
-				int k1 = anInt1626;
-				for (int l1 = 0; l1 < model_1.anInt1626; l1++) {
-					vertexX[anInt1626] = model_1.vertexX[l1];
-					vertexY[anInt1626] = model_1.vertexY[l1];
-					vertexZ[anInt1626] = model_1.vertexZ[l1];
-					anInt1626++;
+				int k1 = totalVertices;
+				for (int l1 = 0; l1 < model_1.totalVertices; l1++) {
+					vertexX[totalVertices] = model_1.vertexX[l1];
+					vertexY[totalVertices] = model_1.vertexY[l1];
+					vertexZ[totalVertices] = model_1.vertexZ[l1];
+					totalVertices++;
 				}
 
 				for (int i2 = 0; i2 < model_1.triangleCount; i2++) {
@@ -457,17 +457,17 @@ public final class Model extends Animable {
 							triangleDrawType[triangleCount] = j2;
 						}
 					if (flag2)
-						if (model_1.anIntArray1638 == null)
-							anIntArray1638[triangleCount] = model_1.anInt1641;
+						if (model_1.priorities == null)
+							priorities[triangleCount] = model_1.anInt1641;
 						else
-							anIntArray1638[triangleCount] = model_1.anIntArray1638[i2];
+							priorities[triangleCount] = model_1.priorities[i2];
 					if (flag3)
-						if (model_1.anIntArray1639 == null)
-							anIntArray1639[triangleCount] = 0;
+						if (model_1.alpha == null)
+							alpha[triangleCount] = 0;
 						else
-							anIntArray1639[triangleCount] = model_1.anIntArray1639[i2];
-					if (flag4 && model_1.anIntArray1640 != null)
-						anIntArray1640[triangleCount] = model_1.anIntArray1640[i2];
+							alpha[triangleCount] = model_1.alpha[i2];
+					if (flag4 && model_1.colors != null)
+						colors[triangleCount] = model_1.colors[i2];
 					triangleCount++;
 				}
 
@@ -487,7 +487,7 @@ public final class Model extends Animable {
 
 	public Model(boolean flag, boolean flag1, boolean flag2, Model model) {
 		aBoolean1659 = false;
-		anInt1626 = model.anInt1626;
+		totalVertices = model.totalVertices;
 		triangleCount = model.triangleCount;
 		anInt1642 = model.anInt1642;
 		if (flag2) {
@@ -495,10 +495,10 @@ public final class Model extends Animable {
 			vertexY = model.vertexY;
 			vertexZ = model.vertexZ;
 		} else {
-			vertexX = new int[anInt1626];
-			vertexY = new int[anInt1626];
-			vertexZ = new int[anInt1626];
-			for (int j = 0; j < anInt1626; j++) {
+			vertexX = new int[totalVertices];
+			vertexY = new int[totalVertices];
+			vertexZ = new int[totalVertices];
+			for (int j = 0; j < totalVertices; j++) {
 				vertexX[j] = model.vertexX[j];
 				vertexY[j] = model.vertexY[j];
 				vertexZ[j] = model.vertexZ[j];
@@ -506,23 +506,21 @@ public final class Model extends Animable {
 
 		}
 		if (flag) {
-			anIntArray1640 = model.anIntArray1640;
+			colors = model.colors;
 		} else {
-			anIntArray1640 = new int[triangleCount];
-			System.arraycopy(model.anIntArray1640, 0, anIntArray1640, 0,
-					triangleCount);
-
+			colors = new int[triangleCount];
+			System.arraycopy(model.colors, 0, colors, 0, triangleCount);
 		}
 		if (flag1) {
-			anIntArray1639 = model.anIntArray1639;
+			alpha = model.alpha;
 		} else {
-			anIntArray1639 = new int[triangleCount];
-			if (model.anIntArray1639 == null) {
+			alpha = new int[triangleCount];
+			if (model.alpha == null) {
 				for (int l = 0; l < triangleCount; l++)
-					anIntArray1639[l] = 0;
+					alpha[l] = 0;
 
 			} else {
-				System.arraycopy(model.anIntArray1639, 0, anIntArray1639, 0,
+				System.arraycopy(model.alpha, 0, alpha, 0,
 						triangleCount);
 
 			}
@@ -533,7 +531,7 @@ public final class Model extends Animable {
 		triangleA = model.triangleA;
 		triangleB = model.triangleB;
 		triangleC = model.triangleC;
-		anIntArray1638 = model.anIntArray1638;
+		priorities = model.priorities;
 		anInt1641 = model.anInt1641;
 		anIntArray1643 = model.anIntArray1643;
 		anIntArray1644 = model.anIntArray1644;
@@ -542,13 +540,13 @@ public final class Model extends Animable {
 
 	public Model(boolean flag, boolean flag1, Model model) {
 		aBoolean1659 = false;
-		anInt1626 = model.anInt1626;
+		totalVertices = model.totalVertices;
 		triangleCount = model.triangleCount;
 		anInt1642 = model.anInt1642;
 		if (flag) {
-			vertexY = new int[anInt1626];
+			vertexY = new int[totalVertices];
 			System.arraycopy(model.vertexY, 0, vertexY, 0,
-					anInt1626);
+					totalVertices);
 
 		} else {
 			vertexY = model.vertexY;
@@ -569,18 +567,16 @@ public final class Model extends Animable {
 					triangleDrawType[l] = 0;
 
 			} else {
-				System.arraycopy(model.triangleDrawType, 0, triangleDrawType, 0,
-						triangleCount);
-
+				System.arraycopy(model.triangleDrawType, 0, triangleDrawType, 0, triangleCount);
 			}
-			super.vertexNormals = new VertexNormal[anInt1626];
-			for (int j1 = 0; j1 < anInt1626; j1++) {
-				VertexNormal class33 = super.vertexNormals[j1] = new VertexNormal();
-				VertexNormal class33_1 = model.vertexNormals[j1];
-				class33.x = class33_1.x;
-				class33.y = class33_1.y;
-				class33.z = class33_1.z;
-				class33.magnitude = class33_1.magnitude;
+			super.vertexNormals = new VertexNormal[totalVertices];
+			for (int index = 0; index < totalVertices; index++) {
+				VertexNormal vertex = super.vertexNormals[index] = new VertexNormal();
+				VertexNormal vertex_1 = model.vertexNormals[index];
+				vertex.x = vertex_1.x;
+				vertex.y = vertex_1.y;
+				vertex.z = vertex_1.z;
+				vertex.magnitude = vertex_1.magnitude;
 			}
 
 			vertexNormalOffset = model.vertexNormalOffset;
@@ -592,9 +588,9 @@ public final class Model extends Animable {
 		}
 		vertexX = model.vertexX;
 		vertexZ = model.vertexZ;
-		anIntArray1640 = model.anIntArray1640;
-		anIntArray1639 = model.anIntArray1639;
-		anIntArray1638 = model.anIntArray1638;
+		colors = model.colors;
+		alpha = model.alpha;
+		priorities = model.priorities;
 		anInt1641 = model.anInt1641;
 		triangleA = model.triangleA;
 		triangleB = model.triangleB;
@@ -614,42 +610,42 @@ public final class Model extends Animable {
 	}
 
 	public void method464(Model model, boolean flag) {
-		anInt1626 = model.anInt1626;
+		totalVertices = model.totalVertices;
 		triangleCount = model.triangleCount;
 		anInt1642 = model.anInt1642;
-		if (anIntArray1622.length < anInt1626) {
-			anIntArray1622 = new int[anInt1626 + 100];
-			anIntArray1623 = new int[anInt1626 + 100];
-			anIntArray1624 = new int[anInt1626 + 100];
+		if (anIntArray1622.length < totalVertices) {
+			anIntArray1622 = new int[totalVertices + 100];
+			anIntArray1623 = new int[totalVertices + 100];
+			anIntArray1624 = new int[totalVertices + 100];
 		}
 		vertexX = anIntArray1622;
 		vertexY = anIntArray1623;
 		vertexZ = anIntArray1624;
-		for (int k = 0; k < anInt1626; k++) {
+		for (int k = 0; k < totalVertices; k++) {
 			vertexX[k] = model.vertexX[k];
 			vertexY[k] = model.vertexY[k];
 			vertexZ[k] = model.vertexZ[k];
 		}
 
 		if (flag) {
-			anIntArray1639 = model.anIntArray1639;
+			alpha = model.alpha;
 		} else {
 			if (anIntArray1625.length < triangleCount)
 				anIntArray1625 = new int[triangleCount + 100];
-			anIntArray1639 = anIntArray1625;
-			if (model.anIntArray1639 == null) {
+			alpha = anIntArray1625;
+			if (model.alpha == null) {
 				for (int l = 0; l < triangleCount; l++)
-					anIntArray1639[l] = 0;
+					alpha[l] = 0;
 
 			} else {
-				System.arraycopy(model.anIntArray1639, 0, anIntArray1639, 0,
+				System.arraycopy(model.alpha, 0, alpha, 0,
 						triangleCount);
 
 			}
 		}
 		triangleDrawType = model.triangleDrawType;
-		anIntArray1640 = model.anIntArray1640;
-		anIntArray1638 = model.anIntArray1638;
+		colors = model.colors;
+		priorities = model.priorities;
 		anInt1641 = model.anInt1641;
 		anIntArrayArray1658 = model.anIntArrayArray1658;
 		anIntArrayArray1657 = model.anIntArrayArray1657;
@@ -669,7 +665,7 @@ public final class Model extends Animable {
 		int k = model.vertexX[i];
 		int l = model.vertexY[i];
 		int i1 = model.vertexZ[i];
-		for (int j1 = 0; j1 < anInt1626; j1++) {
+		for (int j1 = 0; j1 < totalVertices; j1++) {
 			if (k != vertexX[j1] || l != vertexY[j1]
 					|| i1 != vertexZ[j1])
 				continue;
@@ -678,12 +674,12 @@ public final class Model extends Animable {
 		}
 
 		if (j == -1) {
-			vertexX[anInt1626] = k;
-			vertexY[anInt1626] = l;
-			vertexZ[anInt1626] = i1;
+			vertexX[totalVertices] = k;
+			vertexY[totalVertices] = l;
+			vertexZ[totalVertices] = i1;
 			if (model.anIntArray1655 != null)
-				anIntArray1655[anInt1626] = model.anIntArray1655[i];
-			j = anInt1626++;
+				anIntArray1655[totalVertices] = model.anIntArray1655[i];
+			j = totalVertices++;
 		}
 		return j;
 	}
@@ -692,7 +688,7 @@ public final class Model extends Animable {
 		super.modelHeight = 0;
 		anInt1650 = 0;
 		maxY = 0;
-		for (int i = 0; i < anInt1626; i++) {
+		for (int i = 0; i < totalVertices; i++) {
 			int j = vertexX[i];
 			int k = vertexY[i];
 			int l = vertexZ[i];
@@ -715,7 +711,7 @@ public final class Model extends Animable {
 	public void method467() {
 		super.modelHeight = 0;
 		maxY = 0;
-		for (int i = 0; i < anInt1626; i++) {
+		for (int i = 0; i < totalVertices; i++) {
 			int j = vertexY[i];
 			if (-j > super.modelHeight)
 				super.modelHeight = -j;
@@ -738,7 +734,7 @@ public final class Model extends Animable {
 		maxX = 0xfff0bdc1;
 		maxZ = 0xfffe7961;
 		minZ = 0x1869f;
-		for (int j = 0; j < anInt1626; j++) {
+		for (int j = 0; j < totalVertices; j++) {
 			int k = vertexX[j];
 			int l = vertexY[j];
 			int i1 = vertexZ[j];
@@ -771,7 +767,7 @@ public final class Model extends Animable {
 		if (anIntArray1655 != null) {
 			int ai[] = new int[256];
 			int j = 0;
-			for (int l = 0; l < anInt1626; l++) {
+			for (int l = 0; l < totalVertices; l++) {
 				int j1 = anIntArray1655[l];
 				ai[j1]++;
 				if (j1 > j)
@@ -784,7 +780,7 @@ public final class Model extends Animable {
 				ai[k1] = 0;
 			}
 
-			for (int j2 = 0; j2 < anInt1626; j2++) {
+			for (int j2 = 0; j2 < totalVertices; j2++) {
 				int l2 = anIntArray1655[j2];
 				anIntArrayArray1657[l2][ai[l2]++] = j2;
 			}
@@ -821,7 +817,7 @@ public final class Model extends Animable {
 			return;
 		if (i == -1)
 			return;
-		FrameHeader class36 = FrameHeader.method531(i);
+		FrameReader class36 = FrameReader.getFrames(i);
 		if (class36 == null)
 			return;
 		SkinList class18 = class36.skinList;
@@ -844,10 +840,10 @@ public final class Model extends Animable {
 			method470(k);
 			return;
 		}
-		FrameHeader class36 = FrameHeader.method531(k);
+		FrameReader class36 = FrameReader.getFrames(k);
 		if (class36 == null)
 			return;
-		FrameHeader class36_1 = FrameHeader.method531(j);
+		FrameReader class36_1 = FrameReader.getFrames(j);
 		if (class36_1 == null) {
 			method470(k);
 			return;
@@ -1012,18 +1008,18 @@ public final class Model extends Animable {
 
 			return;
 		}
-		if (i == 5 && anIntArrayArray1658 != null && anIntArray1639 != null) {
+		if (i == 5 && anIntArrayArray1658 != null && alpha != null) {
 			for (int j2 = 0; j2 < i1; j2++) {
 				int k3 = ai[j2];
 				if (k3 < anIntArrayArray1658.length) {
 					int ai4[] = anIntArrayArray1658[k3];
 					for (int l4 = 0; l4 < ai4.length; l4++) {
 						int i6 = ai4[l4];
-						anIntArray1639[i6] += j * 8;
-						if (anIntArray1639[i6] < 0)
-							anIntArray1639[i6] = 0;
-						if (anIntArray1639[i6] > 255)
-							anIntArray1639[i6] = 255;
+						alpha[i6] += j * 8;
+						if (alpha[i6] < 0)
+							alpha[i6] = 0;
+						if (alpha[i6] > 255)
+							alpha[i6] = 255;
 					}
 
 				}
@@ -1033,7 +1029,7 @@ public final class Model extends Animable {
 	}
 
 	public void method473() {
-		for (int j = 0; j < anInt1626; j++) {
+		for (int j = 0; j < totalVertices; j++) {
 			int k = vertexX[j];
 			vertexX[j] = vertexZ[j];
 			vertexZ[j] = -k;
@@ -1044,7 +1040,7 @@ public final class Model extends Animable {
 	public void method474(int i) {
 		int k = SINE[i];
 		int l = COSINE[i];
-		for (int i1 = 0; i1 < anInt1626; i1++) {
+		for (int i1 = 0; i1 < totalVertices; i1++) {
 			int j1 = vertexY[i1] * l - vertexZ[i1] * k >> 16;
 			vertexZ[i1] = vertexY[i1] * k + vertexZ[i1]
 					* l >> 16;
@@ -1053,39 +1049,39 @@ public final class Model extends Animable {
 	}
 
 	public void method475(int i, int j, int l) {
-		for (int i1 = 0; i1 < anInt1626; i1++) {
-			vertexX[i1] += i;
-			vertexY[i1] += j;
-			vertexZ[i1] += l;
+		for (int vertex = 0; vertex < totalVertices; vertex++) {
+			vertexX[vertex] += i;
+			vertexY[vertex] += j;
+			vertexZ[vertex] += l;
 		}
 
 	}
 
 	public void changeModelColors(int i, int j) {
-		for (int k = 0; k < triangleCount; k++)
-			if (anIntArray1640[k] == i)
-				anIntArray1640[k] = j;
-
+		for (int color = 0; color < triangleCount; color++) {
+			if (colors[color] == i) {
+				colors[color] = j;
+			}
+		}
 	}
 
 	public void method477() {
-		for (int j = 0; j < anInt1626; j++)
-			vertexZ[j] = -vertexZ[j];
-
-		for (int k = 0; k < triangleCount; k++) {
-			int l = triangleA[k];
-			triangleA[k] = triangleC[k];
-			triangleC[k] = l;
+		for (int vertex = 0; vertex < totalVertices; vertex++) {
+			vertexZ[vertex] = -vertexZ[vertex];
+		}
+		for (int triangle = 0; triangle < triangleCount; triangle++) {
+			int l = triangleA[triangle];
+			triangleA[triangle] = triangleC[triangle];
+			triangleC[triangle] = l;
 		}
 	}
 
-	public void method478(int i, int j, int l) {
-		for (int i1 = 0; i1 < anInt1626; i1++) {
-			vertexX[i1] = (vertexX[i1] * i) / 128;
-			vertexY[i1] = (vertexY[i1] * l) / 128;
-			vertexZ[i1] = (vertexZ[i1] * j) / 128;
+	public void scaleModel(int scaleX, int scaleY, int scaleZ) {
+		for (int vertex = 0; vertex < totalVertices; vertex++) {
+			vertexX[vertex] = (vertexX[vertex] * scaleX) / 128;
+			vertexY[vertex] = (vertexY[vertex] * scaleY) / 128;
+			vertexZ[vertex] = (vertexZ[vertex] * scaleZ) / 128;
 		}
-
 	}
 
 	public void method479(int i, int j, int k, int l, int i1, boolean flag) {
@@ -1097,8 +1093,8 @@ public final class Model extends Animable {
 			anIntArray1636 = new int[triangleCount];
 		}
 		if (super.vertexNormals == null) {
-			super.vertexNormals = new VertexNormal[anInt1626];
-			for (int l1 = 0; l1 < anInt1626; l1++)
+			super.vertexNormals = new VertexNormal[totalVertices];
+			for (int l1 = 0; l1 < totalVertices; l1++)
 				super.vertexNormals[l1] = new VertexNormal();
 
 		}
@@ -1128,39 +1124,38 @@ public final class Model extends Animable {
 			i5 = (i5 * 256) / k5;
 			j5 = (j5 * 256) / k5;
 			if (triangleDrawType == null || (triangleDrawType[i2] & 1) == 0) {
-				VertexNormal class33_2 = super.vertexNormals[j2];
-				class33_2.x += l4;
-				class33_2.y += i5;
-				class33_2.z += j5;
-				class33_2.magnitude++;
-				class33_2 = super.vertexNormals[l2];
-				class33_2.x += l4;
-				class33_2.y += i5;
-				class33_2.z += j5;
-				class33_2.magnitude++;
-				class33_2 = super.vertexNormals[i3];
-				class33_2.x += l4;
-				class33_2.y += i5;
-				class33_2.z += j5;
-				class33_2.magnitude++;
+				VertexNormal vertex = super.vertexNormals[j2];
+				vertex.x += l4;
+				vertex.y += i5;
+				vertex.z += j5;
+				vertex.magnitude++;
+				vertex = super.vertexNormals[l2];
+				vertex.x += l4;
+				vertex.y += i5;
+				vertex.z += j5;
+				vertex.magnitude++;
+				vertex = super.vertexNormals[i3];
+				vertex.x += l4;
+				vertex.y += i5;
+				vertex.z += j5;
+				vertex.magnitude++;
 			} else {
 				int l5 = i + (k * l4 + l * i5 + i1 * j5) / (k1 + k1 / 2);
-				anIntArray1634[i2] = method481(anIntArray1640[i2], l5,
-						triangleDrawType[i2]);
+				anIntArray1634[i2] = method481(colors[i2], l5, triangleDrawType[i2]);
 			}
 		}
 
 		if (flag) {
 			doShading(i, k1, k, l, i1);
 		} else {
-			vertexNormalOffset = new VertexNormal[anInt1626];
-			for (int k2 = 0; k2 < anInt1626; k2++) {
-				VertexNormal class33 = super.vertexNormals[k2];
-				VertexNormal class33_1 = vertexNormalOffset[k2] = new VertexNormal();
-				class33_1.x = class33.x;
-				class33_1.y = class33.y;
-				class33_1.z = class33.z;
-				class33_1.magnitude = class33.magnitude;
+			vertexNormalOffset = new VertexNormal[totalVertices];
+			for (int k2 = 0; k2 < totalVertices; k2++) {
+				VertexNormal vertex = super.vertexNormals[k2];
+				VertexNormal vertex_1 = vertexNormalOffset[k2] = new VertexNormal();
+				vertex_1.x = vertex.x;
+				vertex_1.y = vertex.y;
+				vertex_1.z = vertex.z;
+				vertex_1.magnitude = vertex.magnitude;
 			}
 
 		}
@@ -1177,57 +1172,42 @@ public final class Model extends Animable {
 			int i2 = triangleB[j1];
 			int j2 = triangleC[j1];
 			if (triangleDrawType == null) {
-				int i3 = anIntArray1640[j1];
-				VertexNormal class33 = super.vertexNormals[k1];
-				int k2 = i
-						+ (k * class33.x + l * class33.y + i1
-								* class33.z) / (j * class33.magnitude);
+				int i3 = colors[j1];
+				VertexNormal vertex = super.vertexNormals[k1];
+				int k2 = i + (k * vertex.x + l * vertex.y + i1 * vertex.z) / (j * vertex.magnitude);
 				anIntArray1634[j1] = method481(i3, k2, 0);
-				class33 = super.vertexNormals[i2];
-				k2 = i
-						+ (k * class33.x + l * class33.y + i1
-								* class33.z) / (j * class33.magnitude);
+				vertex = super.vertexNormals[i2];
+				k2 = i + (k * vertex.x + l * vertex.y + i1 * vertex.z) / (j * vertex.magnitude);
 				anIntArray1635[j1] = method481(i3, k2, 0);
-				class33 = super.vertexNormals[j2];
-				k2 = i
-						+ (k * class33.x + l * class33.y + i1
-								* class33.z) / (j * class33.magnitude);
+				vertex = super.vertexNormals[j2];
+				k2 = i + (k * vertex.x + l * vertex.y + i1 * vertex.z) / (j * vertex.magnitude);
 				anIntArray1636[j1] = method481(i3, k2, 0);
 			} else if ((triangleDrawType[j1] & 1) == 0) {
-				int j3 = anIntArray1640[j1];
+				int j3 = colors[j1];
 				int k3 = triangleDrawType[j1];
-				VertexNormal class33_1 = super.vertexNormals[k1];
-				int l2 = i
-						+ (k * class33_1.x + l * class33_1.y + i1
-								* class33_1.z)
-						/ (j * class33_1.magnitude);
+				VertexNormal vertex = super.vertexNormals[k1];
+				int l2 = i + (k * vertex.x + l * vertex.y + i1 * vertex.z) / (j * vertex.magnitude);
 				anIntArray1634[j1] = method481(j3, l2, k3);
-				class33_1 = super.vertexNormals[i2];
-				l2 = i
-						+ (k * class33_1.x + l * class33_1.y + i1
-								* class33_1.z)
-						/ (j * class33_1.magnitude);
+				vertex = super.vertexNormals[i2];
+				l2 = i + (k * vertex.x + l * vertex.y + i1 * vertex.z) / (j * vertex.magnitude);
 				anIntArray1635[j1] = method481(j3, l2, k3);
-				class33_1 = super.vertexNormals[j2];
-				l2 = i
-						+ (k * class33_1.x + l * class33_1.y + i1
-								* class33_1.z)
-						/ (j * class33_1.magnitude);
+				vertex = super.vertexNormals[j2];
+				l2 = i + (k * vertex.x + l * vertex.y + i1 * vertex.z) / (j * vertex.magnitude);
 				anIntArray1636[j1] = method481(j3, l2, k3);
 			}
 		}
-
 		super.vertexNormals = null;
 		vertexNormalOffset = null;
 		anIntArray1655 = null;
 		anIntArray1656 = null;
 		if (triangleDrawType != null) {
-			for (int l1 = 0; l1 < triangleCount; l1++)
-				if ((triangleDrawType[l1] & 2) == 2)
+			for (int triangle = 0; triangle < triangleCount; triangle++) {
+				if ((triangleDrawType[triangle] & 2) == 2) {
 					return;
-
+				}
+			}
 		}
-		anIntArray1640 = null;
+		colors = null;
 	}
 
 	private static int method481(int i, int j, int k) {
@@ -1260,10 +1240,10 @@ public final class Model extends Animable {
 		int l3 = SINE[l];
 		int i4 = COSINE[l];
 		int j4 = j1 * l3 + k1 * i4 >> 16;
-		for (int k4 = 0; k4 < anInt1626; k4++) {
-			int l4 = vertexX[k4];
-			int i5 = vertexY[k4];
-			int j5 = vertexZ[k4];
+		for (int index = 0; index < totalVertices; index++) {
+			int l4 = vertexX[index];
+			int i5 = vertexY[index];
+			int j5 = vertexZ[index];
 			if (k != 0) {
 				int k5 = i5 * j3 + l4 * k3 >> 16;
 				i5 = i5 * k3 - l4 * j3 >> 16;
@@ -1285,16 +1265,15 @@ public final class Model extends Animable {
 			int j6 = i5 * i4 - j5 * l3 >> 16;
 			j5 = i5 * l3 + j5 * i4 >> 16;
 			i5 = j6;
-			anIntArray1667[k4] = j5 - j4;
-			anIntArray1665[k4] = l1 + (l4 << 9) / j5;
-			anIntArray1666[k4] = i2 + (i5 << 9) / j5;
+			anIntArray1667[index] = j5 - j4;
+			anIntArray1665[index] = l1 + (l4 << 9) / j5;
+			anIntArray1666[index] = i2 + (i5 << 9) / j5;
 			if (anInt1642 > 0) {
-				anIntArray1668[k4] = l4;
-				anIntArray1669[k4] = i5;
-				anIntArray1670[k4] = j5;
+				anIntArray1668[index] = l4;
+				anIntArray1669[index] = i5;
+				anIntArray1670[index] = j5;
 			}
 		}
-
 		try {
 			method483(false, false, 0);
 		} catch (Exception _ex) {
@@ -1364,7 +1343,7 @@ public final class Model extends Animable {
 			l6 = SINE[i];
 			i7 = COSINE[i];
 		}
-		for (int j7 = 0; j7 < anInt1626; j7++) {
+		for (int j7 = 0; j7 < totalVertices; j7++) {
 			int k7 = vertexX[j7];
 			int l7 = vertexY[j7];
 			int i8 = vertexZ[j7];
@@ -1443,7 +1422,7 @@ public final class Model extends Animable {
 				}
 			}
 
-		if (anIntArray1638 == null) {
+		if (priorities == null) {
 			for (int i1 = anInt1652 - 1; i1 >= 0; i1--) {
 				int l1 = anIntArray1671[i1];
 				if (l1 > 0) {
@@ -1467,7 +1446,7 @@ public final class Model extends Animable {
 				int ai1[] = anIntArrayArray1672[i2];
 				for (int i4 = 0; i4 < k2; i4++) {
 					int l4 = ai1[i4];
-					int l5 = anIntArray1638[l4];
+					int l5 = priorities[l4];
 					int j6 = anIntArray1673[l5]++;
 					anIntArrayArray1674[l5][j6] = l4;
 					if (l5 < 10)
@@ -1579,10 +1558,10 @@ public final class Model extends Animable {
 		int k = triangleB[i];
 		int l = triangleC[i];
 		Rasterizer.restrictEdges = aBooleanArray1663[i];
-		if (anIntArray1639 == null)
+		if (alpha == null)
 			Rasterizer.alpha = 0;
 		else
-			Rasterizer.alpha = anIntArray1639[i];
+			Rasterizer.alpha = alpha[i];
 		int i1;
 		if (triangleDrawType == null)
 			i1 = 0;
@@ -1612,7 +1591,7 @@ public final class Model extends Animable {
 					anIntArray1636[i], anIntArray1668[l1], anIntArray1668[j2],
 					anIntArray1668[l2], anIntArray1669[l1], anIntArray1669[j2],
 					anIntArray1669[l2], anIntArray1670[l1], anIntArray1670[j2],
-					anIntArray1670[l2], anIntArray1640[i]);
+					anIntArray1670[l2], colors[i]);
 			return;
 		}
 		if (i1 == 3) {
@@ -1626,7 +1605,7 @@ public final class Model extends Animable {
 					anIntArray1634[i], anIntArray1668[i2], anIntArray1668[k2],
 					anIntArray1668[i3], anIntArray1669[i2], anIntArray1669[k2],
 					anIntArray1669[i3], anIntArray1670[i2], anIntArray1670[k2],
-					anIntArray1670[i3], anIntArray1640[i]);
+					anIntArray1670[i3], colors[i]);
 		}
 	}
 
@@ -1769,7 +1748,7 @@ public final class Model extends Animable {
 							anIntArray1669[k9], anIntArray1669[k10],
 							anIntArray1669[k11], anIntArray1670[k9],
 							anIntArray1670[k10], anIntArray1670[k11],
-							anIntArray1640[i]);
+							colors[i]);
 				} else if (l7 == 3) {
 					int k8 = triangleDrawType[i] >> 2;
 					int l9 = anIntArray1643[k8];
@@ -1782,7 +1761,7 @@ public final class Model extends Animable {
 							anIntArray1669[l9], anIntArray1669[l10],
 							anIntArray1669[l11], anIntArray1670[l9],
 							anIntArray1670[l10], anIntArray1670[l11],
-							anIntArray1640[i]);
+							colors[i]);
 				}
 			}
 			if (l == 4) {
@@ -1824,7 +1803,7 @@ public final class Model extends Animable {
 							anIntArray1669[i10], anIntArray1669[i11],
 							anIntArray1669[i12], anIntArray1670[i10],
 							anIntArray1670[i11], anIntArray1670[i12],
-							anIntArray1640[i]);
+							colors[i]);
 					Rasterizer.drawTexturedTriangle(i7, k7, anIntArray1679[3], j3, j5,
 							anIntArray1678[3], anIntArray1680[0],
 							anIntArray1680[2], anIntArray1680[3],
@@ -1832,7 +1811,7 @@ public final class Model extends Animable {
 							anIntArray1668[i12], anIntArray1669[i10],
 							anIntArray1669[i11], anIntArray1669[i12],
 							anIntArray1670[i10], anIntArray1670[i11],
-							anIntArray1670[i12], anIntArray1640[i]);
+							anIntArray1670[i12], colors[i]);
 					return;
 				}
 				if (i8 == 3) {
@@ -1847,7 +1826,7 @@ public final class Model extends Animable {
 							anIntArray1669[j10], anIntArray1669[j11],
 							anIntArray1669[j12], anIntArray1670[j10],
 							anIntArray1670[j11], anIntArray1670[j12],
-							anIntArray1640[i]);
+							colors[i]);
 					Rasterizer.drawTexturedTriangle(i7, k7, anIntArray1679[3], j3, j5,
 							anIntArray1678[3], anIntArray1634[i],
 							anIntArray1634[i], anIntArray1634[i],
@@ -1855,7 +1834,7 @@ public final class Model extends Animable {
 							anIntArray1668[j12], anIntArray1669[j10],
 							anIntArray1669[j11], anIntArray1669[j12],
 							anIntArray1670[j10], anIntArray1670[j11],
-							anIntArray1670[j12], anIntArray1640[i]);
+							anIntArray1670[j12], colors[i]);
 				}
 			}
 		}
@@ -1875,7 +1854,7 @@ public final class Model extends Animable {
 	private static int[] anIntArray1623 = new int[2000];
 	private static int[] anIntArray1624 = new int[2000];
 	private static int[] anIntArray1625 = new int[2000];
-	public int anInt1626;
+	public int totalVertices;
 	public int vertexX[];
 	public int vertexY[];
 	public int vertexZ[];
@@ -1887,9 +1866,9 @@ public final class Model extends Animable {
 	private int[] anIntArray1635;
 	private int[] anIntArray1636;
 	public int triangleDrawType[];
-	private int[] anIntArray1638;
-	private int[] anIntArray1639;
-	public int anIntArray1640[];
+	private int[] priorities;
+	private int[] alpha;
+	public int colors[];
 	private int anInt1641;
 	private int anInt1642;
 	private int[] anIntArray1643;

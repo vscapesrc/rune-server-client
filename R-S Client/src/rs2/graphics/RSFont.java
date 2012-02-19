@@ -2,7 +2,7 @@ package rs2.graphics;
 
 import java.util.Random;
 
-import rs2.ByteBuffer;
+import rs2.JagexBuffer;
 import rs2.Client;
 import rs2.cache.JagexArchive;
 
@@ -17,29 +17,29 @@ public final class RSFont extends RSDrawingArea {
 		characterScreenWidth = new int[256];
 		myRandom = new Random();
 		strikeThrough = false;
-		ByteBuffer font = new ByteBuffer(archive.getData(name + ".dat"));
-		ByteBuffer index = new ByteBuffer(archive.getData("index.dat"));
-		index.offset = font.getShort() + 4;
-		int k = index.getUByte();
+		JagexBuffer font = new JagexBuffer(archive.getData(name + ".dat"));
+		JagexBuffer index = new JagexBuffer(archive.getData("index.dat"));
+		index.offset = font.getUnsignedShort() + 4;
+		int k = index.getUnsignedByte();
 		if (k > 0) {
 			index.offset += 3 * (k - 1);
 		}
 		for (int charIndex = 0; charIndex < 256; charIndex++) {
-			characterOffsetX[charIndex] = index.getUByte();
-			characterOffsetY[charIndex] = index.getUByte();
-			int charWidth = characterWidth[charIndex] = index.getShort();
-			int charHeight = characterHeight[charIndex] = index.getShort();
-			int mode = index.getUByte();
+			characterOffsetX[charIndex] = index.getUnsignedByte();
+			characterOffsetY[charIndex] = index.getUnsignedByte();
+			int charWidth = characterWidth[charIndex] = index.getUnsignedShort();
+			int charHeight = characterHeight[charIndex] = index.getUnsignedShort();
+			int mode = index.getUnsignedByte();
 			int size = charWidth * charHeight;
 			characterPixels[charIndex] = new byte[size];
 			if (mode == 0) {
 				for (int address = 0; address < size; address++) {
-					characterPixels[charIndex][address] = font.getByte();
+					characterPixels[charIndex][address] = font.getSignedByte();
 				}
 			} else if (mode == 1) {
 				for (int x = 0; x < charWidth; x++) {
 					for (int y = 0; y < charHeight; y++) {
-						characterPixels[charIndex][x + y * charWidth] = font.getByte();
+						characterPixels[charIndex][x + y * charWidth] = font.getSignedByte();
 					}
 				}
 			}

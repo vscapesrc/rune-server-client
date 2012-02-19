@@ -1,7 +1,7 @@
 package rs2;
 
 import rs2.config.Sequence;
-import rs2.config.NPCDef;
+import rs2.config.NPCDefinitions;
 import rs2.config.SpotAnim;
 
 public final class NPC extends Entity {
@@ -33,23 +33,21 @@ public final class NPC extends Entity {
 			Model model_1 = spotAnim.getModel();
 			if (model_1 != null) {
 				int j = spotAnim.sequence.frames[super.anInt1521];
-				Model model_2 = new Model(true, FrameHeader.method532(j), false,
+				Model model_2 = new Model(true, FrameReader.method532(j), false,
 						model_1);
 				model_2.method475(0, -super.graphicsHeight, 0);
 				model_2.method469();
 				model_2.method470(j);
 				model_2.anIntArrayArray1658 = null;
 				model_2.anIntArrayArray1657 = null;
-				if (spotAnim.anInt410 != 128 || spotAnim.anInt411 != 128)
-					model_2.method478(spotAnim.anInt410, spotAnim.anInt410,
-							spotAnim.anInt411);
-				model_2.method479(64 + spotAnim.anInt413,
-						850 + spotAnim.anInt414, -30, -50, -30, true);
+				if (spotAnim.modelScaleX != 128 || spotAnim.modelScaleY != 128)
+					model_2.scaleModel(spotAnim.modelScaleX, spotAnim.modelScaleY, spotAnim.modelScaleX);
+				model_2.method479(64 + spotAnim.modelBrightness, 850 + spotAnim.modelShadowing, -30, -50, -30, true);
 				Model aModel[] = { model, model_2 };
 				model = new Model(aModel);
 			}
 		}
-		if (desc.aByte68 == 1)
+		if (desc.tileSize == 1)
 			model.aBoolean1659 = true;
 		return model;
 	}
@@ -61,5 +59,5 @@ public final class NPC extends Entity {
 	NPC() {
 	}
 
-	public NPCDef desc;
+	public NPCDefinitions desc;
 }

@@ -1,7 +1,7 @@
 package rs2.world;
 
 import rs2.Animable;
-import rs2.FrameHeader;
+import rs2.FrameReader;
 import rs2.Model;
 import rs2.config.SpotAnim;
 
@@ -32,19 +32,17 @@ public final class Projectile extends Animable {
 		int j = -1;
 		if (graphics.sequence != null)
 			j = graphics.sequence.frames[anInt1593];
-		Model model_1 = new Model(true, FrameHeader.method532(j), false, model);
+		Model model_1 = new Model(true, FrameReader.method532(j), false, model);
 		if (j != -1) {
 			model_1.method469();
 			model_1.method470(j);
 			model_1.anIntArrayArray1658 = null;
 			model_1.anIntArrayArray1657 = null;
 		}
-		if (graphics.anInt410 != 128 || graphics.anInt411 != 128)
-			model_1.method478(graphics.anInt410, graphics.anInt410,
-					graphics.anInt411);
+		if (graphics.modelScaleX != 128 || graphics.modelScaleY != 128)
+			model_1.scaleModel(graphics.modelScaleX, graphics.modelScaleY, graphics.modelScaleX);
 		model_1.method474(anInt1596);
-		model_1.method479(64 + graphics.anInt413,
-				850 + graphics.anInt414, -30, -50, -30, true);
+		model_1.method479(64 + graphics.modelBrightness, 850 + graphics.modelShadowing, -30, -50, -30, true);
 		return model_1;
 	}
 

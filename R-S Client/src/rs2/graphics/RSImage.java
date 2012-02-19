@@ -15,7 +15,7 @@ import java.awt.image.PixelGrabber;
 
 import javax.swing.ImageIcon;
 
-import rs2.ByteBuffer;
+import rs2.JagexBuffer;
 import rs2.cache.JagexArchive;
 import rs2.sign.signlink;
 
@@ -182,12 +182,12 @@ public final class RSImage extends RSDrawingArea {
 	}
 
 	public RSImage(JagexArchive streamLoader, String s, int i) {
-		ByteBuffer stream = new ByteBuffer(streamLoader.getData(s + ".dat"));
-		ByteBuffer stream_1 = new ByteBuffer(streamLoader.getData("index.dat"));
-		stream_1.offset = stream.getShort();
-		maxWidth = stream_1.getShort();
-		maxHeight = stream_1.getShort();
-		int j = stream_1.getUByte();
+		JagexBuffer stream = new JagexBuffer(streamLoader.getData(s + ".dat"));
+		JagexBuffer stream_1 = new JagexBuffer(streamLoader.getData("index.dat"));
+		stream_1.offset = stream.getUnsignedShort();
+		maxWidth = stream_1.getUnsignedShort();
+		maxHeight = stream_1.getUnsignedShort();
+		int j = stream_1.getUnsignedByte();
 		int pixels[] = new int[j];
 		for (int index = 0; index < j - 1; index++) {
 			pixels[index + 1] = stream_1.get3Bytes();
@@ -197,27 +197,27 @@ public final class RSImage extends RSDrawingArea {
 		}
 		for (int index = 0; index < i; index++) {
 			stream_1.offset += 2;
-			stream.offset += stream_1.getShort() * stream_1.getShort();
+			stream.offset += stream_1.getUnsignedShort() * stream_1.getUnsignedShort();
 			stream_1.offset++;
 		}
 
-		offsetX = stream_1.getUByte();
-		offsetY = stream_1.getUByte();
-		myWidth = stream_1.getShort();
-		myHeight = stream_1.getShort();
-		int i1 = stream_1.getUByte();
+		offsetX = stream_1.getUnsignedByte();
+		offsetY = stream_1.getUnsignedByte();
+		myWidth = stream_1.getUnsignedShort();
+		myHeight = stream_1.getUnsignedShort();
+		int i1 = stream_1.getUnsignedByte();
 		int totalPixels = myWidth * myHeight;
 		myPixels = new int[totalPixels];
 		if (i1 == 0) {
 			for (int index = 0; index < totalPixels; index++) {
-				myPixels[index] = pixels[stream.getUByte()];
+				myPixels[index] = pixels[stream.getUnsignedByte()];
 			}
 			return;
 		}
 		if (i1 == 1) {
 			for (int width = 0; width < myWidth; width++) {
 				for (int height = 0; height < myHeight; height++) {
-					myPixels[width + height * myWidth] = pixels[stream.getUByte()];
+					myPixels[width + height * myWidth] = pixels[stream.getUnsignedByte()];
 				}
 			}
 		}

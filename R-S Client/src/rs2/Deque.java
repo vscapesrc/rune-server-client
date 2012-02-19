@@ -1,9 +1,5 @@
 package rs2;
 
-// Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
-
 public final class Deque {
 
 	public Deque() {
@@ -30,7 +26,7 @@ public final class Deque {
 		node.prev.next = node;
 	}
 
-	public Node popHead() {
+	public Node popFront() {
 		Node node = head.prev;
 		if (node == head) {
 			return null;

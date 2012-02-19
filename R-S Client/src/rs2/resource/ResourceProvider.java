@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.zip.CRC32;
 import java.util.zip.GZIPInputStream;
 
-import rs2.ByteBuffer;
+import rs2.JagexBuffer;
 import rs2.Deque;
 import rs2.Queue;
 import rs2.Client;
@@ -118,11 +118,11 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		for (int i = 0; i < 4; i++) {
 			byte abyte0[] = streamLoader.getData(as[i]);
 			int j = abyte0.length / 2;
-			ByteBuffer stream = new ByteBuffer(abyte0);
+			JagexBuffer stream = new JagexBuffer(abyte0);
 			versions[i] = new int[j];
 			fileStatus[i] = new byte[j];
 			for (int l = 0; l < j; l++)
-				versions[i][l] = stream.getShort();
+				versions[i][l] = stream.getUnsignedShort();
 
 		}
 
@@ -130,7 +130,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		for (int k = 0; k < 4; k++) {
 			byte abyte1[] = streamLoader.getData(as1[k]);
 			int i1 = abyte1.length / 4;
-			ByteBuffer stream_1 = new ByteBuffer(abyte1);
+			JagexBuffer stream_1 = new JagexBuffer(abyte1);
 			crcs[k] = new int[i1];
 			for (int l1 = 0; l1 < i1; l1++)
 				crcs[k][l1] = stream_1.getInt();
@@ -147,32 +147,32 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 				modelIndices[k1] = 0;
 
 		abyte2 = streamLoader.getData("map_index");
-		ByteBuffer stream2 = new ByteBuffer(abyte2);
+		JagexBuffer stream2 = new JagexBuffer(abyte2);
 		j1 = abyte2.length / 7;
 		mapIndices1 = new int[j1];
 		mapIndices2 = new int[j1];
 		mapIndices3 = new int[j1];
 		mapIndices4 = new int[j1];
 		for (int i2 = 0; i2 < j1; i2++) {
-			mapIndices1[i2] = stream2.getShort();
-			mapIndices2[i2] = stream2.getShort();
-			mapIndices3[i2] = stream2.getShort();
-			mapIndices4[i2] = stream2.getUByte();
+			mapIndices1[i2] = stream2.getUnsignedShort();
+			mapIndices2[i2] = stream2.getUnsignedShort();
+			mapIndices3[i2] = stream2.getUnsignedShort();
+			mapIndices4[i2] = stream2.getUnsignedByte();
 		}
 
 		abyte2 = streamLoader.getData("anim_index");
-		stream2 = new ByteBuffer(abyte2);
+		stream2 = new JagexBuffer(abyte2);
 		j1 = abyte2.length / 2;
 		anIntArray1360 = new int[j1];
 		for (int j2 = 0; j2 < j1; j2++)
-			anIntArray1360[j2] = stream2.getShort();
+			anIntArray1360[j2] = stream2.getUnsignedShort();
 
 		abyte2 = streamLoader.getData("midi_index");
-		stream2 = new ByteBuffer(abyte2);
+		stream2 = new JagexBuffer(abyte2);
 		j1 = abyte2.length;
 		anIntArray1348 = new int[j1];
 		for (int k2 = 0; k2 < j1; k2++)
-			anIntArray1348[k2] = stream2.getUByte();
+			anIntArray1348[k2] = stream2.getUnsignedByte();
 
 		client = client1;
 		running = true;
@@ -388,7 +388,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 	public Resource getNextNode() {
 		Resource onDemandData;
 		synchronized (completed) {
-			onDemandData = (Resource) completed.popHead();
+			onDemandData = (Resource) completed.popFront();
 		}
 		if (onDemandData == null)
 			return null;
@@ -468,7 +468,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 
 		while (uncompletedCount < 10) {
 			Resource onDemandData_1 = (Resource) aClass19_1368
-					.popHead();
+					.popFront();
 			if (onDemandData_1 == null)
 				break;
 			if (fileStatus[onDemandData_1.type][onDemandData_1.id] != 0)
@@ -490,7 +490,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 	private void checkReceived() {
 		Resource onDemandData;
 		synchronized (aClass19_1370) {
-			onDemandData = (Resource) aClass19_1370.popHead();
+			onDemandData = (Resource) aClass19_1370.popFront();
 		}
 		while (onDemandData != null) {
 			waiting = true;
@@ -510,7 +510,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 						completed.append(onDemandData);
 					}
 				}
-				onDemandData = (Resource) aClass19_1370.popHead();
+				onDemandData = (Resource) aClass19_1370.popFront();
 			}
 		}
 	}
@@ -521,7 +521,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 				break;
 			Resource onDemandData;
 			synchronized (aClass19_1344) {
-				onDemandData = (Resource) aClass19_1344.popHead();
+				onDemandData = (Resource) aClass19_1344.popFront();
 			}
 			while (onDemandData != null) {
 				if (fileStatus[onDemandData.type][onDemandData.id] != 0) {
@@ -538,7 +538,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 						return;
 				}
 				synchronized (aClass19_1344) {
-					onDemandData = (Resource) aClass19_1344.popHead();
+					onDemandData = (Resource) aClass19_1344.popFront();
 				}
 			}
 			for (int j = 0; j < 4; j++) {

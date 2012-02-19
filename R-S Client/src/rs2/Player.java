@@ -1,9 +1,9 @@
 package rs2;
 
 import rs2.config.Sequence;
-import rs2.config.NPCDef;
+import rs2.config.NPCDefinitions;
 import rs2.config.IdentityKit;
-import rs2.config.ItemDef;
+import rs2.config.ItemDefinitions;
 import rs2.config.SpotAnim;
 import rs2.util.TextUtils;
 
@@ -24,17 +24,15 @@ public final class Player extends Entity {
 			Model model_2 = spotAnim.getModel();
 			if (model_2 != null) {
 				Model model_3 = new Model(true,
-						FrameHeader.method532(super.anInt1521), false, model_2);
+						FrameReader.method532(super.anInt1521), false, model_2);
 				model_3.method475(0, -super.graphicsHeight, 0);
 				model_3.method469();
 				model_3.method470(spotAnim.sequence.frames[super.anInt1521]);
 				model_3.anIntArrayArray1658 = null;
 				model_3.anIntArrayArray1657 = null;
-				if (spotAnim.anInt410 != 128 || spotAnim.anInt411 != 128)
-					model_3.method478(spotAnim.anInt410, spotAnim.anInt410,
-							spotAnim.anInt411);
-				model_3.method479(64 + spotAnim.anInt413,
-						850 + spotAnim.anInt414, -30, -50, -30, true);
+				if (spotAnim.modelScaleX != 128 || spotAnim.modelScaleY != 128)
+					model_3.scaleModel(spotAnim.modelScaleX, spotAnim.modelScaleY, spotAnim.modelScaleX);
+				model_3.method479(64 + spotAnim.modelBrightness, 850 + spotAnim.modelShadowing, -30, -50, -30, true);
 				Model aclass30_sub2_sub4_sub6_1s[] = { model, model_3 };
 				model = new Model(aclass30_sub2_sub4_sub6_1s);
 			}
@@ -75,63 +73,63 @@ public final class Player extends Entity {
 		return model;
 	}
 
-	public void updatePlayer(ByteBuffer buffer) {
+	public void updatePlayer(JagexBuffer buffer) {
 		buffer.offset = 0;
-		gender = buffer.getUByte();
-		prayerId = buffer.getUByte();
-		skullId = buffer.getUByte();
+		gender = buffer.getUnsignedByte();
+		prayerId = buffer.getUnsignedByte();
+		skullId = buffer.getUnsignedByte();
 		desc = null;
 		team = 0;
 		for (int j = 0; j < 12; j++) {
-			int k = buffer.getUByte();
+			int k = buffer.getUnsignedByte();
 			if (k == 0) {
 				equipment[j] = 0;
 				continue;
 			}
-			int i1 = buffer.getUByte();
+			int i1 = buffer.getUnsignedByte();
 			equipment[j] = (k << 8) + i1;
 			if (j == 0 && equipment[0] == 65535) {
-				desc = NPCDef.getDef(buffer.getShort());
+				desc = NPCDefinitions.getDefinition(buffer.getUnsignedShort());
 				break;
 			}
-			if (equipment[j] >= 512 && equipment[j] - 512 < ItemDef.totalItems) {
-				int l1 = ItemDef.getDef(equipment[j] - 512).team;
+			if (equipment[j] >= 512 && equipment[j] - 512 < ItemDefinitions.totalItems) {
+				int l1 = ItemDefinitions.getDefinition(equipment[j] - 512).team;
 				if (l1 != 0)
 					team = l1;
 			}
 		}
 
 		for (int l = 0; l < 5; l++) {
-			int j1 = buffer.getUByte();
+			int j1 = buffer.getUnsignedByte();
 			if (j1 < 0 || j1 >= Client.anIntArrayArray1003[l].length)
 				j1 = 0;
 			anIntArray1700[l] = j1;
 		}
 
-		super.standAnimIndex = buffer.getShort();
+		super.standAnimIndex = buffer.getUnsignedShort();
 		if (super.standAnimIndex == 65535)
 			super.standAnimIndex = -1;
-		super.standTurnAnimIndex = buffer.getShort();
+		super.standTurnAnimIndex = buffer.getUnsignedShort();
 		if (super.standTurnAnimIndex == 65535)
 			super.standTurnAnimIndex = -1;
-		super.walkAnimIndex = buffer.getShort();
+		super.walkAnimIndex = buffer.getUnsignedShort();
 		if (super.walkAnimIndex == 65535)
 			super.walkAnimIndex = -1;
-		super.turn180AnimIndex = buffer.getShort();
+		super.turn180AnimIndex = buffer.getUnsignedShort();
 		if (super.turn180AnimIndex == 65535)
 			super.turn180AnimIndex = -1;
-		super.turn90CWAnimIndex = buffer.getShort();
+		super.turn90CWAnimIndex = buffer.getUnsignedShort();
 		if (super.turn90CWAnimIndex == 65535)
 			super.turn90CWAnimIndex = -1;
-		super.turn90CCWAnimIndex = buffer.getShort();
+		super.turn90CCWAnimIndex = buffer.getUnsignedShort();
 		if (super.turn90CCWAnimIndex == 65535)
 			super.turn90CCWAnimIndex = -1;
-		super.runAnimIndex = buffer.getShort();
+		super.runAnimIndex = buffer.getUnsignedShort();
 		if (super.runAnimIndex == 65535)
 			super.runAnimIndex = -1;
 		name = TextUtils.fixName(TextUtils.nameForLong(buffer.getLong()));
-		combatLevel = buffer.getUByte();
-		skill = buffer.getShort();
+		combatLevel = buffer.getUnsignedByte();
+		skill = buffer.getUnsignedShort();
 		visible = true;
 		aLong1718 = 0L;
 		for (int k1 = 0; k1 < 12; k1++) {
@@ -194,7 +192,7 @@ public final class Player extends Entity {
 					k2 = j1;
 				if (k2 >= 256 && k2 < 512 && !IdentityKit.cache[k2 - 256].method537())
 					flag = true;
-				if (k2 >= 512 && !ItemDef.getDef(k2 - 512).method195(gender))
+				if (k2 >= 512 && !ItemDefinitions.getDefinition(k2 - 512).method195(gender))
 					flag = true;
 			}
 
@@ -220,7 +218,7 @@ public final class Player extends Entity {
 						aclass30_sub2_sub4_sub6s[j2++] = model_3;
 				}
 				if (i3 >= 512) {
-					Model model_4 = ItemDef.getDef(i3 - 512)
+					Model model_4 = ItemDefinitions.getDefinition(i3 - 512)
 							.method196(gender);
 					if (model_4 != null)
 						aclass30_sub2_sub4_sub6s[j2++] = model_4;
@@ -245,7 +243,7 @@ public final class Player extends Entity {
 		if (aBoolean1699)
 			return model_1;
 		Model model_2 = Model.aModel_1621;
-		model_2.method464(model_1, FrameHeader.method532(k) & FrameHeader.method532(i1));
+		model_2.method464(model_1, FrameReader.method532(k) & FrameReader.method532(i1));
 		if (k != -1 && i1 != -1)
 			model_2.method471(Sequence.getSeq(super.anim).anIntArray357, i1, k);
 		else if (k != -1)
@@ -272,7 +270,7 @@ public final class Player extends Entity {
 			int j = equipment[i];
 			if (j >= 256 && j < 512 && !IdentityKit.cache[j - 256].method539())
 				flag = true;
-			if (j >= 512 && !ItemDef.getDef(j - 512).method192(gender))
+			if (j >= 512 && !ItemDefinitions.getDefinition(j - 512).method192(gender))
 				flag = true;
 		}
 
@@ -288,7 +286,7 @@ public final class Player extends Entity {
 					aclass30_sub2_sub4_sub6s[k++] = model_1;
 			}
 			if (i1 >= 512) {
-				Model model_2 = ItemDef.getDef(i1 - 512).method194(gender);
+				Model model_2 = ItemDefinitions.getDefinition(i1 - 512).method194(gender);
 				if (model_2 != null)
 					aclass30_sub2_sub4_sub6s[k++] = model_2;
 			}
@@ -316,7 +314,7 @@ public final class Player extends Entity {
 	}
 
 	private long aLong1697;
-	public NPCDef desc;
+	public NPCDefinitions desc;
 	boolean aBoolean1699;
 	final int[] anIntArray1700;
 	public int team;

@@ -1,25 +1,25 @@
 package rs2.cache;
 
 import rs2.BZip2InputStream;
-import rs2.ByteBuffer;
+import rs2.JagexBuffer;
 
 public final class JagexArchive {
 
 	public JagexArchive(byte data[]) {
-		ByteBuffer stream = new ByteBuffer(data);
+		JagexBuffer stream = new JagexBuffer(data);
 		int decompressedSize = stream.get3Bytes();
 		int j = stream.get3Bytes();
 		if (j != decompressedSize) {
 			byte abyte1[] = new byte[decompressedSize];
 			BZip2InputStream.resetAndRead(abyte1, decompressedSize, data, j, 6);
 			finalBuffer = abyte1;
-			stream = new ByteBuffer(finalBuffer);
+			stream = new JagexBuffer(finalBuffer);
 			compressedAsWhole = true;
 		} else {
 			finalBuffer = data;
 			compressedAsWhole = false;
 		}
-		totalFiles = stream.getShort();
+		totalFiles = stream.getUnsignedShort();
 		identifiers = new int[totalFiles];
 		decompressedSizes = new int[totalFiles];
 		compressedSizes = new int[totalFiles];

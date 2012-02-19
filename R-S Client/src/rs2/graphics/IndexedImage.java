@@ -1,6 +1,6 @@
 package rs2.graphics;
 
-import rs2.ByteBuffer;
+import rs2.JagexBuffer;
 import rs2.cache.JagexArchive;
 
 // Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
@@ -10,33 +10,33 @@ import rs2.cache.JagexArchive;
 public final class IndexedImage extends RSDrawingArea {
 
 	public IndexedImage(JagexArchive streamLoader, String s, int i) {
-		ByteBuffer stream = new ByteBuffer(streamLoader.getData(s + ".dat"));
-		ByteBuffer stream_1 = new ByteBuffer(streamLoader.getData("index.dat"));
-		stream_1.offset = stream.getShort();
-		anInt1456 = stream_1.getShort();
-		anInt1457 = stream_1.getShort();
-		int j = stream_1.getUByte();
+		JagexBuffer stream = new JagexBuffer(streamLoader.getData(s + ".dat"));
+		JagexBuffer stream_1 = new JagexBuffer(streamLoader.getData("index.dat"));
+		stream_1.offset = stream.getUnsignedShort();
+		anInt1456 = stream_1.getUnsignedShort();
+		anInt1457 = stream_1.getUnsignedShort();
+		int j = stream_1.getUnsignedByte();
 		anIntArray1451 = new int[j];
 		for (int k = 0; k < j - 1; k++)
 			anIntArray1451[k + 1] = stream_1.get3Bytes();
 
 		for (int l = 0; l < i; l++) {
 			stream_1.offset += 2;
-			stream.offset += stream_1.getShort()
-					* stream_1.getShort();
+			stream.offset += stream_1.getUnsignedShort()
+					* stream_1.getUnsignedShort();
 			stream_1.offset++;
 		}
 
-		anInt1454 = stream_1.getUByte();
-		anInt1455 = stream_1.getUByte();
-		myWidth = stream_1.getShort();
-		myHeight = stream_1.getShort();
-		int i1 = stream_1.getUByte();
+		anInt1454 = stream_1.getUnsignedByte();
+		anInt1455 = stream_1.getUnsignedByte();
+		myWidth = stream_1.getUnsignedShort();
+		myHeight = stream_1.getUnsignedShort();
+		int i1 = stream_1.getUnsignedByte();
 		int j1 = myWidth * myHeight;
 		myPixels = new byte[j1];
 		if (i1 == 0) {
 			for (int k1 = 0; k1 < j1; k1++)
-				myPixels[k1] = stream.getByte();
+				myPixels[k1] = stream.getSignedByte();
 
 			return;
 		}
@@ -44,7 +44,7 @@ public final class IndexedImage extends RSDrawingArea {
 			for (int l1 = 0; l1 < myWidth; l1++) {
 				for (int i2 = 0; i2 < myHeight; i2++)
 					myPixels[l1 + i2 * myWidth] = stream
-							.getByte();
+							.getSignedByte();
 
 			}
 

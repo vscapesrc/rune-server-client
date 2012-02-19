@@ -2,91 +2,102 @@ package rs2.config;
 
 import rs2.MemCache;
 import rs2.Model;
-import rs2.ByteBuffer;
+import rs2.JagexBuffer;
 import rs2.cache.JagexArchive;
 
 public final class SpotAnim {
 
 	public static void unpackConfig(JagexArchive streamLoader) {
-		ByteBuffer stream = new ByteBuffer(streamLoader.getData("spotanim.dat"));
-		int length = stream.getShort();
-		if (cache == null)
+		JagexBuffer stream = new JagexBuffer(streamLoader.getData("spotanim.dat"));
+		int length = stream.getUnsignedShort();
+		if (cache == null) {
 			cache = new SpotAnim[length];
-		for (int j = 0; j < length; j++) {
-			if (cache[j] == null)
-				cache[j] = new SpotAnim();
-			cache[j].anInt404 = j;
-			cache[j].readValues(stream);
 		}
-
+		for (int index = 0; index < length; index++) {
+			if (cache[index] == null) {
+				cache[index] = new SpotAnim();
+			}
+			cache[index].id = index;
+			cache[index].readValues(stream);
+		}
 	}
 
-	private void readValues(ByteBuffer stream) {
+	private void readValues(JagexBuffer stream) {
 		do {
-			int i = stream.getUByte();
+			int i = stream.getUnsignedByte();
 			if (i == 0)
 				return;
 			if (i == 1)
-				anInt405 = stream.getShort();
+				modelId = stream.getUnsignedShort();
 			else if (i == 2) {
-				anInt406 = stream.getShort();
-				if (Sequence.anims != null)
-					sequence = Sequence.getSeq(anInt406);
+				animationId = stream.getUnsignedShort();
+				if (Sequence.cache != null) {
+					sequence = Sequence.getSeq(animationId);
+				}
 			} else if (i == 4)
-				anInt410 = stream.getShort();
+				modelScaleX = stream.getUnsignedShort();
 			else if (i == 5)
-				anInt411 = stream.getShort();
+				modelScaleY = stream.getUnsignedShort();
 			else if (i == 6)
-				anInt412 = stream.getShort();
+				modelRotation = stream.getUnsignedShort();
 			else if (i == 7)
-				anInt413 = stream.getUByte();
+				modelBrightness = stream.getUnsignedByte();
 			else if (i == 8)
-				anInt414 = stream.getUByte();
+				modelShadowing = stream.getUnsignedByte();
 			else if (i >= 40 && i < 50)
-				anIntArray408[i - 40] = stream.getShort();
+				oldColors[i - 40] = stream.getUnsignedShort();
 			else if (i >= 50 && i < 60)
-				anIntArray409[i - 50] = stream.getShort();
+				newColors[i - 50] = stream.getUnsignedShort();
 			else
-				System.out.println("Error unrecognised spotanim config code: "
-						+ i);
+				System.out.println("Error unrecognised spotanim config code: " + i);
 		} while (true);
 	}
 
 	public Model getModel() {
-		Model model = (Model) aMRUNodes_415.get(anInt404);
+		Model model = (Model) aMRUNodes_415.get(id);
 		if (model != null)
 			return model;
-		model = Model.method462(anInt405);
-		if (model == null)
+		model = Model.method462(modelId);
+		if (model == null) {
 			return null;
-		for (int i = 0; i < 6; i++)
-			if (anIntArray408[0] != 0)
-				model.changeModelColors(anIntArray408[i], anIntArray409[i]);
-
-		aMRUNodes_415.put(model, anInt404);
+		}
+		for (int color = 0; color < 6; color++) {
+			if (oldColors[0] != 0) {
+				model.changeModelColors(oldColors[color], newColors[color]);
+			}
+		}
+		aMRUNodes_415.put(model, id);
 		return model;
 	}
 
+	/**
+	 * Returns the amount of spotanim data.
+	 * @return
+	 */
+	public static int getCount() {
+		return cache.length;
+	}
+
 	private SpotAnim() {
-		anInt406 = -1;
-		anIntArray408 = new int[6];
-		anIntArray409 = new int[6];
-		anInt410 = 128;
-		anInt411 = 128;
+		animationId = -1;
+		oldColors = new int[6];
+		newColors = new int[6];
+		modelScaleX = 128;
+		modelScaleY = 128;
 	}
 
 	public static SpotAnim cache[];
-	private int anInt404;
-	private int anInt405;
-	private int anInt406;
+	public int id;
+	public int modelId;
+	public int animationId;
 	public Sequence sequence;
-	private final int[] anIntArray408;
-	private final int[] anIntArray409;
-	public int anInt410;
-	public int anInt411;
-	public int anInt412;
-	public int anInt413;
-	public int anInt414;
+	public final int[] oldColors;
+	public final int[] newColors;
+	public int modelScaleX;
+	public int modelScaleY;
+	public int modelRotation;
+	public int modelBrightness;
+	public int modelShadowing;
 	public static MemCache aMRUNodes_415 = new MemCache(30);
 
 }

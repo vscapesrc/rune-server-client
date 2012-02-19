@@ -1,7 +1,7 @@
 package rs2.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,19 +15,14 @@ import java.util.zip.GZIPOutputStream;
 
 public class DataUtils {
 
-	public static void writeFile(File f, byte[] data) throws IOException {
-		RandomAccessFile raf = new RandomAccessFile(f, "rw");
+	public static void writeFile(byte[] data, String fileName) {
 		try {
-			raf.write(data);
-		} finally {
-			raf.close();
+			OutputStream out = new FileOutputStream(fileName);
+			out.write(data);
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-	}
-
-	public void writeFile(byte[] data, String fileName) throws IOException {
-		OutputStream out = new FileOutputStream(fileName);
-		out.write(data);
-		out.close();
 	}
 
 	public static int readJAGHash(String string) {
@@ -123,5 +118,28 @@ public class DataUtils {
 			bos.close();
 		}
 		return bos.toByteArray();
+	}
+
+	/**
+	 * Writes a string in the form of bytes that can be read by Jagex buffer methods.
+	 * @param dat output stream.
+	 * @param input input string.
+	 * @throws IOException
+	 */
+	public static void writeString(DataOutputStream dat, String input) throws IOException {
+		dat.write(input.getBytes());
+		dat.writeByte(10);
+	}
+
+	/**
+	 * Writes 3 bytes(24 bits) to the output stream that can be read by Jagex buffer methods.
+	 * @param dat output stream.
+	 * @param i input value.
+	 * @throws IOException
+	 */
+	public static void write3Bytes(DataOutputStream dat, int i) throws IOException {
+		dat.write((byte) (i >> 16));
+		dat.write((byte) (i >> 8));
+		dat.write((byte) i);
 	}
 }

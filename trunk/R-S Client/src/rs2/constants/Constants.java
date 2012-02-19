@@ -34,6 +34,11 @@ public class Constants {
 	public final static int CLIENT_VERSION = 317;
 
 	/**
+	 * Should we check for lent variables?
+	 */
+	public final static boolean LENT_ITEMS = false;
+
+	/**
 	 * Prayer headicons.
 	 */
 	public final static int PROTECT_FROM_MELEE = 0;

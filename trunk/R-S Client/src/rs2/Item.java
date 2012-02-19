@@ -1,11 +1,11 @@
 package rs2;
 
-import rs2.config.ItemDef;
+import rs2.config.ItemDefinitions;
 
 final class Item extends Animable {
 
 	public final Model getRotatedModel() {
-		ItemDef itemDef = ItemDef.getDef(ID);
+		ItemDefinitions itemDef = ItemDefinitions.getDefinition(ID);
 		return itemDef.method201(anInt1559);
 	}
 

@@ -55,20 +55,20 @@ final class FrequencyGenerator {
 		return anIntArray665[i] * 2;
 	}
 
-	public void method545(ByteBuffer stream, AmplitudeEnvelope class29) {
-		int i = stream.getUByte();
+	public void method545(JagexBuffer stream, AmplitudeEnvelope class29) {
+		int i = stream.getUnsignedByte();
 		anIntArray665[0] = i >> 4;
 		anIntArray665[1] = i & 0xf;
 		if (i != 0) {
-			anIntArray668[0] = stream.getShort();
-			anIntArray668[1] = stream.getShort();
-			int j = stream.getUByte();
+			anIntArray668[0] = stream.getUnsignedShort();
+			anIntArray668[1] = stream.getUnsignedShort();
+			int j = stream.getUnsignedByte();
 			for (int k = 0; k < 2; k++) {
 				for (int l = 0; l < anIntArray665[k]; l++) {
 					anIntArrayArrayArray666[k][0][l] = stream
-							.getShort();
+							.getUnsignedShort();
 					anIntArrayArrayArray667[k][0][l] = stream
-							.getShort();
+							.getUnsignedShort();
 				}
 
 			}
@@ -77,9 +77,9 @@ final class FrequencyGenerator {
 				for (int j1 = 0; j1 < anIntArray665[i1]; j1++)
 					if ((j & 1 << i1 * 4 << j1) != 0) {
 						anIntArrayArrayArray666[i1][1][j1] = stream
-								.getShort();
+								.getUnsignedShort();
 						anIntArrayArrayArray667[i1][1][j1] = stream
-								.getShort();
+								.getUnsignedShort();
 					} else {
 						anIntArrayArrayArray666[i1][1][j1] = anIntArrayArrayArray666[i1][0][j1];
 						anIntArrayArrayArray667[i1][1][j1] = anIntArrayArrayArray667[i1][0][j1];

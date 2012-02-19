@@ -45,12 +45,14 @@ public class PacketConstants {
 		public final int ALL_ITEMS_UPDATE = 53;
 		public final int NPC_UPDATE = 65;
 		public final int PACKET_68 = 68;
+		public final int SET_TAB_INTERFACE = 71;
 		public final int INTERFACE_SCROLLPOS_UPDATE = 79;
 		public final int PLAYER_UPDATE = 81;
 		public final int PACKET_85 = 85;
 		public final int SET_OPEN_INTERFACE = 97;
 		public final int INTERFACE_TEXT_COLOR_UPDATE = 122;
 		public final int INTERFACE_TEXT_UPDATE = 126;
+		public final int UPDATE_SKILL = 134;
 		public final int SET_OVERLAY_INTERFACE = 142;
 		public final int PACKET_171 = 171;
 		public final int SHOW_STRING_INPUT = 187;

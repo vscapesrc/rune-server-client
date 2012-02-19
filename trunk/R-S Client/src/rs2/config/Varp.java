@@ -1,56 +1,67 @@
 package rs2.config;
 
-import rs2.ByteBuffer;
+import rs2.JagexBuffer;
 import rs2.cache.JagexArchive;
 
 public final class Varp {
 
-	public static void unpackConfig(JagexArchive streamLoader) {
-		ByteBuffer stream = new ByteBuffer(streamLoader.getData("varp.dat"));
+	public static void unpackConfig(JagexArchive archive) {
+		JagexBuffer buffer = new JagexBuffer(archive.getData("varp.dat"));
 		anInt702 = 0;
-		int cacheSize = stream.getShort();
-		if (cache == null)
-			cache = new Varp[cacheSize];
-		if (anIntArray703 == null)
-			anIntArray703 = new int[cacheSize];
-		for (int j = 0; j < cacheSize; j++) {
-			if (cache[j] == null)
-				cache[j] = new Varp();
-			cache[j].readValues(stream, j);
+		int length = buffer.getUnsignedShort();
+		if (cache == null) {
+			cache = new Varp[length];
+		}			
+		if (anIntArray703 == null) {
+			anIntArray703 = new int[length];
 		}
-		if (stream.offset != stream.buffer.length)
+		for (int index = 0; index < length; index++) {
+			if (cache[index] == null)
+				cache[index] = new Varp();
+			cache[index].readValues(buffer, index);
+		}
+		if (buffer.offset != buffer.payload.length) {
 			System.out.println("varptype load mismatch");
+		}
 	}
 
-	private void readValues(ByteBuffer stream, int i) {
+	private void readValues(JagexBuffer stream, int i) {
 		do {
-			int j = stream.getUByte();
-			if (j == 0)
+			int opcode = stream.getUnsignedByte();
+			if (opcode == 0)
 				return;
-			if (j == 1)
-				stream.getUByte();
-			else if (j == 2)
-				stream.getUByte();
-			else if (j == 3)
+			if (opcode == 1)
+				stream.getUnsignedByte();
+			else if (opcode == 2)
+				stream.getUnsignedByte();
+			else if (opcode == 3)
 				anIntArray703[anInt702++] = i;
-			else if (j == 4) {
-			} else if (j == 5)
-				anInt709 = stream.getShort();
-			else if (j == 6) {
-			} else if (j == 7)
+			else if (opcode == 4) {
+			} else if (opcode == 5)
+				actionId = stream.getUnsignedShort();
+			else if (opcode == 6) {
+			} else if (opcode == 7)
 				stream.getInt();
-			else if (j == 8)
+			else if (opcode == 8)
 				aBoolean713 = true;
-			else if (j == 10)
+			else if (opcode == 10)
 				stream.getString();
-			else if (j == 11)
+			else if (opcode == 11)
 				aBoolean713 = true;
-			else if (j == 12)
+			else if (opcode == 12)
 				stream.getInt();
-			else if (j == 13) {
+			else if (opcode == 13) {
 			} else
-				System.out.println("Error unrecognised config code: " + j);
+				System.out.println("Error unrecognised config code: " + opcode);
 		} while (true);
+	}
+
+	/**
+	 * Returns the total amount of varp data.
+	 * @return
+	 */
+	public static int getCount() {
+		return cache.length;
 	}
 
 	private Varp() {
@@ -60,7 +71,7 @@ public final class Varp {
 	public static Varp cache[];
 	private static int anInt702;
 	private static int[] anIntArray703;
-	public int anInt709;
+	public int actionId;
 	public boolean aBoolean713;
 
 }

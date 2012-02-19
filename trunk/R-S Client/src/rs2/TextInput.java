@@ -6,11 +6,11 @@ package rs2;
 
 final class TextInput {
 
-	public static String method525(int i, ByteBuffer stream) {
+	public static String method525(int i, JagexBuffer stream) {
 		int j = 0;
 		int k = -1;
 		for (int l = 0; l < i; l++) {
-			int i1 = stream.getUByte();
+			int i1 = stream.getUnsignedByte();
 			int j1 = i1 >> 4 & 0xf;
 			if (k == -1) {
 				if (j1 < 13)
@@ -46,7 +46,7 @@ final class TextInput {
 		return new String(aCharArray631, 0, j);
 	}
 
-	public static void method526(String s, ByteBuffer stream) {
+	public static void method526(String s, JagexBuffer stream) {
 		if (s.length() > 80)
 			s = s.substring(0, 80);
 		s = s.toLowerCase();
@@ -67,17 +67,17 @@ final class TextInput {
 				if (k < 13)
 					i = k;
 				else
-					stream.writeWordBigEndian(k);
+					stream.putByte(k);
 			} else if (k < 13) {
-				stream.writeWordBigEndian((i << 4) + k);
+				stream.putByte((i << 4) + k);
 				i = -1;
 			} else {
-				stream.writeWordBigEndian((i << 4) + (k >> 4));
+				stream.putByte((i << 4) + (k >> 4));
 				i = k & 0xf;
 			}
 		}
 		if (i != -1)
-			stream.writeWordBigEndian(i << 4);
+			stream.putByte(i << 4);
 	}
 
 	public static String processText(String s) {
@@ -90,7 +90,7 @@ final class TextInput {
 	}
 
 	private static final char[] aCharArray631 = new char[100];
-	private static final ByteBuffer stream = new ByteBuffer(new byte[100]);
+	private static final JagexBuffer stream = new JagexBuffer(new byte[100]);
 	private static final char[] validChars = { ' ', 'e', 't', 'a', 'o', 'i',
 			'h', 'n', 's', 'r', 'd', 'l', 'u', 'm', 'w', 'c', 'y', 'f', 'g',
 			'p', 'b', 'v', 'k', 'x', 'j', 'q', 'z', '0', '1', '2', '3', '4',

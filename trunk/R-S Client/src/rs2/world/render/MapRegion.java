@@ -1,12 +1,12 @@
 package rs2.world.render;
 import rs2.Animable;
-import rs2.ByteBuffer;
+import rs2.JagexBuffer;
 import rs2.Model;
 import rs2.config.Floor;
-import rs2.config.ObjectDef;
+import rs2.config.ObjectDefinitions;
 import rs2.graphics.Rasterizer;
 import rs2.resource.ResourceProvider;
-import rs2.util.MapUtility;
+import rs2.util.MapUtils;
 import rs2.world.ObjectOnTile;
 import rs2.world.tile.TileSetting;
 
@@ -49,7 +49,7 @@ public final class MapRegion {
 							k1--;
 						}
 						if(k1 >= 0) {
-							tileSetting[k1].orClipTableSet(i1, k);
+							tileSetting[k1].clipTableSet(i1, k);
 						}
 					}
 				}
@@ -182,7 +182,7 @@ public final class MapRegion {
 									boolean flag = true;
 									if(l18 == 0 && tileShape[z][x][y] != 0)
 										flag = false;
-									if(i19 > 0 && !Floor.cache[i19 - 1].aBoolean393)
+									if(i19 > 0 && !Floor.cache[i19 - 1].occlude)
 										flag = false;
 									if(flag && j19 == k19 && j19 == l19 && j19 == i20)
 										tileCullingBitmap[z][x][y] |= 0x924;
@@ -190,48 +190,38 @@ public final class MapRegion {
 								int i22 = 0;
 								if(j21 != -1)
 									i22 = Rasterizer.hslToRGB[mixLightness(k21, 96)];
-								if(i19 == 0)
-								{
+								if(i19 == 0) {
 									sceneGraph.addTile(z, x, y, 0, 0, -1, j19, k19, l19, i20, mixLightness(j21, j20), mixLightness(j21, k20), mixLightness(j21, l20), mixLightness(j21, i21), 0, 0, 0, 0, i22, 0);
-								} else
-								{
-									int k22 = tileShape[z][x][y] + 1;
-									byte byte4 = tileShapeRotation[z][x][y];
-									Floor flo_2 = Floor.cache[i19 - 1];
-									int i23 = flo_2.anInt391;
-									int j23;
-									int k23;
-									if(i23 >= 0)
-									{
-										k23 = Rasterizer.getAverageTextureColor(i23);
-										j23 = -1;
-									} else
-									if(flo_2.anInt390 == 0xff00ff)
-									{
-										k23 = 0;
-										j23 = -2;
-										i23 = -1;
-									} else
-									{
-										j23 = packHSL(flo_2.anInt394, flo_2.saturation, flo_2.lightness);
-										k23 = Rasterizer.hslToRGB[method185(flo_2.anInt399, 96)];
+								} else {
+									int shape = tileShape[z][x][y] + 1;
+									byte rotation = tileShapeRotation[z][x][y];
+									Floor floor = Floor.cache[i19 - 1];
+									int texture = floor.textureId;
+									int hsl;
+									int rgb;
+									if(texture >= 0) {
+										rgb = Rasterizer.getAverageTextureColor(texture);
+										hsl = -1;
+									} else if(floor.getTerrainColor() == 0xff00ff) {
+										rgb = 0;
+										hsl = -2;
+										texture = -1;
+									} else {
+										hsl = packHSL(floor.anInt394, floor.saturation, floor.lightness);
+										rgb = Rasterizer.hslToRGB[method185(floor.anInt399, 96)];
 									}
-									sceneGraph.addTile(z, x, y, k22, byte4, i23, j19, k19, l19, i20, mixLightness(j21, j20), mixLightness(j21, k20), mixLightness(j21, l20), mixLightness(j21, i21), method185(j23, j20), method185(j23, k20), method185(j23, l20), method185(j23, i21), i22, k23);
+									sceneGraph.addTile(z, x, y, shape, rotation, texture, j19, k19, l19, i20, mixLightness(j21, j20), mixLightness(j21, k20), mixLightness(j21, l20), mixLightness(j21, i21), method185(hsl, j20), method185(hsl, k20), method185(hsl, l20), method185(hsl, i21), i22, rgb);
 								}
 							}
 						}
 					}
-
 				}
 			}
 
-			for(int j8 = 1; j8 < yMapSize - 1; j8++)
-			{
+			for(int j8 = 1; j8 < yMapSize - 1; j8++) {
 				for(int i10 = 1; i10 < xMapSize - 1; i10++)
 					sceneGraph.setTileLogicHeight(z, i10, j8, getLogicHeight(j8, z, i10));
-
 			}
-
 		}
 
 		sceneGraph.shadeModels(-10, -50, -50);
@@ -405,44 +395,44 @@ label5:
 		return k;
 	}
 
-	public static void prefetchObjects(ByteBuffer buffer, ResourceProvider resourceProvider) {
+	public static void prefetchObjects(JagexBuffer buffer, ResourceProvider resourceProvider) {
 		label0: {
 			int i = -1;
 			do {
-				int j = buffer.method422();
+				int j = buffer.getSmart();
 				if(j == 0) {
 					break label0;
 				}
 				i += j;
-				ObjectDef def = ObjectDef.getDef(i);
+				ObjectDefinitions def = ObjectDefinitions.getDefinition(i);
 				def.method574(resourceProvider);
 				do {
-					int k = buffer.method422();
+					int k = buffer.getSmart();
 					if(k == 0) {
 						break;
 					}
-					buffer.getUByte();
+					buffer.getUnsignedByte();
 				} while(true);
 			} while(true);
 		}
 	}
 
-	public final void initMapTables(int i, int j, int l, int i1) {
-		for(int y = i; y <= i + j; y++) {
-			for(int x = i1; x <= i1 + l; x++) {
-				if(x >= 0 && x < xMapSize && y >= 0 && y < yMapSize) {
-					objectShadowData[0][x][y] = 127;
-					if(x == i1 && x > 0) {
-						heightMap[0][x][y] = heightMap[0][x - 1][y];
+	public final void initMapTables(int y, int j, int l, int x) {
+		for(int posY = y; posY <= y + j; posY++) {
+			for(int posX = x; posX <= x + l; posX++) {
+				if(posX >= 0 && posX < xMapSize && posY >= 0 && posY < yMapSize) {
+					objectShadowData[0][posX][posY] = 127;
+					if(posX == x && posX > 0) {
+						heightMap[0][posX][posY] = heightMap[0][posX - 1][posY];
 					}
-					if(x == i1 + l && x < xMapSize - 1) {
-						heightMap[0][x][y] = heightMap[0][x + 1][y];
+					if(posX == x + l && posX < xMapSize - 1) {
+						heightMap[0][posX][posY] = heightMap[0][posX + 1][posY];
 					}
-					if(y == i && y > 0) {
-						heightMap[0][x][y] = heightMap[0][x][y - 1];
+					if(posY == y && posY > 0) {
+						heightMap[0][posX][posY] = heightMap[0][posX][posY - 1];
 					}
-					if(y == i + j && y < yMapSize - 1) {
-						heightMap[0][x][y] = heightMap[0][x][y + 1];
+					if(posY == y + j && posY < yMapSize - 1) {
+						heightMap[0][posX][posY] = heightMap[0][posX][posY + 1];
 					}
 				}
 			}
@@ -466,7 +456,7 @@ label5:
 		int i2 = heightMap[z][x + 1][y + 1];
 		int j2 = heightMap[z][x][y + 1];
 		int k2 = k1 + l1 + i2 + j2 >> 2;
-		ObjectDef def = ObjectDef.getDef(objectId);
+		ObjectDefinitions def = ObjectDefinitions.getDefinition(objectId);
 		int l2 = x + (y << 7) + (objectId << 14) + 0x40000000;
 		if(!def.hasActions)
 			l2 += 0x80000000;
@@ -480,8 +470,8 @@ label5:
 			else
 				obj = new ObjectOnTile(objectId, objectFace, 22, l1, i2, k1, j2, def.animationId, true);
 			sceneGraph.addGroundDecoration(z, k2, y, ((Animable) (obj)), byte0, l2, x);
-			if(def.isUnwalkable && def.hasActions && tileSetting != null)
-				tileSetting.orClipTableSet(y, x);
+			if(def.unwalkable && def.hasActions && tileSetting != null)
+				tileSetting.clipTableSet(y, x);
 			return;
 		}
 		if(objectType == 10 || objectType == 11) {
@@ -497,11 +487,11 @@ label5:
 				int j4;
 				int l4;
 				if(objectFace == 1 || objectFace == 3) {
-					j4 = def.sizeY;
-					l4 = def.sizeX;
+					j4 = def.tileSizeY;
+					l4 = def.tileSizeX;
 				} else {
-					j4 = def.sizeX;
-					l4 = def.sizeY;
+					j4 = def.tileSizeX;
+					l4 = def.tileSizeY;
 				}
 				if(sceneGraph.method284(l2, byte0, k2, l4, ((Animable) (object)), j4, z, i5, y, x) && def.aBoolean779) {
 					Model model;
@@ -522,8 +512,8 @@ label5:
 					}
 				}
 			}
-			if(def.isUnwalkable && tileSetting != null)
-				tileSetting.method212(def.aBoolean757, def.sizeX, def.sizeY, x, y, objectFace);
+			if(def.unwalkable && tileSetting != null)
+				tileSetting.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, x, y, objectFace);
 			return;
 		}
 		if(objectType >= 12) {
@@ -535,8 +525,8 @@ label5:
 			sceneGraph.method284(l2, byte0, k2, 1, ((Animable) (object)), 1, z, 0, y, x);
 			if(objectType >= 12 && objectType <= 17 && objectType != 13 && z > 0)
 				tileCullingBitmap[z][x][y] |= 0x924;
-			if(def.isUnwalkable && tileSetting != null)
-				tileSetting.method212(def.aBoolean757, def.sizeX, def.sizeY, x, y, objectFace);
+			if(def.unwalkable && tileSetting != null)
+				tileSetting.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, x, y, objectFace);
 			return;
 		}
 		if(objectType == 0) {
@@ -576,7 +566,7 @@ label5:
 				if(def.aBoolean764)
 					tileCullingBitmap[z][x][y] |= 0x492;
 			}
-			if(def.isUnwalkable && tileSetting != null)
+			if(def.unwalkable && tileSetting != null)
 				tileSetting.method211(y, objectFace, x, objectType, def.aBoolean757);
 			if(def.anInt775 != 16)
 				sceneGraph.method290(y, def.anInt775, x, z);
@@ -601,7 +591,7 @@ label5:
 				else
 				if(objectFace == 3)
 					objectShadowData[z][x][y] = 50;
-			if(def.isUnwalkable && tileSetting != null)
+			if(def.unwalkable && tileSetting != null)
 				tileSetting.method211(y, objectFace, x, objectType, def.aBoolean757);
 			return;
 		}
@@ -631,7 +621,7 @@ label5:
 					tileCullingBitmap[z][x][y] |= 0x492;
 					tileCullingBitmap[z][x][y] |= 0x249;
 				}
-			if(def.isUnwalkable && tileSetting != null)
+			if(def.unwalkable && tileSetting != null)
 				tileSetting.method211(y, objectFace, x, objectType, def.aBoolean757);
 			if(def.anInt775 != 16)
 				sceneGraph.method290(y, def.anInt775, x, z);
@@ -653,7 +643,7 @@ label5:
 					objectShadowData[z][x + 1][y] = 50;
 				else if(objectFace == 3)
 					objectShadowData[z][x][y] = 50;
-			if(def.isUnwalkable && tileSetting != null)
+			if(def.unwalkable && tileSetting != null)
 				tileSetting.method211(y, objectFace, x, objectType, def.aBoolean757);
 			return;
 		}
@@ -664,11 +654,11 @@ label5:
 			else
 				object = new ObjectOnTile(objectId, objectFace, objectType, l1, i2, k1, j2, def.animationId, true);
 			sceneGraph.method284(l2, byte0, k2, 1, ((Animable) (object)), 1, z, 0, y, x);
-			if(def.isUnwalkable && tileSetting != null)
-				tileSetting.method212(def.aBoolean757, def.sizeX, def.sizeY, x, y, objectFace);
+			if(def.unwalkable && tileSetting != null)
+				tileSetting.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, x, y, objectFace);
 			return;
 		}
-		if(def.conform)
+		if(def.conforms)
 			if(objectFace == 1) {
 				int j3 = j2;
 				j2 = i2;
@@ -702,7 +692,7 @@ label5:
 			int i4 = 16;
 			int k4 = sceneGraph.getWallObjectUID(z, x, y);
 			if(k4 > 0)
-				i4 = ObjectDef.getDef(k4 >> 14 & 0x7fff).anInt775;
+				i4 = ObjectDefinitions.getDefinition(k4 >> 14 & 0x7fff).anInt775;
 			Object object;
 			if(def.animationId == -1 && def.childrenIDs == null)
 				object = def.renderObject(4, 0, k1, l1, i2, j2, -1);
@@ -766,7 +756,7 @@ label5:
 	}
 
 	public static boolean method178(int id, int j) {
-		ObjectDef def = ObjectDef.getDef(id);
+		ObjectDefinitions def = ObjectDefinitions.getDefinition(id);
 		if(j == 11)
 			j = 10;
 		if(j >= 5 && j <= 8)
@@ -782,12 +772,12 @@ label5:
 				}
 			}
 		}
-		ByteBuffer stream = new ByteBuffer(abyte0);
+		JagexBuffer stream = new JagexBuffer(abyte0);
 		for(int l2 = 0; l2 < 4; l2++) {
 			for(int i3 = 0; i3 < 64; i3++) {
 				for(int j3 = 0; j3 < 64; j3++) {
 					if(l2 == tileZ && i3 >= i1 && i3 < i1 + 8 && j3 >= j1 && j3 < j1 + 8) {
-						readTile(y + MapUtility.getRotatedMapChunkY(i3 & 7, j3 & 7, tileRotation), 0, stream, x + MapUtility.getRotatedMapChunkX(i3 & 7, j3 & 7, tileRotation), k1, tileRotation, 0);
+						readTile(y + MapUtils.getRotatedMapChunkY(i3 & 7, j3 & 7, tileRotation), 0, stream, x + MapUtils.getRotatedMapChunkX(i3 & 7, j3 & 7, tileRotation), k1, tileRotation, 0);
 					} else {
 						readTile(-1, 0, stream, -1, 0, 0, 0);
 					}
@@ -797,31 +787,31 @@ label5:
 
 	}
 
-	public final void loadTerrain(byte abyte0[], int offsetZ, int offsetX, int k, int l, TileSetting tileSetting[]) {
-		for(int i1 = 0; i1 < 4; i1++) {
-			for(int j1 = 0; j1 < 64; j1++) {
-				for(int k1 = 0; k1 < 64; k1++) {
-					if(offsetX + j1 > 0 && offsetX + j1 < 103 && offsetZ + k1 > 0 && offsetZ + k1 < 103) {
-						tileSetting[i1].clipData[offsetX + j1][offsetZ + k1] &= 0xfeffffff;
+	public final void loadTerrain(byte abyte0[], int offsetY, int offsetX, int k, int l, TileSetting tileSetting[]) {
+		for(int z = 0; z < 4; z++) {
+			for(int x = 0; x < 64; x++) {
+				for(int y = 0; y < 64; y++) {
+					if(offsetX + x > 0 && offsetX + x < 103 && offsetY + y > 0 && offsetY + y < 103) {
+						tileSetting[z].clipData[offsetX + x][offsetY + y] &= 0xfeffffff;
 					}
 				}
 			}
 		}
-		ByteBuffer stream = new ByteBuffer(abyte0);
-		for(int l1 = 0; l1 < 4; l1++) {
-			for(int i2 = 0; i2 < 64; i2++) {
-				for(int j2 = 0; j2 < 64; j2++) {
-					readTile(j2 + offsetZ, l, stream, i2 + offsetX, l1, 0, k);
+		JagexBuffer stream = new JagexBuffer(abyte0);
+		for(int z = 0; z < 4; z++) {
+			for(int x = 0; x < 64; x++) {
+				for(int y = 0; y < 64; y++) {
+					readTile(y + offsetY, l, stream, x + offsetX, z, 0, k);
 				}
 			}
 		}
 	}
 
-	private void readTile(int z, int offsetZ, ByteBuffer buffer, int x, int l, int shapeBOffset, int offsetX) {
+	private void readTile(int z, int offsetZ, JagexBuffer buffer, int x, int l, int shapeBOffset, int offsetX) {
 		if(x >= 0 && x < 104 && z >= 0 && z < 104) {
 			tileSettings[l][x][z] = 0;
 			do {
-				int l1 = buffer.getUByte();
+				int l1 = buffer.getUnsignedByte();
 				if(l1 == 0)
 					if(l == 0) {
 						heightMap[0][x][z] = -generateMapHeight(0xe3b7b + x + offsetX, 0x87cce + z + offsetZ) * 8;
@@ -831,7 +821,7 @@ label5:
 						return;
 					}
 				if(l1 == 1) {
-					int j2 = buffer.getUByte();
+					int j2 = buffer.getUnsignedByte();
 					if(j2 == 1)
 						j2 = 0;
 					if(l == 0) {
@@ -843,7 +833,7 @@ label5:
 					}
 				}
 				if(l1 <= 49) {
-					overlay[l][x][z] = buffer.getByte();
+					overlay[l][x][z] = buffer.getSignedByte();
 					tileShape[l][x][z] = (byte)((l1 - 2) / 4);
 					tileShapeRotation[l][x][z] = (byte)((l1 - 2) + shapeBOffset & 3);
 				} else if(l1 <= 81)
@@ -853,15 +843,15 @@ label5:
 			} while(true);
 		}
 		do {
-			int i2 = buffer.getUByte();
+			int i2 = buffer.getUnsignedByte();
 			if(i2 == 0)
 				break;
 			if(i2 == 1) {
-				buffer.getUByte();
+				buffer.getUnsignedByte();
 				return;
 			}
 			if(i2 <= 49)
-				buffer.getUByte();
+				buffer.getUnsignedByte();
 		} while(true);
 	}
 
@@ -881,32 +871,32 @@ label5:
 	{
 label0:
 		{
-			ByteBuffer stream = new ByteBuffer(abyte0);
+			JagexBuffer stream = new JagexBuffer(abyte0);
 			int l1 = -1;
 			do
 			{
-				int i2 = stream.method422();
+				int i2 = stream.getSmart();
 				if(i2 == 0)
 					break label0;
 				l1 += i2;
 				int j2 = 0;
 				do
 				{
-					int k2 = stream.method422();
+					int k2 = stream.getSmart();
 					if(k2 == 0)
 						break;
 					j2 += k2 - 1;
 					int l2 = j2 & 0x3f;
 					int i3 = j2 >> 6 & 0x3f;
 					int j3 = j2 >> 12;
-					int k3 = stream.getUByte();
+					int k3 = stream.getUnsignedByte();
 					int l3 = k3 >> 2;
 					int i4 = k3 & 3;
 					if(j3 == i && i3 >= i1 && i3 < i1 + 8 && l2 >= k && l2 < k + 8)
 					{
-						ObjectDef class46 = ObjectDef.getDef(l1);
-						int j4 = j + MapUtility.getRotatedLandscapeChunkX(i3 & 7, l2 & 7, class46.sizeX, class46.sizeY, j1);
-						int k4 = k1 + MapUtility.getRotatedLandscapeChunkY(i3 & 7, l2 & 7, class46.sizeX, class46.sizeY, j1);
+						ObjectDefinitions class46 = ObjectDefinitions.getDefinition(l1);
+						int j4 = j + MapUtils.getRotatedLandscapeChunkX(i3 & 7, l2 & 7, class46.tileSizeX, class46.tileSizeY, j1);
+						int k4 = k1 + MapUtils.getRotatedLandscapeChunkY(i3 & 7, l2 & 7, class46.tileSizeX, class46.tileSizeY, j1);
 						if(j4 > 0 && k4 > 0 && j4 < 103 && k4 < 103)
 						{
 							int l4 = j3;
@@ -980,7 +970,7 @@ label0:
 		int j2 = ai[l][i1 + 1][j + 1];
 		int k2 = ai[l][i1][j + 1];
 		int l2 = l1 + i2 + j2 + k2 >> 2;
-		ObjectDef def = ObjectDef.getDef(j1);
+		ObjectDefinitions def = ObjectDefinitions.getDefinition(j1);
 		int i3 = i1 + (j << 7) + (j1 << 14) + 0x40000000;
 		if(!def.hasActions)
 			i3 += 0x80000000;
@@ -993,8 +983,8 @@ label0:
 			else
 				obj = new ObjectOnTile(j1, i, 22, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addGroundDecoration(k1, l2, j, ((Animable) (obj)), byte1, i3, i1);
-			if(def.isUnwalkable && def.hasActions)
-				class11.orClipTableSet(j, i1);
+			if(def.unwalkable && def.hasActions)
+				class11.clipTableSet(j, i1);
 			return;
 		}
 		if(k == 10 || k == 11)
@@ -1013,17 +1003,17 @@ label0:
 				int i5;
 				if(i == 1 || i == 3)
 				{
-					k4 = def.sizeY;
-					i5 = def.sizeX;
+					k4 = def.tileSizeY;
+					i5 = def.tileSizeX;
 				} else
 				{
-					k4 = def.sizeX;
-					i5 = def.sizeY;
+					k4 = def.tileSizeX;
+					i5 = def.tileSizeY;
 				}
 				sceneGraph.method284(i3, byte1, l2, i5, ((Animable) (obj1)), k4, k1, j5, j, i1);
 			}
-			if(def.isUnwalkable)
-				class11.method212(def.aBoolean757, def.sizeX, def.sizeY, i1, j, i);
+			if(def.unwalkable)
+				class11.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, i1, j, i);
 			return;
 		}
 		if(k >= 12)
@@ -1034,8 +1024,8 @@ label0:
 			else
 				obj2 = new ObjectOnTile(j1, i, k, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.method284(i3, byte1, l2, 1, ((Animable) (obj2)), 1, k1, 0, j, i1);
-			if(def.isUnwalkable)
-				class11.method212(def.aBoolean757, def.sizeX, def.sizeY, i1, j, i);
+			if(def.unwalkable)
+				class11.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, i1, j, i);
 			return;
 		}
 		if(k == 0)
@@ -1046,7 +1036,7 @@ label0:
 			else
 				obj3 = new ObjectOnTile(j1, i, 0, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallObject(bitValues[i], ((Animable) (obj3)), i3, j, byte1, i1, null, l2, 0, k1);
-			if(def.isUnwalkable)
+			if(def.unwalkable)
 				class11.method211(j, i, i1, k, def.aBoolean757);
 			return;
 		}
@@ -1058,7 +1048,7 @@ label0:
 			else
 				obj4 = new ObjectOnTile(j1, i, 1, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallObject(highNybbleBitValues[i], ((Animable) (obj4)), i3, j, byte1, i1, null, l2, 0, k1);
-			if(def.isUnwalkable)
+			if(def.unwalkable)
 				class11.method211(j, i, i1, k, def.aBoolean757);
 			return;
 		}
@@ -1077,7 +1067,7 @@ label0:
 				obj12 = new ObjectOnTile(j1, j3, 2, i2, j2, l1, k2, def.animationId, true);
 			}
 			sceneGraph.addWallObject(bitValues[i], ((Animable) (obj11)), i3, j, byte1, i1, ((Animable) (obj12)), l2, bitValues[j3], k1);
-			if(def.isUnwalkable)
+			if(def.unwalkable)
 				class11.method211(j, i, i1, k, def.aBoolean757);
 			return;
 		}
@@ -1089,7 +1079,7 @@ label0:
 			else
 				obj5 = new ObjectOnTile(j1, i, 3, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallObject(highNybbleBitValues[i], ((Animable) (obj5)), i3, j, byte1, i1, null, l2, 0, k1);
-			if(def.isUnwalkable)
+			if(def.unwalkable)
 				class11.method211(j, i, i1, k, def.aBoolean757);
 			return;
 		}
@@ -1101,11 +1091,11 @@ label0:
 			else
 				obj6 = new ObjectOnTile(j1, i, k, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.method284(i3, byte1, l2, 1, ((Animable) (obj6)), 1, k1, 0, j, i1);
-			if(def.isUnwalkable)
-				class11.method212(def.aBoolean757, def.sizeX, def.sizeY, i1, j, i);
+			if(def.unwalkable)
+				class11.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, i1, j, i);
 			return;
 		}
-		if(def.conform)
+		if(def.conforms)
 			if(i == 1)
 			{
 				int k3 = k2;
@@ -1146,7 +1136,7 @@ label0:
 			int j4 = 16;
 			int l4 = sceneGraph.getWallObjectUID(k1, i1, j);
 			if(l4 > 0)
-				j4 = ObjectDef.getDef(l4 >> 14 & 0x7fff).anInt775;
+				j4 = ObjectDefinitions.getDefinition(l4 >> 14 & 0x7fff).anInt775;
 			Object obj13;
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj13 = def.renderObject(4, 0, l1, i2, j2, k2, -1);
@@ -1190,11 +1180,11 @@ label0:
   ) //xxx bad method, decompiled with JODE
   {
 	boolean bool = true;
-	ByteBuffer stream = new ByteBuffer(is);
+	JagexBuffer stream = new JagexBuffer(is);
 	int i_252_ = -1;
 	for (;;)
 	  {
-	int i_253_ = stream.method422 ();
+	int i_253_ = stream.getSmart ();
 	if (i_253_ == 0)
 	  break;
 	i_252_ += i_253_;
@@ -1204,25 +1194,25 @@ label0:
 	  {
 		if (bool_255_)
 		  {
-		int i_256_ = stream.method422 ();
+		int i_256_ = stream.getSmart ();
 		if (i_256_ == 0)
 		  break;
-		stream.getUByte();
+		stream.getUnsignedByte();
 		  }
 		else
 		  {
-		int i_257_ = stream.method422 ();
+		int i_257_ = stream.getSmart ();
 		if (i_257_ == 0)
 		  break;
 		i_254_ += i_257_ - 1;
 		int i_258_ = i_254_ & 0x3f;
 		int i_259_ = i_254_ >> 6 & 0x3f;
-		int i_260_ = stream.getUByte() >> 2;
+		int i_260_ = stream.getUnsignedByte() >> 2;
 		int i_261_ = i_259_ + i;
 		int i_262_ = i_258_ + i_250_;
 		if (i_261_ > 0 && i_262_ > 0 && i_261_ < 103 && i_262_ < 103)
 		  {
-			ObjectDef class46 = ObjectDef.getDef (i_252_);
+			ObjectDefinitions class46 = ObjectDefinitions.getDefinition (i_252_);
 			if (i_260_ != 22 || !lowMem || class46.hasActions
 					|| class46.aBoolean736)
 			  {
@@ -1238,36 +1228,39 @@ label0:
 
 	public final void loadObjects(int offsetX, TileSetting tileSetting[], int offsetY, SceneGraph sceneGraph, byte abyte0[]) {
 		label0: {
-			ByteBuffer buffer = new ByteBuffer(abyte0);
-			int l = -1;
+			JagexBuffer buffer = new JagexBuffer(abyte0);
+			int id = -1;
 			do {
-				int i1 = buffer.method422();
-				if(i1 == 0)
+				int idOffset = buffer.getSmart();
+				if(idOffset == 0) {
 					break label0;
-				l += i1;
-				int j1 = 0;
+				}
+				id += idOffset;
+				int loc = 0;
 				do {
-					int k1 = buffer.method422();
-					if(k1 == 0)
+					int posOffset = buffer.getSmart();
+					if(posOffset == 0) {
 						break;
-					j1 += k1 - 1;
-					int l1 = j1 & 0x3f;
-					int i2 = j1 >> 6 & 0x3f;
-					int j2 = j1 >> 12;
-					int k2 = buffer.getUByte();
-					int l2 = k2 >> 2;
-					int i3 = k2 & 3;
-					int x = i2 + offsetX;
-					int y = l1 + offsetY;
+					}
+					loc += posOffset - 1;
+					int localY = loc & 0x3f;
+					int localX = loc >> 6 & 0x3f;
+					int height = loc >> 12;
+					int data = buffer.getUnsignedByte();
+					int type = data >> 2;
+					int direction = data & 3;
+					int x = localX + offsetX;
+					int y = localY + offsetY;
 					if(x > 0 && y > 0 && x < 103 && y < 103) {
-						int l3 = j2;
-						if((tileSettings[1][x][y] & 2) == 2)
-							l3--;
-						TileSetting tile = null;
-						if(l3 >= 0) {
-							tile = tileSetting[l3];
+						int z = height;
+						if((tileSettings[1][x][y] & 2) == 2) {
+							z--;
 						}
-						addObjectToRenderer(x, y, j2, l, l2, sceneGraph, tile, i3);
+						TileSetting tile = null;
+						if(z >= 0) {
+							tile = tileSetting[z];
+						}
+						addObjectToRenderer(x, y, height, id, type, sceneGraph, tile, direction);
 					}
 				} while(true);
 			} while(true);

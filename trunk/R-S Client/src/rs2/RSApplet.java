@@ -286,10 +286,12 @@ public class RSApplet extends Applet
 			if (mouseX > offsetX + positionX && mouseY > offsetY + positionY && mouseX < offsetX + positionX + width && mouseY < offsetY + positionY + height) {
 				if (RSInterface.cache[tab.children[childID]].scrollPosition > 0) {
 					RSInterface.cache[tab.children[childID]].scrollPosition += rotation * 30;
+					Client.getClient().updateTabArea = true;
 					return;
 				} else {
 					if (rotation > 0) {
 						RSInterface.cache[tab.children[childID]].scrollPosition += rotation * 30;
+						Client.getClient().updateTabArea = true;
 						return;
 					}
 				}

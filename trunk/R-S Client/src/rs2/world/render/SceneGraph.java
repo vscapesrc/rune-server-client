@@ -629,8 +629,8 @@ public final class SceneGraph {
 		anInt488++;
 		int l = 0;
 		int ai[] = model_1.vertexX;
-		int i1 = model_1.anInt1626;
-		for (int j1 = 0; j1 < model.anInt1626; j1++) {
+		int i1 = model_1.totalVertices;
+		for (int j1 = 0; j1 < model.totalVertices; j1++) {
 			VertexNormal vertexNormal = model.vertexNormals[j1];
 			VertexNormal vertexNormal_1 = model.vertexNormalOffset[j1];
 			if (vertexNormal_1.magnitude != 0) {
@@ -968,7 +968,7 @@ public final class SceneGraph {
 		do {
 			Tile newTile;
 			do {
-				newTile = (Tile) aClass19_477.popHead();
+				newTile = (Tile) aClass19_477.popFront();
 				if (newTile == null) {
 					return;
 				}

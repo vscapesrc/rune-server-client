@@ -66,51 +66,51 @@ public class RSDrawingArea extends NodeSub {
 			drawFilledPixels(x + 1, y + height - 2, 1, 1, color);
 		} else if (alpha != -1) {
 			if (filled) {
-				method340(color, width - 4, y + 1, alpha, x + 2);
-				method340(color, width - 4, y + height - 2, alpha, x + 2);
-				method335(color, y + 2, width - 2, height - 4, alpha, x + 1);
+				drawHorizontalAlphaLine(x + 2, y + 1, width - 4, color, alpha);
+				drawHorizontalAlphaLine(x + 2, y + height - 2, width - 4, color, alpha);
+				drawFilledAlphaPixels(x + 1, y + 2, width - 2, height - 4, color, alpha);
 			}
-			method340(color, width - 4, y, alpha, x + 2);
-			method340(color, width - 4, y + height - 1, alpha, x + 2);
-			method342(color, x, alpha, y + 2, height - 4);
-			method342(color, x + width - 1, alpha, y + 2, height - 4);
-			method335(color, y + 1, 1, 1, alpha, x + 1);
-			method335(color, y + 1, 1, 1, alpha, x + width - 2);
-			method335(color, y + height - 2, 1, 1, alpha, x + 1);
-			method335(color, y + height - 2, 1, 1, alpha, x + width - 2);
+			drawHorizontalAlphaLine(x + 2, y, width - 4, color, alpha);
+			drawHorizontalAlphaLine(x + 2, y + height - 1, width - 4, color, alpha);
+			drawVerticalAlphaLine(x, y + 2, height - 4, color, alpha);
+			drawVerticalAlphaLine(x + width - 1, y + 2, height - 4, color, alpha);
+			drawFilledAlphaPixels(x + 1, y + 1, 1, 1, color, alpha);
+			drawFilledAlphaPixels(x + width - 2, y + 1, 1, 1, color, alpha);
+			drawFilledAlphaPixels(x + 1, y + height - 2, 1, 1, color, alpha);
+			drawFilledAlphaPixels(x + width - 2, y + height - 2, 1, 1, color, alpha);
 		}
 	}
 
-	public static void method335(int i, int j, int k, int l, int i1, int k1) {
-		if (k1 < startX) {
-			k -= startX - k1;
-			k1 = startX;
+	public static void drawFilledAlphaPixels(int x, int y, int w, int h, int color, int alpha) {
+		if (x < startX) {
+			w -= startX - x;
+			x = startX;
 		}
-		if (j < startY) {
-			l -= startY - j;
-			j = startY;
+		if (y < startY) {
+			h -= startY - y;
+			y = startY;
 		}
-		if (k1 + k > endX)
-			k = endX - k1;
-		if (j + l > endY)
-			l = endY - j;
-		int l1 = 256 - i1;
-		int i2 = (i >> 16 & 0xff) * i1;
-		int j2 = (i >> 8 & 0xff) * i1;
-		int k2 = (i & 0xff) * i1;
-		int k3 = width - k;
-		int l3 = k1 + j * width;
-		for (int i4 = 0; i4 < l; i4++) {
-			for (int j4 = -k; j4 < 0; j4++) {
-				int l2 = (pixels[l3] >> 16 & 0xff) * l1;
-				int i3 = (pixels[l3] >> 8 & 0xff) * l1;
-				int j3 = (pixels[l3] & 0xff) * l1;
-				int k4 = ((i2 + l2 >> 8) << 16) + ((j2 + i3 >> 8) << 8)
-						+ (k2 + j3 >> 8);
-				pixels[l3++] = k4;
+		if (x + w > endX) {
+			w = endX - x;
+		}
+		if (y + h > endY) {
+			h = endY - y;
+		}
+		int alphaValue = 256 - alpha;
+		int red = (color >> 16 & 0xff) * alpha;
+		int green = (color >> 8 & 0xff) * alpha;
+		int blue = (color & 0xff) * alpha;
+		int offset = width - w;
+		int pixel = x + y * width;
+		for (int heightPointer = 0; heightPointer < h; heightPointer++) {
+			for (int widthPointer = -w; widthPointer < 0; widthPointer++) {
+				int r = (pixels[pixel] >> 16 & 0xff) * alphaValue;
+				int g = (pixels[pixel] >> 8 & 0xff) * alphaValue;
+				int b = (pixels[pixel] & 0xff) * alphaValue;
+				int pixelColor = ((red + r >> 8) << 16) + ((green + g >> 8) << 8) + (blue + b >> 8);
+				pixels[pixel++] = pixelColor;
 			}
-
-			l3 += k3;
+			pixel += offset;
 		}
 	}
 
@@ -147,11 +147,11 @@ public class RSDrawingArea extends NodeSub {
 	}
 
 	public static void method338(int i, int j, int k, int l, int i1, int j1) {
-		method340(l, i1, i, k, j1);
-		method340(l, i1, (i + j) - 1, k, j1);
+		drawHorizontalAlphaLine(j1, i, i1, l, k);
+		drawHorizontalAlphaLine(j1, (i + j) - 1, i1, l, k);
 		if (j >= 3) {
-			method342(l, j1, k, i + 1, j - 2);
-			method342(l, (j1 + i1) - 1, k, i + 1, j - 2);
+			drawVerticalAlphaLine(j1, i + 1, j - 2, l, k);
+			drawVerticalAlphaLine((j1 + i1) - 1, i + 1, j - 2, l, k);
 		}
 	}
 
@@ -171,26 +171,26 @@ public class RSDrawingArea extends NodeSub {
 
 	}
 
-	private static void method340(int i, int j, int k, int alphaValue, int i1) {
-		if (k < startY || k >= endY)
+	public static void drawHorizontalAlphaLine(int x, int y, int length, int color, int alphaValue) {
+		if (y < startY || y >= endY)
 			return;
-		if (i1 < startX) {
-			j -= startX - i1;
-			i1 = startX;
+		if (x < startX) {
+			length -= startX - x;
+			x = startX;
 		}
-		if (i1 + j > endX)
-			j = endX - i1;
+		if (x + length > endX)
+			length = endX - x;
 		int alpha = 256 - alphaValue;
-		int k1 = (i >> 16 & 0xff) * alphaValue;
-		int l1 = (i >> 8 & 0xff) * alphaValue;
-		int i2 = (i & 0xff) * alphaValue;
-		int i3 = i1 + k * width;
-		for (int index = 0; index < j; index++) {
-			int r = (pixels[i3] >> 16 & 0xff) * alpha;
-			int g = (pixels[i3] >> 8 & 0xff) * alpha;
-			int b = (pixels[i3] & 0xff) * alpha;
-			int color = ((k1 + r >> 8) << 16) + ((l1 + g >> 8) << 8) + (i2 + b >> 8);
-			pixels[i3++] = color;
+		int red = (color >> 16 & 0xff) * alphaValue;
+		int green = (color >> 8 & 0xff) * alphaValue;
+		int blue = (color & 0xff) * alphaValue;
+		int pixel = x + y * width;
+		for (int index = 0; index < length; index++) {
+			int r = (pixels[pixel] >> 16 & 0xff) * alpha;
+			int g = (pixels[pixel] >> 8 & 0xff) * alpha;
+			int b = (pixels[pixel] & 0xff) * alpha;
+			int pixelColor = ((red + r >> 8) << 16) + ((green + g >> 8) << 8) + (blue + b >> 8);
+			pixels[pixel++] = pixelColor;
 		}
 
 	}
@@ -210,28 +210,29 @@ public class RSDrawingArea extends NodeSub {
 
 	}
 
-	private static void method342(int i, int j, int k, int l, int i1) {
-		if (j < startX || j >= endX)
+	public static void drawVerticalAlphaLine(int x, int y, int length, int color, int alpha) {
+		if (x < startX || x >= endX) {
 			return;
-		if (l < startY) {
-			i1 -= startY - l;
-			l = startY;
 		}
-		if (l + i1 > endY)
-			i1 = endY - l;
-		int j1 = 256 - k;
-		int k1 = (i >> 16 & 0xff) * k;
-		int l1 = (i >> 8 & 0xff) * k;
-		int i2 = (i & 0xff) * k;
-		int i3 = j + l * width;
-		for (int j3 = 0; j3 < i1; j3++) {
-			int j2 = (pixels[i3] >> 16 & 0xff) * j1;
-			int k2 = (pixels[i3] >> 8 & 0xff) * j1;
-			int l2 = (pixels[i3] & 0xff) * j1;
-			int k3 = ((k1 + j2 >> 8) << 16) + ((l1 + k2 >> 8) << 8)
-					+ (i2 + l2 >> 8);
-			pixels[i3] = k3;
-			i3 += width;
+		if (y < startY) {
+			length -= startY - y;
+			y = startY;
+		}
+		if (y + length > endY) {
+			length = endY - y;
+		}
+		int alphaValue = 256 - alpha;
+		int red = (color >> 16 & 0xff) * alpha;
+		int green = (color >> 8 & 0xff) * alpha;
+		int blue = (color & 0xff) * alpha;
+		int pixel = x + y * width;
+		for (int j3 = 0; j3 < length; j3++) {
+			int r = (pixels[pixel] >> 16 & 0xff) * alphaValue;
+			int g = (pixels[pixel] >> 8 & 0xff) * alphaValue;
+			int b = (pixels[pixel] & 0xff) * alphaValue;
+			int pixelColor = ((red + r >> 8) << 16) + ((green + g >> 8) << 8) + (blue + b >> 8);
+			pixels[pixel] = pixelColor;
+			pixel += width;
 		}
 
 	}

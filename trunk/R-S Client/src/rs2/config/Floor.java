@@ -1,13 +1,15 @@
 package rs2.config;
 
-import rs2.ByteBuffer;
+import java.awt.Color;
+
+import rs2.JagexBuffer;
 import rs2.cache.JagexArchive;
 
-public final class Floor {
+public class Floor {
 
 	public static void unpackConfig(JagexArchive streamLoader) {
-		ByteBuffer stream = new ByteBuffer(streamLoader.getData("flo.dat"));
-		int cacheSize = stream.getShort();
+		JagexBuffer stream = new JagexBuffer(streamLoader.getData("flo.dat"));
+		int cacheSize = stream.getUnsignedShort();
 		if (cache == null)
 			cache = new Floor[cacheSize];
 		for (int j = 0; j < cacheSize; j++) {
@@ -18,28 +20,28 @@ public final class Floor {
 
 	}
 
-	private void readValues(ByteBuffer stream) {
+	private void readValues(JagexBuffer stream) {
 		do {
-			int i = stream.getUByte();
-			if (i == 0)
+			int i = stream.getUnsignedByte();
+			if (i == 0) {
 				return;
-			else if (i == 1) {
-				anInt390 = stream.get3Bytes();
-				method262(anInt390);
-			} else if (i == 2)
-				anInt391 = stream.getUByte();
-			else if (i == 3) {
-			} else if (i == 5)
-				aBoolean393 = false;
-			else if (i == 6)
-				stream.getString();
-			else if (i == 7) {
+			} else if (i == 1) {
+				terrainColor = new Color(stream.get3Bytes());
+				method262(getTerrainColor());
+			} else if (i == 2) {
+				textureId = stream.getUnsignedByte();
+			} else if (i == 3) {
+			} else if (i == 5) {
+				occlude = false;
+			} else if (i == 6) {
+				name = stream.getString();
+			} else if (i == 7) {
 				int j = anInt394;
 				int k = saturation;
 				int l = lightness;
 				int i1 = anInt397;
-				int j1 = stream.get3Bytes();
-				method262(j1);
+				minimapColor = new Color(stream.get3Bytes());
+				method262(getMinimapColor());
 				anInt394 = j;
 				saturation = k;
 				lightness = l;
@@ -51,20 +53,24 @@ public final class Floor {
 		} while (true);
 	}
 
-	private void method262(int i) {
-		double d = (double) (i >> 16 & 0xff) / 256D;
-		double d1 = (double) (i >> 8 & 0xff) / 256D;
-		double d2 = (double) (i & 0xff) / 256D;
-		double d3 = d;
-		if (d1 < d3)
-			d3 = d1;
-		if (d2 < d3)
-			d3 = d2;
-		double d4 = d;
-		if (d1 > d4)
-			d4 = d1;
-		if (d2 > d4)
-			d4 = d2;
+	private void method262(int color) {
+		double r = (double) (color >> 16 & 0xff) / 256D;
+		double g = (double) (color >> 8 & 0xff) / 256D;
+		double b = (double) (color & 0xff) / 256D;
+		double d3 = r;
+		if (g < d3) {
+			d3 = g;
+		}
+		if (b < d3) {
+			d3 = b;
+		}
+		double d4 = r;
+		if (g > d4) {
+			d4 = g;
+		}
+		if (b > d4) {
+			d4 = b;
+		}
 		double d5 = 0.0D;
 		double d6 = 0.0D;
 		double d7 = (d3 + d4) / 2D;
@@ -73,12 +79,12 @@ public final class Floor {
 				d6 = (d4 - d3) / (d4 + d3);
 			if (d7 >= 0.5D)
 				d6 = (d4 - d3) / (2D - d4 - d3);
-			if (d == d4)
-				d5 = (d1 - d2) / (d4 - d3);
-			else if (d1 == d4)
-				d5 = 2D + (d2 - d) / (d4 - d3);
-			else if (d2 == d4)
-				d5 = 4D + (d - d1) / (d4 - d3);
+			if (r == d4)
+				d5 = (g - b) / (d4 - d3);
+			else if (g == d4)
+				d5 = 2D + (b - r) / (d4 - d3);
+			else if (b == d4)
+				d5 = 4D + (r - g) / (d4 - d3);
 		}
 		d5 /= 6D;
 		anInt394 = (int) (d5 * 256D);
@@ -129,19 +135,45 @@ public final class Floor {
 		return (i / 4 << 10) + (j / 32 << 7) + k / 2;
 	}
 
+	/**
+	 * Returns the total amount of floor data.
+	 * @return
+	 */
+	public static int getCount() {
+		return cache.length;
+	}
+
+	/**
+	 * Returns the terrain color in terms of RGB.
+	 * @return
+	 */
+	public int getTerrainColor() {
+		return terrainColor.getRGB();
+	}
+
+	/**
+	 * Returns the minimap color in terms of RGB.
+	 * @return
+	 */
+	public int getMinimapColor() {
+		return minimapColor.getRGB();
+	}
+
 	private Floor() {
-		anInt391 = -1;
-		aBoolean393 = true;
+		textureId = -1;
+		occlude = true;
 	}
 
 	public static Floor cache[];
-	public int anInt390;
-	public int anInt391;
-	public boolean aBoolean393;
+	public Color terrainColor;
+	public Color minimapColor;
+	public int textureId;
+	public boolean occlude;
 	public int anInt394;
 	public int saturation;
 	public int lightness;
 	public int anInt397;
 	public int anInt398;
 	public int anInt399;
+	public String name;
 }

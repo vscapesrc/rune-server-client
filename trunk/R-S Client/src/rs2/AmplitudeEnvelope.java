@@ -2,20 +2,20 @@ package rs2;
 
 final class AmplitudeEnvelope {
 
-	public void method325(ByteBuffer buffer) {
-		form = buffer.getUByte();
+	public void method325(JagexBuffer buffer) {
+		form = buffer.getUnsignedByte();
 		anInt538 = buffer.getInt();
 		anInt539 = buffer.getInt();
 		readValues(buffer);
 	}
 
-	public void readValues(ByteBuffer buffer) {
-		length = buffer.getUByte();
+	public void readValues(JagexBuffer buffer) {
+		length = buffer.getUnsignedByte();
 		duration = new int[length];
 		amplitudes = new int[length];
 		for (int index = 0; index < length; index++) {
-			duration[index] = buffer.getShort();
-			amplitudes[index] = buffer.getShort();
+			duration[index] = buffer.getUnsignedShort();
+			amplitudes[index] = buffer.getUnsignedShort();
 		}
 	}
 

@@ -1,70 +1,70 @@
 package rs2.config;
 
-import rs2.ByteBuffer;
+import rs2.JagexBuffer;
 import rs2.cache.JagexArchive;
 import rs2.constants.Constants;
 
 public final class Censor {
 
 	public static void loadConfig(JagexArchive archive) {
-		ByteBuffer fragment = new ByteBuffer(archive.getData("fragmentsenc.txt"));
-		ByteBuffer bad = new ByteBuffer(archive.getData("badenc.txt"));
-		ByteBuffer domain = new ByteBuffer(archive.getData("domainenc.txt"));
-		ByteBuffer tld = new ByteBuffer(archive.getData("tldlist.txt"));
+		JagexBuffer fragment = new JagexBuffer(archive.getData("fragmentsenc.txt"));
+		JagexBuffer bad = new JagexBuffer(archive.getData("badenc.txt"));
+		JagexBuffer domain = new JagexBuffer(archive.getData("domainenc.txt"));
+		JagexBuffer tld = new JagexBuffer(archive.getData("tldlist.txt"));
 		readValues(fragment, bad, domain, tld);
 	}
 
-	private static void readValues(ByteBuffer fragment, ByteBuffer bad, ByteBuffer domain, ByteBuffer tld) {
+	private static void readValues(JagexBuffer fragment, JagexBuffer bad, JagexBuffer domain, JagexBuffer tld) {
 		readBadEnc(bad);
 		readDomainEnc(domain);
 		readFragmentsEnc(fragment);
 		readTldList(tld);
 	}
 
-	private static void readTldList(ByteBuffer buffer) {
+	private static void readTldList(JagexBuffer buffer) {
 		int i = buffer.getInt();
 		aCharArrayArray624 = new char[i][];
 		anIntArray625 = new int[i];
 		for (int j = 0; j < i; j++) {
-			anIntArray625[j] = buffer.getUByte();
-			char ac[] = new char[buffer.getUByte()];
+			anIntArray625[j] = buffer.getUnsignedByte();
+			char ac[] = new char[buffer.getUnsignedByte()];
 			for (int k = 0; k < ac.length; k++)
-				ac[k] = (char) buffer.getUByte();
+				ac[k] = (char) buffer.getUnsignedByte();
 			aCharArrayArray624[j] = ac;
 		}
 
 	}
 
-	private static void readBadEnc(ByteBuffer buffer) {
+	private static void readBadEnc(JagexBuffer buffer) {
 		int j = buffer.getInt();
 		aCharArrayArray621 = new char[j][];
 		aByteArrayArrayArray622 = new byte[j][][];
 		method493(buffer, aCharArrayArray621, aByteArrayArrayArray622);
 	}
 
-	private static void readDomainEnc(ByteBuffer buffer) {
+	private static void readDomainEnc(JagexBuffer buffer) {
 		int i = buffer.getInt();
 		aCharArrayArray623 = new char[i][];
 		method494(aCharArrayArray623, buffer);
 	}
 
-	private static void readFragmentsEnc(ByteBuffer buffer) {
+	private static void readFragmentsEnc(JagexBuffer buffer) {
 		anIntArray620 = new int[buffer.getInt()];
 		for (int i = 0; i < anIntArray620.length; i++)
-			anIntArray620[i] = buffer.getShort();
+			anIntArray620[i] = buffer.getUnsignedShort();
 	}
 
-	private static void method493(ByteBuffer stream, char ac[][], byte abyte0[][][]) {
+	private static void method493(JagexBuffer stream, char ac[][], byte abyte0[][][]) {
 		for (int j = 0; j < ac.length; j++) {
-			char ac1[] = new char[stream.getUByte()];
+			char ac1[] = new char[stream.getUnsignedByte()];
 			for (int k = 0; k < ac1.length; k++)
-				ac1[k] = (char) stream.getUByte();
+				ac1[k] = (char) stream.getUnsignedByte();
 
 			ac[j] = ac1;
-			byte abyte1[][] = new byte[stream.getUByte()][2];
+			byte abyte1[][] = new byte[stream.getUnsignedByte()][2];
 			for (int l = 0; l < abyte1.length; l++) {
-				abyte1[l][0] = (byte) stream.getUByte();
-				abyte1[l][1] = (byte) stream.getUByte();
+				abyte1[l][0] = (byte) stream.getUnsignedByte();
+				abyte1[l][1] = (byte) stream.getUnsignedByte();
 			}
 
 			if (abyte1.length > 0)
@@ -73,11 +73,11 @@ public final class Censor {
 
 	}
 
-	private static void method494(char ac[][], ByteBuffer stream) {
+	private static void method494(char ac[][], JagexBuffer stream) {
 		for (int j = 0; j < ac.length; j++) {
-			char ac1[] = new char[stream.getUByte()];
+			char ac1[] = new char[stream.getUnsignedByte()];
 			for (int k = 0; k < ac1.length; k++)
-				ac1[k] = (char) stream.getUByte();
+				ac1[k] = (char) stream.getUnsignedByte();
 
 			ac[j] = ac1;
 		}

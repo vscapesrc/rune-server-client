@@ -1,122 +1,137 @@
 package rs2.config;
 
 import rs2.Model;
-import rs2.ByteBuffer;
+import rs2.JagexBuffer;
 import rs2.cache.JagexArchive;
 
-public final class IdentityKit {
+public class IdentityKit {
 
-	public static void unpackConfig(JagexArchive streamLoader) {
-		ByteBuffer stream = new ByteBuffer(streamLoader.getData("idk.dat"));
-		length = stream.getShort();
-		if (cache == null)
+	public static void unpackConfig(JagexArchive archive) {
+		JagexBuffer buffer = new JagexBuffer(archive.getData("idk.dat"));
+		length = buffer.getUnsignedShort();
+		if (cache == null) {
 			cache = new IdentityKit[length];
-		for (int j = 0; j < length; j++) {
-			if (cache[j] == null)
-				cache[j] = new IdentityKit();
-			cache[j].readValues(stream);
+		}
+		for (int index = 0; index < length; index++) {
+			if (cache[index] == null) {
+				cache[index] = new IdentityKit();
+			}
+			cache[index].readValues(buffer);
 		}
 	}
 
-	private void readValues(ByteBuffer stream) {
+	private void readValues(JagexBuffer buffer) {
 		do {
-			int i = stream.getUByte();
-			if (i == 0)
+			int opcode = buffer.getUnsignedByte();
+			if (opcode == 0)
 				return;
-			if (i == 1)
-				anInt657 = stream.getUByte();
-			else if (i == 2) {
-				int j = stream.getUByte();
-				anIntArray658 = new int[j];
-				for (int k = 0; k < j; k++)
-					anIntArray658[k] = stream.getShort();
-
-			} else if (i == 3)
-				aBoolean662 = true;
-			else if (i >= 40 && i < 50)
-				anIntArray659[i - 40] = stream.getShort();
-			else if (i >= 50 && i < 60)
-				anIntArray660[i - 50] = stream.getShort();
-			else if (i >= 60 && i < 70)
-				anIntArray661[i - 60] = stream.getShort();
+			if (opcode == 1)
+				partId = buffer.getUnsignedByte();
+			else if (opcode == 2) {
+				int total = buffer.getUnsignedByte();
+				models = new int[total];
+				for (int model = 0; model < total; model++) {
+					models[model] = buffer.getUnsignedShort();
+				}
+			} else if (opcode == 3)
+				disableDisplay = true;
+			else if (opcode >= 40 && opcode < 50)
+				oldColors[opcode - 40] = buffer.getUnsignedShort();
+			else if (opcode >= 50 && opcode < 60)
+				newColors[opcode - 50] = buffer.getUnsignedShort();
+			else if (opcode >= 60 && opcode < 70)
+				dialogModels[opcode - 60] = buffer.getUnsignedShort();
 			else
-				System.out.println("Error unrecognised config code: " + i);
+				System.out.println("Error unrecognised config code: " + opcode);
 		} while (true);
 	}
 
 	public boolean method537() {
-		if (anIntArray658 == null)
+		if (models == null) {
 			return true;
+		}
 		boolean flag = true;
-		for (int j = 0; j < anIntArray658.length; j++)
-			if (!Model.method463(anIntArray658[j]))
+		for (int model = 0; model < models.length; model++) {
+			if (!Model.method463(models[model])) {
 				flag = false;
-
+			}
+		}
 		return flag;
 	}
 
 	public Model method538() {
-		if (anIntArray658 == null)
+		if (models == null) {
 			return null;
-		Model aclass30_sub2_sub4_sub6s[] = new Model[anIntArray658.length];
-		for (int i = 0; i < anIntArray658.length; i++)
-			aclass30_sub2_sub4_sub6s[i] = Model.method462(anIntArray658[i]);
+		}
+		Model modelArray[] = new Model[models.length];
+		for (int i = 0; i < models.length; i++)
+			modelArray[i] = Model.method462(models[i]);
 
 		Model model;
-		if (aclass30_sub2_sub4_sub6s.length == 1)
-			model = aclass30_sub2_sub4_sub6s[0];
-		else
-			model = new Model(aclass30_sub2_sub4_sub6s.length,
-					aclass30_sub2_sub4_sub6s);
-		for (int j = 0; j < 6; j++) {
-			if (anIntArray659[j] == 0)
-				break;
-			model.changeModelColors(anIntArray659[j], anIntArray660[j]);
+		if (modelArray.length == 1) {
+			model = modelArray[0];
+		} else {
+			model = new Model(modelArray.length, modelArray);
 		}
-
+		for (int color = 0; color < 6; color++) {
+			if (oldColors[color] == 0) {
+				break;
+			}
+			model.changeModelColors(oldColors[color], newColors[color]);
+		}
 		return model;
 	}
 
 	public boolean method539() {
 		boolean flag1 = true;
-		for (int i = 0; i < 5; i++)
-			if (anIntArray661[i] != -1 && !Model.method463(anIntArray661[i]))
+		for (int model = 0; model < 5; model++) {
+			if (dialogModels[model] != -1 && !Model.method463(dialogModels[model])) {
 				flag1 = false;
-
+			}
+		}
 		return flag1;
 	}
 
 	public Model method540() {
-		Model aclass30_sub2_sub4_sub6s[] = new Model[5];
-		int j = 0;
-		for (int k = 0; k < 5; k++)
-			if (anIntArray661[k] != -1)
-				aclass30_sub2_sub4_sub6s[j++] = Model
-						.method462(anIntArray661[k]);
-
-		Model model = new Model(j, aclass30_sub2_sub4_sub6s);
-		for (int l = 0; l < 6; l++) {
-			if (anIntArray659[l] == 0)
+		Model modelArray[] = new Model[5];
+		int id = 0;
+		for (int model = 0; model < 5; model++) {
+			if (dialogModels[model] != -1) {
+				modelArray[id++] = Model.method462(dialogModels[model]);
+			}
+		}
+		Model model = new Model(id, modelArray);
+		for (int color = 0; color < 6; color++) {
+			if (oldColors[color] == 0) {
 				break;
-			model.changeModelColors(anIntArray659[l], anIntArray660[l]);
+			}
+			model.changeModelColors(oldColors[color], newColors[color]);
 		}
 
 		return model;
 	}
 
-	private IdentityKit() {
-		anInt657 = -1;
-		anIntArray659 = new int[6];
-		anIntArray660 = new int[6];
-		aBoolean662 = false;
+	/**
+	 * Returns the total amount of identity kit data.
+	 * @return
+	 */
+	public static int getCount() {
+		return cache.length;
+	}
+
+	public IdentityKit() {
+		partId = -1;
+		oldColors = new int[6];
+		newColors = new int[6];
+		disableDisplay = false;
 	}
 
 	public static int length;
 	public static IdentityKit cache[];
-	public int anInt657;
-	private int[] anIntArray658;
-	private final int[] anIntArray659;
-	private final int[] anIntArray660;
-	private final int[] anIntArray661 = { -1, -1, -1, -1, -1 };
-	public boolean aBoolean662;
+	public int partId;
+	public int[] models;
+	public final int[] oldColors;
+	public final int[] newColors;
+	public final int[] dialogModels = { -1, -1, -1, -1, -1 };
+	public boolean disableDisplay;
 }

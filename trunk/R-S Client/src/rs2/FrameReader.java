@@ -103,7 +103,7 @@ public final class FrameReader {
 		}
 	}
 
-	public static void nullLoader() {
+	public static void clearCache() {
 		frameReader = null;
 	}
 

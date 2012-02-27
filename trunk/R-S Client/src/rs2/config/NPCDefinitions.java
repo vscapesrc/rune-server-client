@@ -56,7 +56,7 @@ public final class NPCDefinitions {
 		}
 		if (oldColors != null) {
 			for (int colors = 0; colors < oldColors.length; colors++) {
-				model.changeModelColors(oldColors[colors], newColors[colors]);
+				model.changeColors(oldColors[colors], newColors[colors]);
 			}
 		}
 		return model;
@@ -97,7 +97,7 @@ public final class NPCDefinitions {
 		}
 	}
 
-	public static void nullLoader() {
+	public static void clearCache() {
 		memCache = null;
 		streamIndices = null;
 		definitions = null;
@@ -135,11 +135,11 @@ public final class NPCDefinitions {
 			}
 			if (oldColors != null) {
 				for (int color = 0; color < oldColors.length; color++) {
-					model.changeModelColors(oldColors[color], newColors[color]);
+					model.changeColors(oldColors[color], newColors[color]);
 				}
 			}
 			model.method469();
-			model.method479(64 + modelBrightness, 850 + modelShadowing, -30, -50, -30, true);
+			model.doLighting(64 + modelBrightness, 850 + modelShadowing, -30, -50, -30, true);
 			memCache.put(model, id);
 		}
 		Model model_1 = Model.aModel_1621;
@@ -161,7 +161,7 @@ public final class NPCDefinitions {
 		return model_1;
 	}
 
-	private void readValues(JagexBuffer buffer) {
+	public void readValues(JagexBuffer buffer) {
 		do {
 			int opcode = buffer.getUnsignedByte();
 			if (opcode == 0) {
@@ -255,7 +255,15 @@ public final class NPCDefinitions {
 		} while (true);
 	}
 
-	private NPCDefinitions() {
+	/**
+	 * Returns the total amount of npc definitions.
+	 * @return
+	 */
+	public static int getCount() {
+		return streamIndices.length;
+	}
+
+	public NPCDefinitions() {
 		turn90RightAnim = -1;
 		varBitChild = -1;
 		turn180Anim = -1;
@@ -276,37 +284,37 @@ public final class NPCDefinitions {
 	}
 
 	public int turn90RightAnim;
-	private static int cacheIndex;
-	private int varBitChild;
+	public static int cacheIndex;
+	public int varBitChild;
 	public int turn180Anim;
-	private int configChild;
-	private static JagexBuffer dataBuffer;
+	public int configChild;
+	public static JagexBuffer dataBuffer;
 	public int combatLevel;
 	public String name;
 	public String actions[];
 	public int walkAnim;
 	public byte tileSize;
-	private int[] newColors;
-	private static int[] streamIndices;
-	private int[] dialogModels;
+	public int[] newColors;
+	public static int[] streamIndices;
+	public int[] dialogModels;
 	public int headIcon;
-	private int[] oldColors;
+	public int[] oldColors;
 	public int standAnim;
 	public long id;
 	public int getDegreesToTurn;
-	private static NPCDefinitions[] definitions;
+	public static NPCDefinitions[] definitions;
 	public static Client client;
 	public int turn90LeftAnim;
 	public boolean aBoolean84;
-	private int modelBrightness;
-	private int modelScaleY;
+	public int modelBrightness;
+	public int modelScaleY;
 	public boolean displayMapMarker;
 	public int childrenIDs[];
 	public byte description[];
-	private int modelScaleXZ;
-	private int modelShadowing;
+	public int modelScaleXZ;
+	public int modelShadowing;
 	public boolean visible;
-	private int[] entityModels;
+	public int[] entityModels;
 	public static MemCache memCache = new MemCache(30);
 
 }

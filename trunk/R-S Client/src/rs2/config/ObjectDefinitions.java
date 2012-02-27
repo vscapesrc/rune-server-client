@@ -38,24 +38,24 @@ public final class ObjectDefinitions {
 		aBoolean757 = true;
 		hasActions = false;
 		conforms = false;
-		aBoolean769 = false;
+		blackModel = false;
 		aBoolean764 = false;
 		animationId = -1;
-		anInt775 = 16;
+		renderOffset = 16;
 		modelBrightness = 0;
 		modelShadowing = 0;
 		actions = null;
-		anInt746 = -1;
-		anInt758 = -1;
-		aBoolean751 = false;
+		mapIconId = -1;
+		mapSceneId = -1;
+		mirrorModel = false;
 		aBoolean779 = true;
 		modelScaleX = 128;
 		modelScaleY = 128;
 		modelScaleZ = 128;
 		anInt768 = 0;
-		anInt738 = 0;
-		anInt745 = 0;
-		anInt783 = 0;
+		vertexOffsetX = 0;
+		vertexOffsetY = 0;
+		vertexOffsetZ = 0;
 		aBoolean736 = false;
 		aBoolean766 = false;
 		anInt760 = -1;
@@ -73,7 +73,7 @@ public final class ObjectDefinitions {
 		}
 	}
 
-	public static void nullLoader() {
+	public static void clearCache() {
 		memCache1 = null;
 		memCache2 = null;
 		streamIndices = null;
@@ -124,8 +124,8 @@ public final class ObjectDefinitions {
 		if (model == null) {
 			return null;
 		}
-		if (conforms || aBoolean769) {
-			model = new Model(conforms, aBoolean769, model);
+		if (conforms || blackModel) {
+			model = new Model(conforms, blackModel, model);
 		}
 		if (conforms) {
 			int l1 = (k + l + i1 + j1) / 4;
@@ -186,11 +186,11 @@ public final class ObjectDefinitions {
 			if (modelArray == null) {
 				return null;
 			}
-			boolean flag1 = aBoolean751 ^ (l > 3);
+			boolean mirrored = mirrorModel ^ (l > 3);
 			int k1 = modelArray.length;
 			for (int index = 0; index < k1; index++) {
 				int modelId = modelArray[index];
-				if (flag1) {
+				if (mirrored) {
 					modelId += 0x10000;
 				}
 				model = (Model) memCache1.get(modelId);
@@ -199,7 +199,7 @@ public final class ObjectDefinitions {
 					if (model == null) {
 						return null;
 					}
-					if (flag1) {
+					if (mirrored) {
 						model.method477();
 					}
 					memCache1.put(model, modelId);
@@ -229,8 +229,8 @@ public final class ObjectDefinitions {
 				return model_2;
 			}
 			int modelId = modelArray[modelIndex];
-			boolean flag3 = aBoolean751 ^ (l > 3);
-			if (flag3) {
+			boolean mirrored = mirrorModel ^ (l > 3);
+			if (mirrored) {
 				modelId += 0x10000;
 			}
 			model = (Model) memCache1.get(modelId);
@@ -239,14 +239,14 @@ public final class ObjectDefinitions {
 				if (model == null) {
 					return null;
 				}
-				if (flag3) {
+				if (mirrored) {
 					model.method477();
 				}
 				memCache1.put(model, modelId);
 			}
 		}
 		boolean rescaled = modelScaleX != 128 || modelScaleY != 128 || modelScaleZ != 128;
-		boolean visible = anInt738 != 0 || anInt745 != 0 || anInt783 != 0;
+		boolean visible = vertexOffsetX != 0 || vertexOffsetZ != 0 || vertexOffsetY != 0;
 		Model model_3 = new Model(oldColors == null, FrameReader.method532(k), l == 0 && k == -1 && !rescaled && !visible, model);
 		if (k != -1) {
 			model_3.method469();
@@ -259,16 +259,16 @@ public final class ObjectDefinitions {
 		}
 		if (oldColors != null) {
 			for (int color = 0; color < oldColors.length; color++) {
-				model_3.changeModelColors(oldColors[color], newColors[color]);
+				model_3.changeColors(oldColors[color], newColors[color]);
 			}
 		}
 		if (rescaled) {
 			model_3.scaleModel(modelScaleX, modelScaleY, modelScaleZ);
 		}
 		if (visible) {
-			model_3.method475(anInt738, anInt745, anInt783);
+			model_3.moveVertices(vertexOffsetX, vertexOffsetZ, vertexOffsetY);
 		}
-		model_3.method479(64 + modelBrightness, 768 + modelShadowing * 5, -50, -10, -50, !aBoolean769);
+		model_3.doLighting(64 + modelBrightness, 768 + modelShadowing * 5, -50, -10, -50, !blackModel);
 		if (anInt760 == 1) {
 			model_3.anInt1654 = model_3.modelHeight;
 		}
@@ -327,7 +327,7 @@ public final class ObjectDefinitions {
 				} else if (opcode == 21) {
 					conforms = true;
 				} else if (opcode == 22) {
-					aBoolean769 = true;
+					blackModel = true;
 				} else if (opcode == 23) {
 					aBoolean764 = true;
 				} else if (opcode == 24) {
@@ -336,7 +336,7 @@ public final class ObjectDefinitions {
 						animationId = -1;
 					}
 				} else if (opcode == 28) {
-					anInt775 = buffer.getUnsignedByte();
+					renderOffset = buffer.getUnsignedByte();
 				} else if (opcode == 29) {
 					modelBrightness = buffer.getSignedByte();
 				} else if (opcode == 39) {
@@ -358,9 +358,9 @@ public final class ObjectDefinitions {
 						newColors[index] = buffer.getUnsignedShort();
 					}
 				} else if (opcode == 60) {
-					anInt746 = buffer.getUnsignedShort();
+					mapIconId = buffer.getUnsignedShort();
 				} else if (opcode == 62) {
-					aBoolean751 = true;
+					mirrorModel = true;
 				} else if (opcode == 64) {
 					aBoolean779 = false;
 				} else if (opcode == 65) {
@@ -370,15 +370,15 @@ public final class ObjectDefinitions {
 				} else if (opcode == 67) {
 					modelScaleZ = buffer.getUnsignedShort();
 				} else if (opcode == 68) {
-					anInt758 = buffer.getUnsignedShort();
+					mapSceneId = buffer.getUnsignedShort();
 				} else if (opcode == 69) {
 					anInt768 = buffer.getUnsignedByte();
 				} else if (opcode == 70) {
-					anInt738 = buffer.getShort();
+					vertexOffsetX = buffer.getShort();
 				} else if (opcode == 71) {
-					anInt745 = buffer.getShort();
+					vertexOffsetZ = buffer.getShort();
 				} else if (opcode == 72) {
-					anInt783 = buffer.getShort();
+					vertexOffsetY = buffer.getShort();
 				} else if (opcode == 73) {
 					aBoolean736 = true;
 				} else if (opcode == 74) {
@@ -430,24 +430,24 @@ public final class ObjectDefinitions {
 	public static int totalObjects;
 	public boolean aBoolean736;
 	private byte modelBrightness;
-	private int anInt738;
+	private int vertexOffsetX;
 	public String name;
 	private int modelScaleZ;
 	private static final Model[] models = new Model[4];
 	private byte modelShadowing;
 	public int tileSizeX;
-	private int anInt745;
-	public int anInt746;
+	private int vertexOffsetZ;
+	public int mapIconId;
 	private int[] newColors;
 	private int modelScaleX;
 	public int anInt749;
-	private boolean aBoolean751;
+	private boolean mirrorModel;
 	public static boolean lowMem;
 	private static JagexBuffer dataBuffer;
 	public int id;
 	private static int[] streamIndices;
 	public boolean aBoolean757;
-	public int anInt758;
+	public int mapSceneId;
 	public int childrenIDs[];
 	private int anInt760;
 	public int tileSizeY;
@@ -457,12 +457,12 @@ public final class ObjectDefinitions {
 	private boolean aBoolean766;
 	public boolean unwalkable;
 	public int anInt768;
-	private boolean aBoolean769;
+	private boolean blackModel;
 	private static int cacheIndex;
 	private int modelScaleY;
 	private int[] modelArray;
 	public int varBitChild;
-	public int anInt775;
+	public int renderOffset;
 	private int[] anIntArray776;
 	public byte description[];
 	public boolean hasActions;
@@ -470,7 +470,7 @@ public final class ObjectDefinitions {
 	public static MemCache memCache2 = new MemCache(30);
 	public int animationId;
 	private static ObjectDefinitions[] definitions;
-	private int anInt783;
+	private int vertexOffsetY;
 	private int[] oldColors;
 	public static MemCache memCache1 = new MemCache(500);
 	public String actions[];

@@ -28,12 +28,13 @@ public class DataUtils {
 	public static int readJAGHash(String string) {
 		int id = 0;
 		string = string.toUpperCase();
-		for (int j = 0; j < string.length(); j++)
+		for (int j = 0; j < string.length(); j++) {
 			id = (id * 61 + string.charAt(j)) - 32;
+		}
 		return id;
 	}
 
-	public static int getCRCFromData(byte[] data) {
+	public static int getCRC(byte[] data) {
 		CRC32 crc = new CRC32();
 		crc.update(data);
 		return (int) crc.getValue();
@@ -54,7 +55,7 @@ public class DataUtils {
 		return out.toByteArray();
 	}
 
-	public static byte[] gzDecompress(byte[] b) throws IOException {
+	public static byte[] decompressGZip(byte[] b) throws IOException {
 		GZIPInputStream gzi = new GZIPInputStream(new ByteArrayInputStream(b));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		byte[] buf = new byte[1024];
@@ -66,7 +67,7 @@ public class DataUtils {
 		return out.toByteArray();
 	}
 
-	static byte[] unzip(byte[] data) throws IOException {
+	public static byte[] unzip(byte[] data) throws IOException {
 		InputStream in = new ByteArrayInputStream(data);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
@@ -102,22 +103,26 @@ public class DataUtils {
 				raf.close();
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static byte[] gZipCompress(byte[] data, int off, int len)
-			throws IOException {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		GZIPOutputStream gzo = new GZIPOutputStream(bos);
+	public static byte[] compressGZip(byte[] data, int off, int len) {
 		try {
-			gzo.write(data, off, len);
-		} finally {
-			gzo.close();
-			bos.close();
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			GZIPOutputStream gzo = new GZIPOutputStream(bos);
+			try {
+				gzo.write(data, off, len);
+			} finally {
+				gzo.close();
+				bos.close();
+			}
+			return bos.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return bos.toByteArray();
+		return null;
 	}
 
 	/**

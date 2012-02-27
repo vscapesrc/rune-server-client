@@ -181,53 +181,52 @@ public final class RSImage extends RSDrawingArea {
 		}
 	}
 
-	public RSImage(JagexArchive streamLoader, String s, int i) {
-		JagexBuffer stream = new JagexBuffer(streamLoader.getData(s + ".dat"));
-		JagexBuffer stream_1 = new JagexBuffer(streamLoader.getData("index.dat"));
-		stream_1.offset = stream.getUnsignedShort();
-		maxWidth = stream_1.getUnsignedShort();
-		maxHeight = stream_1.getUnsignedShort();
-		int j = stream_1.getUnsignedByte();
-		int pixels[] = new int[j];
-		for (int index = 0; index < j - 1; index++) {
-			pixels[index + 1] = stream_1.get3Bytes();
+	public RSImage(JagexArchive archive, String spriteArchive, int spriteIndex) {
+		JagexBuffer dataBuffer = new JagexBuffer(archive.getData(spriteArchive + ".dat"));
+		JagexBuffer indexBuffer = new JagexBuffer(archive.getData("index.dat"));
+		indexBuffer.offset = dataBuffer.getUnsignedShort();
+		maxWidth = indexBuffer.getUnsignedShort();
+		maxHeight = indexBuffer.getUnsignedShort();
+		int total = indexBuffer.getUnsignedByte();
+		int pixels[] = new int[total];
+		for (int index = 0; index < total - 1; index++) {
+			pixels[index + 1] = indexBuffer.get3Bytes();
 			if (pixels[index + 1] == 0) {
 				pixels[index + 1] = 1;
 			}
 		}
-		for (int index = 0; index < i; index++) {
-			stream_1.offset += 2;
-			stream.offset += stream_1.getUnsignedShort() * stream_1.getUnsignedShort();
-			stream_1.offset++;
+		for (int index = 0; index < spriteIndex; index++) {
+			indexBuffer.offset += 2;
+			dataBuffer.offset += indexBuffer.getUnsignedShort() * indexBuffer.getUnsignedShort();
+			indexBuffer.offset++;
 		}
-
-		offsetX = stream_1.getUnsignedByte();
-		offsetY = stream_1.getUnsignedByte();
-		myWidth = stream_1.getUnsignedShort();
-		myHeight = stream_1.getUnsignedShort();
-		int i1 = stream_1.getUnsignedByte();
+		offsetX = indexBuffer.getUnsignedByte();
+		offsetY = indexBuffer.getUnsignedByte();
+		myWidth = indexBuffer.getUnsignedShort();
+		myHeight = indexBuffer.getUnsignedShort();
+		int type = indexBuffer.getUnsignedByte();
 		int totalPixels = myWidth * myHeight;
 		myPixels = new int[totalPixels];
-		if (i1 == 0) {
+		if (type == 0) {
 			for (int index = 0; index < totalPixels; index++) {
-				myPixels[index] = pixels[stream.getUnsignedByte()];
+				myPixels[index] = pixels[dataBuffer.getUnsignedByte()];
 			}
 			return;
 		}
-		if (i1 == 1) {
+		if (type == 1) {
 			for (int width = 0; width < myWidth; width++) {
 				for (int height = 0; height < myHeight; height++) {
-					myPixels[width + height * myWidth] = pixels[stream.getUnsignedByte()];
+					myPixels[width + height * myWidth] = pixels[dataBuffer.getUnsignedByte()];
 				}
 			}
 		}
 	}
 
-	public void method343() {
-		RSDrawingArea.initDrawingArea(myHeight, myWidth, myPixels);
+	public void initDrawingArea() {
+		RSDrawingArea.initDrawingArea(myWidth, myHeight, myPixels);
 	}
 
-	public void adjustColors(int redOffset, int greenOffset, int blueOffset) {
+	public void adjustRGB(int redOffset, int greenOffset, int blueOffset) {
 		for (int index = 0; index < myPixels.length; index++) {
 			int color = myPixels[index];
 			if (color != 0) {
@@ -433,10 +432,10 @@ public final class RSImage extends RSDrawingArea {
 		}
 	}
 
-	public void shapeImageToPixels(int i, int j, int ai[], int k, int originalPixels[], int i1, int y, int x, int l1, int i2) {
+	public void shapeImageToPixels(int x, int y, int height, int originalPixels[], int ai[], int j, int k, int i1, int l1, int i2) {
 		try {
 			int j2 = -l1 / 2;
-			int k2 = -i / 2;
+			int k2 = -height / 2;
 			int l2 = (int) (Math.sin((double) j / 326.11000000000001D) * 65536D);
 			int i3 = (int) (Math.cos((double) j / 326.11000000000001D) * 65536D);
 			l2 = l2 * k >> 8;
@@ -444,7 +443,7 @@ public final class RSImage extends RSDrawingArea {
 			int j3 = (i2 << 16) + (k2 * l2 + j2 * i3);
 			int k3 = (i1 << 16) + (k2 * i3 - j2 * l2);
 			int offset = x + y * RSDrawingArea.width;
-			for (y = 0; y < i; y++) {
+			for (y = 0; y < height; y++) {
 				int i4 = originalPixels[y];
 				int j4 = offset + i4;
 				int k4 = j3 + i3 * i4;
@@ -504,36 +503,36 @@ public final class RSImage extends RSDrawingArea {
 		}
 	}
 
-	public void method354(IndexedImage image, int i, int j) {
-		j += offsetX;
-		i += offsetY;
-		int k = j + i * RSDrawingArea.width;
+	public void drawIndexedImage(IndexedImage image, int x, int y) {
+		x += offsetX;
+		y += offsetY;
+		int k = x + y * RSDrawingArea.width;
 		int l = 0;
 		int height = myHeight;
 		int width = myWidth;
 		int k1 = RSDrawingArea.width - width;
 		int l1 = 0;
-		if (i < RSDrawingArea.startY) {
-			int i2 = RSDrawingArea.startY - i;
+		if (y < RSDrawingArea.startY) {
+			int i2 = RSDrawingArea.startY - y;
 			height -= i2;
-			i = RSDrawingArea.startY;
+			y = RSDrawingArea.startY;
 			l += i2 * width;
 			k += i2 * RSDrawingArea.width;
 		}
-		if (i + height > RSDrawingArea.endY) {
-			height -= (i + height) - RSDrawingArea.endY;
+		if (y + height > RSDrawingArea.endY) {
+			height -= (y + height) - RSDrawingArea.endY;
 		}
-		if (j < RSDrawingArea.startX) {
-			int j2 = RSDrawingArea.startX - j;
+		if (x < RSDrawingArea.startX) {
+			int j2 = RSDrawingArea.startX - x;
 			width -= j2;
-			j = RSDrawingArea.startX;
+			x = RSDrawingArea.startX;
 			l += j2;
 			k += j2;
 			l1 += j2;
 			k1 += j2;
 		}
-		if (j + width > RSDrawingArea.endX) {
-			int k2 = (j + width) - RSDrawingArea.endX;
+		if (x + width > RSDrawingArea.endX) {
+			int k2 = (x + width) - RSDrawingArea.endX;
 			width -= k2;
 			l1 += k2;
 			k1 += k2;

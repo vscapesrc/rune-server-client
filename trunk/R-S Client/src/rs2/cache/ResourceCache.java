@@ -99,7 +99,7 @@ public final class ResourceCache {
 	/**
 	 * Puts a file into the cache.
 	 * @param exists Whether or not the file exists.
-	 * @param requestedFileID The file ID.
+	 * @param requestedFileID The file id.
 	 * @param fileIndex The file index.
 	 * @param fileData The file data.
 	 * @return Whether the put operation was succesful or not.

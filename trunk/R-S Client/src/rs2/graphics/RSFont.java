@@ -318,8 +318,9 @@ public final class RSFont extends RSDrawingArea {
 			pixel += offsetY * width;
 			offset += offsetY * RSDrawingArea.width;
 		}
-		if (y + height >= RSDrawingArea.endY)
-			height -= ((y + height) - RSDrawingArea.endY) + 1;
+		if (y + height >= RSDrawingArea.endY) {
+			height -= ((y + height) - RSDrawingArea.endY);
+		}
 		if (x < RSDrawingArea.startX) {
 			int offsetX = RSDrawingArea.startX - x;
 			width -= offsetX;
@@ -330,7 +331,7 @@ public final class RSFont extends RSDrawingArea {
 			k1 += offsetX;
 		}
 		if (x + width >= RSDrawingArea.endX) {
-			int l2 = ((x + width) - RSDrawingArea.endX) + 1;
+			int l2 = ((x + width) - RSDrawingArea.endX);
 			width -= l2;
 			l1 += l2;
 			k1 += l2;
@@ -391,7 +392,7 @@ public final class RSFont extends RSDrawingArea {
 			offset += k2 * RSDrawingArea.width;
 		}
 		if (y + i1 >= RSDrawingArea.endY)
-			i1 -= ((y + i1) - RSDrawingArea.endY) + 1;
+			i1 -= ((y + i1) - RSDrawingArea.endY);
 		if (x < RSDrawingArea.startX) {
 			int l2 = RSDrawingArea.startX - x;
 			k -= l2;
@@ -402,7 +403,7 @@ public final class RSFont extends RSDrawingArea {
 			l1 += l2;
 		}
 		if (x + k >= RSDrawingArea.endX) {
-			int i3 = ((x + k) - RSDrawingArea.endX) + 1;
+			int i3 = ((x + k) - RSDrawingArea.endX);
 			k -= i3;
 			i2 += i3;
 			l1 += i3;

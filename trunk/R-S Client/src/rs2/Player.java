@@ -25,14 +25,14 @@ public final class Player extends Entity {
 			if (model_2 != null) {
 				Model model_3 = new Model(true,
 						FrameReader.method532(super.anInt1521), false, model_2);
-				model_3.method475(0, -super.graphicsHeight, 0);
+				model_3.moveVertices(0, -super.graphicsHeight, 0);
 				model_3.method469();
 				model_3.method470(spotAnim.sequence.frames[super.anInt1521]);
 				model_3.anIntArrayArray1658 = null;
 				model_3.anIntArrayArray1657 = null;
 				if (spotAnim.modelScaleX != 128 || spotAnim.modelScaleY != 128)
 					model_3.scaleModel(spotAnim.modelScaleX, spotAnim.modelScaleY, spotAnim.modelScaleX);
-				model_3.method479(64 + spotAnim.modelBrightness, 850 + spotAnim.modelShadowing, -30, -50, -30, true);
+				model_3.doLighting(64 + spotAnim.modelBrightness, 850 + spotAnim.modelShadowing, -30, -50, -30, true);
 				Model aclass30_sub2_sub4_sub6_1s[] = { model, model_3 };
 				model = new Model(aclass30_sub2_sub4_sub6_1s);
 			}
@@ -42,7 +42,7 @@ public final class Player extends Entity {
 				aModel_1714 = null;
 			if (Client.currentTime >= anInt1707 && Client.currentTime < anInt1708) {
 				Model model_1 = aModel_1714;
-				model_1.method475(anInt1711 - super.currentX, anInt1712 - anInt1709,
+				model_1.moveVertices(anInt1711 - super.currentX, anInt1712 - anInt1709,
 						anInt1713 - super.currentY);
 				if (super.turnDirection == 512) {
 					model_1.method473();
@@ -65,7 +65,7 @@ public final class Player extends Entity {
 					model_1.method473();
 					model_1.method473();
 				}
-				model_1.method475(super.currentX - anInt1711, anInt1709 - anInt1712,
+				model_1.moveVertices(super.currentX - anInt1711, anInt1709 - anInt1712,
 						super.currentY - anInt1713);
 			}
 		}
@@ -154,10 +154,10 @@ public final class Player extends Entity {
 	private Model method452() {
 		if (desc != null) {
 			int j = -1;
-			if (super.anim >= 0 && super.anInt1529 == 0)
-				j = Sequence.getSeq(super.anim).frames[super.anInt1527];
-			else if (super.anInt1517 >= 0)
-				j = Sequence.getSeq(super.anInt1517).frames[super.anInt1518];
+			if (super.forcedAnimation >= 0 && super.anInt1529 == 0)
+				j = Sequence.getSequence(super.forcedAnimation).frames[super.anInt1527];
+			else if (super.renderAnimation >= 0)
+				j = Sequence.getSequence(super.renderAnimation).frames[super.anInt1518];
 			Model model = desc.method164(-1, j, null);
 			return model;
 		}
@@ -166,11 +166,11 @@ public final class Player extends Entity {
 		int i1 = -1;
 		int j1 = -1;
 		int k1 = -1;
-		if (super.anim >= 0 && super.anInt1529 == 0) {
-			Sequence animation = Sequence.getSeq(super.anim);
+		if (super.forcedAnimation >= 0 && super.anInt1529 == 0) {
+			Sequence animation = Sequence.getSequence(super.forcedAnimation);
 			k = animation.frames[super.anInt1527];
-			if (super.anInt1517 >= 0 && super.anInt1517 != super.standAnimIndex)
-				i1 = Sequence.getSeq(super.anInt1517).frames[super.anInt1518];
+			if (super.renderAnimation >= 0 && super.renderAnimation != super.standAnimIndex)
+				i1 = Sequence.getSequence(super.renderAnimation).frames[super.anInt1518];
 			if (animation.anInt360 >= 0) {
 				j1 = animation.anInt360;
 				l += j1 - equipment[5] << 40;
@@ -179,8 +179,8 @@ public final class Player extends Entity {
 				k1 = animation.anInt361;
 				l += k1 - equipment[3] << 48;
 			}
-		} else if (super.anInt1517 >= 0)
-			k = Sequence.getSeq(super.anInt1517).frames[super.anInt1518];
+		} else if (super.renderAnimation >= 0)
+			k = Sequence.getSequence(super.renderAnimation).frames[super.anInt1518];
 		Model model_1 = (Model) mruNodes.get(l);
 		if (model_1 == null) {
 			boolean flag = false;
@@ -228,15 +228,15 @@ public final class Player extends Entity {
 			model_1 = new Model(j2, aclass30_sub2_sub4_sub6s);
 			for (int j3 = 0; j3 < 5; j3++)
 				if (anIntArray1700[j3] != 0) {
-					model_1.changeModelColors(Client.anIntArrayArray1003[j3][0],
+					model_1.changeColors(Client.anIntArrayArray1003[j3][0],
 							Client.anIntArrayArray1003[j3][anIntArray1700[j3]]);
 					if (j3 == 1)
-						model_1.changeModelColors(Client.anIntArray1204[0],
+						model_1.changeColors(Client.anIntArray1204[0],
 								Client.anIntArray1204[anIntArray1700[j3]]);
 				}
 
 			model_1.method469();
-			model_1.method479(64, 850, -30, -50, -30, true);
+			model_1.doLighting(64, 850, -30, -50, -30, true);
 			mruNodes.put(model_1, l);
 			aLong1697 = l;
 		}
@@ -245,7 +245,7 @@ public final class Player extends Entity {
 		Model model_2 = Model.aModel_1621;
 		model_2.method464(model_1, FrameReader.method532(k) & FrameReader.method532(i1));
 		if (k != -1 && i1 != -1)
-			model_2.method471(Sequence.getSeq(super.anim).anIntArray357, i1, k);
+			model_2.method471(Sequence.getSequence(super.forcedAnimation).anIntArray357, i1, k);
 		else if (k != -1)
 			model_2.method470(k);
 		model_2.method466();
@@ -295,10 +295,10 @@ public final class Player extends Entity {
 		Model model = new Model(k, aclass30_sub2_sub4_sub6s);
 		for (int j1 = 0; j1 < 5; j1++)
 			if (anIntArray1700[j1] != 0) {
-				model.changeModelColors(Client.anIntArrayArray1003[j1][0],
+				model.changeColors(Client.anIntArrayArray1003[j1][0],
 						Client.anIntArrayArray1003[j1][anIntArray1700[j1]]);
 				if (j1 == 1)
-					model.changeModelColors(Client.anIntArray1204[0],
+					model.changeColors(Client.anIntArray1204[0],
 							Client.anIntArray1204[anIntArray1700[j1]]);
 			}
 

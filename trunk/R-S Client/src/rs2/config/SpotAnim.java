@@ -7,9 +7,9 @@ import rs2.cache.JagexArchive;
 
 public final class SpotAnim {
 
-	public static void unpackConfig(JagexArchive streamLoader) {
-		JagexBuffer stream = new JagexBuffer(streamLoader.getData("spotanim.dat"));
-		int length = stream.getUnsignedShort();
+	public static void unpackConfig(JagexArchive archive) {
+		JagexBuffer buffer = new JagexBuffer(archive.getData("spotanim.dat"));
+		int length = buffer.getUnsignedShort();
 		if (cache == null) {
 			cache = new SpotAnim[length];
 		}
@@ -18,8 +18,18 @@ public final class SpotAnim {
 				cache[index] = new SpotAnim();
 			}
 			cache[index].id = index;
-			cache[index].readValues(stream);
+			cache[index].readValues(buffer);
 		}
+	}
+
+	public static SpotAnim getGraphic(int id) {
+		if (id > cache.length - 1) {
+			return cache[0];
+		}
+		if (cache[id] == null) {
+			return cache[0];
+		}
+		return cache[id];
 	}
 
 	private void readValues(JagexBuffer stream) {
@@ -32,7 +42,7 @@ public final class SpotAnim {
 			else if (i == 2) {
 				animationId = stream.getUnsignedShort();
 				if (Sequence.cache != null) {
-					sequence = Sequence.getSeq(animationId);
+					sequence = Sequence.getSequence(animationId);
 				}
 			} else if (i == 4)
 				modelScaleX = stream.getUnsignedShort();
@@ -63,7 +73,7 @@ public final class SpotAnim {
 		}
 		for (int color = 0; color < 6; color++) {
 			if (oldColors[0] != 0) {
-				model.changeModelColors(oldColors[color], newColors[color]);
+				model.changeColors(oldColors[color], newColors[color]);
 			}
 		}
 		aMRUNodes_415.put(model, id);

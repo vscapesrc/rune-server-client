@@ -45,7 +45,7 @@ public final class StillGraphics extends Animable {
 				model_1.method473();
 			}
 		}
-		model_1.method479(64 + graphics.modelBrightness, 850 + graphics.modelShadowing, -30, -50, -30, true);
+		model_1.doLighting(64 + graphics.modelBrightness, 850 + graphics.modelShadowing, -30, -50, -30, true);
 		return model_1;
 	}
 

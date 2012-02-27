@@ -25,7 +25,7 @@ public final class Sequence {
 	 * @param id
 	 * @return
 	 */
-	public static Sequence getSeq(int id) {
+	public static Sequence getSequence(int id) {
 		if (id > total - 1) {
 			return cache[808];
 		}

@@ -305,7 +305,7 @@ public final class RSInterface {
 		if (id != -1) {
 			model.method470(id);
 		}
-		model.method479(64, 768, -50, -10, -50, true);
+		model.doLighting(64, 768, -50, -10, -50, true);
 		return model;
 	}
 

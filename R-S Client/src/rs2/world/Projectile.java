@@ -42,7 +42,7 @@ public final class Projectile extends Animable {
 		if (graphics.modelScaleX != 128 || graphics.modelScaleY != 128)
 			model_1.scaleModel(graphics.modelScaleX, graphics.modelScaleY, graphics.modelScaleX);
 		model_1.method474(anInt1596);
-		model_1.method479(64 + graphics.modelBrightness, 850 + graphics.modelShadowing, -30, -50, -30, true);
+		model_1.doLighting(64 + graphics.modelBrightness, 850 + graphics.modelShadowing, -30, -50, -30, true);
 		return model_1;
 	}
 

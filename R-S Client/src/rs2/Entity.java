@@ -5,8 +5,8 @@ import rs2.config.Sequence;
 public class Entity extends Animable {
 
 	public final void setPos(int x, int y, boolean flag) {
-		if (anim != -1 && Sequence.getSeq(anim).priority == 1)
-			anim = -1;
+		if (forcedAnimation != -1 && Sequence.getSequence(forcedAnimation).priority == 1)
+			forcedAnimation = -1;
 		if (!flag) {
 			int dx = x - pathX[0];
 			int dy = y - pathY[0];
@@ -29,8 +29,8 @@ public class Entity extends Animable {
 		anInt1503 = 0;
 		pathX[0] = x;
 		pathY[0] = y;
-		currentX = pathX[0] * 128 + boundDim * 64;
-		currentY = pathY[0] * 128 + boundDim * 64;
+		currentX = pathX[0] * 128 + tileSize * 64;
+		currentY = pathY[0] * 128 + tileSize * 64;
 	}
 
 	public final void method446() {
@@ -80,8 +80,8 @@ public class Entity extends Animable {
 			x++;
 			y--;
 		}
-		if (anim != -1 && Sequence.getSeq(anim).priority == 1) {
-			anim = -1;
+		if (forcedAnimation != -1 && Sequence.getSequence(forcedAnimation).priority == 1) {
+			forcedAnimation = -1;
 		}
 		if (pathLength < 9) {
 			pathLength++;
@@ -116,12 +116,12 @@ public class Entity extends Animable {
 		hitDamage = new int[4];
 		hitMarkTypes = new int[4];
 		hitsLoopCycle = new int[4];
-		anInt1517 = -1;
+		renderAnimation = -1;
 		graphicsId = -1;
-		anim = -1;
+		forcedAnimation = -1;
 		loopCycleStatus = -1000;
 		textCycle = 100;
-		boundDim = 1;
+		tileSize = 1;
 		aBoolean1541 = false;
 		pathRun = new boolean[10];
 		walkAnimIndex = -1;
@@ -145,16 +145,16 @@ public class Entity extends Animable {
 	final int[] hitDamage;
 	final int[] hitMarkTypes;
 	final int[] hitsLoopCycle;
-	int anInt1517;
+	int renderAnimation;
 	int anInt1518;
-	int anInt1519;
+	int animationSpeed;
 	int graphicsId;
 	int anInt1521;
 	int anInt1522;
 	int graphicsDelay;
 	int graphicsHeight;
 	int pathLength;
-	public int anim;
+	public int forcedAnimation;
 	int anInt1527;
 	int anInt1528;
 	int anInt1529;
@@ -167,7 +167,7 @@ public class Entity extends Animable {
 	int time;
 	int faceX;
 	int faceY;
-	int boundDim;
+	int tileSize;
 	boolean aBoolean1541;
 	int anInt1542;
 	int anInt1543;

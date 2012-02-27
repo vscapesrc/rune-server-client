@@ -13,19 +13,21 @@ import rs2.Deque;
 import rs2.Queue;
 import rs2.Client;
 import rs2.cache.JagexArchive;
+import rs2.constants.Constants;
 import rs2.sign.signlink;
 
 public final class ResourceProvider extends ModelProvider implements Runnable {
 
-	private boolean crcMatches(int i, int j, byte abyte0[]) {
-		if (abyte0 == null || abyte0.length < 2)
+	private boolean crcMatches(int listVersion, int listCrc, byte data[]) {
+		if (data == null || data.length < 2) {
 			return false;
-		int k = abyte0.length - 2;
-		int l = ((abyte0[k] & 0xff) << 8) + (abyte0[k + 1] & 0xff);
+		}
+		int length = data.length - 2;
+		int version = ((data[length] & 0xff) << 8) + (data[length + 1] & 0xff);
 		crc32.reset();
-		crc32.update(abyte0, 0, k);
-		int i1 = (int) crc32.getValue();
-		return l == i && i1 == j;
+		crc32.update(data, 0, length);
+		int crc = (int) crc32.getValue();
+		return version == listVersion && crc == listCrc;
 	}
 
 	private void handleResponse() {
@@ -113,68 +115,66 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		}
 	}
 
-	public void start(JagexArchive streamLoader, Client client1) {
-		String as[] = { "model_version", "anim_version", "midi_version", "map_version" };
-		for (int i = 0; i < 4; i++) {
-			byte abyte0[] = streamLoader.getData(as[i]);
-			int j = abyte0.length / 2;
-			JagexBuffer stream = new JagexBuffer(abyte0);
-			versions[i] = new int[j];
-			fileStatus[i] = new byte[j];
-			for (int l = 0; l < j; l++)
-				versions[i][l] = stream.getUnsignedShort();
-
+	public void start(JagexArchive archive, Client c) {
+		String ver[] = { "model_version", "anim_version", "midi_version", "map_version" };
+		for (int type = 0; type < 4; type++) {
+			byte data[] = archive.getData(ver[type]);
+			int total = data.length / 2;
+			JagexBuffer buffer = new JagexBuffer(data);
+			versions[type] = new int[total];
+			fileStatus[type] = new byte[total];
+			for (int id = 0; id < total; id++) {
+				versions[type][id] = buffer.getUnsignedShort();
+			}
 		}
-
-		String as1[] = { "model_crc", "anim_crc", "midi_crc", "map_crc" };
-		for (int k = 0; k < 4; k++) {
-			byte abyte1[] = streamLoader.getData(as1[k]);
-			int i1 = abyte1.length / 4;
-			JagexBuffer stream_1 = new JagexBuffer(abyte1);
-			crcs[k] = new int[i1];
-			for (int l1 = 0; l1 < i1; l1++)
-				crcs[k][l1] = stream_1.getInt();
-
+		String crc[] = { "model_crc", "anim_crc", "midi_crc", "map_crc" };
+		for (int type = 0; type < 4; type++) {
+			byte data[] = archive.getData(crc[type]);
+			int total = data.length / 4;
+			JagexBuffer buffer = new JagexBuffer(data);
+			crcs[type] = new int[total];
+			for (int id = 0; id < total; id++) {
+				crcs[type][id] = buffer.getInt();
+			}
 		}
-
-		byte abyte2[] = streamLoader.getData("model_index");
-		int j1 = versions[0].length;
-		modelIndices = new byte[j1];
-		for (int k1 = 0; k1 < j1; k1++)
-			if (k1 < abyte2.length)
-				modelIndices[k1] = abyte2[k1];
-			else
-				modelIndices[k1] = 0;
-
-		abyte2 = streamLoader.getData("map_index");
-		JagexBuffer stream2 = new JagexBuffer(abyte2);
-		j1 = abyte2.length / 7;
-		mapIndices1 = new int[j1];
-		mapIndices2 = new int[j1];
-		mapIndices3 = new int[j1];
-		mapIndices4 = new int[j1];
-		for (int i2 = 0; i2 < j1; i2++) {
-			mapIndices1[i2] = stream2.getUnsignedShort();
-			mapIndices2[i2] = stream2.getUnsignedShort();
-			mapIndices3[i2] = stream2.getUnsignedShort();
-			mapIndices4[i2] = stream2.getUnsignedByte();
+		byte data[] = archive.getData("model_index");
+		int total = versions[0].length;
+		modelFlags = new byte[total];
+		for (int id = 0; id < total; id++) {
+			if (id < data.length) {
+				modelFlags[id] = data[id];
+			} else {
+				modelFlags[id] = 0;
+			}
 		}
-
-		abyte2 = streamLoader.getData("anim_index");
-		stream2 = new JagexBuffer(abyte2);
-		j1 = abyte2.length / 2;
-		anIntArray1360 = new int[j1];
-		for (int j2 = 0; j2 < j1; j2++)
-			anIntArray1360[j2] = stream2.getUnsignedShort();
-
-		abyte2 = streamLoader.getData("midi_index");
-		stream2 = new JagexBuffer(abyte2);
-		j1 = abyte2.length;
-		anIntArray1348 = new int[j1];
-		for (int k2 = 0; k2 < j1; k2++)
-			anIntArray1348[k2] = stream2.getUnsignedByte();
-
-		client = client1;
+		data = archive.getData("map_index");
+		JagexBuffer buffer = new JagexBuffer(data);
+		total = data.length / 7;
+		mapIndices1 = new int[total];
+		mapIndices2 = new int[total];
+		mapIndices3 = new int[total];
+		mapIndices4 = new int[total];
+		for (int index = 0; index < total; index++) {
+			mapIndices1[index] = buffer.getUnsignedShort();
+			mapIndices2[index] = buffer.getUnsignedShort();
+			mapIndices3[index] = buffer.getUnsignedShort();
+			mapIndices4[index] = buffer.getUnsignedByte();
+		}
+		data = archive.getData("anim_index");
+		buffer = new JagexBuffer(data);
+		total = data.length / 2;
+		animIndices = new int[total];
+		for (int index = 0; index < total; index++) {
+			animIndices[index] = buffer.getUnsignedShort();
+		}
+		data = archive.getData("midi_index");
+		buffer = new JagexBuffer(data);
+		total = data.length;
+		midiIndices = new int[total];
+		for (int index = 0; index < total; index++) {
+			midiIndices[index] = buffer.getUnsignedByte();
+		}
+		client = c;
 		running = true;
 		client.startRunnable(this, 2);
 	}
@@ -190,44 +190,46 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 	}
 
 	public void method554(boolean flag) {
-		int j = mapIndices1.length;
-		for (int k = 0; k < j; k++)
-			if (flag || mapIndices4[k] != 0) {
-				method563((byte) 2, 3, mapIndices3[k]);
-				method563((byte) 2, 3, mapIndices2[k]);
+		int total = mapIndices1.length;
+		for (int index = 0; index < total; index++) {
+			if (flag || mapIndices4[index] != 0) {
+				method563((byte) 2, 3, mapIndices3[index]);
+				method563((byte) 2, 3, mapIndices2[index]);
 			}
-
+		}
 	}
 
-	public int getVersionCount(int j) {
-		return versions[j].length;
+	public int getVersionCount(int type) {
+		return versions[type].length;
 	}
 
-	private void closeRequest(Resource onDemandData) {
+	private void closeRequest(Resource resource) {
 		try {
 			if (socket == null) {
 				long l = System.currentTimeMillis();
-				if (l - openSocketTime < 4000L)
+				if (l - openSocketTime < 4000L) {
 					return;
+				}
 				openSocketTime = l;
 				socket = client.openSocket(43594 + Client.portOff);
 				in = socket.getInputStream();
 				out = socket.getOutputStream();
 				out.write(15);
-				for (int j = 0; j < 8; j++)
+				for (int index = 0; index < 8; index++) {
 					in.read();
-
+				}
 				connectionIdleTicks = 0;
 			}
-			ioBuffer[0] = (byte) onDemandData.type;
-			ioBuffer[1] = (byte) (onDemandData.id >> 8);
-			ioBuffer[2] = (byte) onDemandData.id;
-			if (onDemandData.incomplete)
+			ioBuffer[0] = (byte) resource.type;
+			ioBuffer[1] = (byte) (resource.id >> 8);
+			ioBuffer[2] = (byte) resource.id;
+			if (resource.incomplete) {
 				ioBuffer[3] = 2;
-			else if (!client.loggedIn)
+			} else if (!client.loggedIn) {
 				ioBuffer[3] = 1;
-			else
+			} else {
 				ioBuffer[3] = 0;
+			}
 			out.write(ioBuffer, 0, 4);
 			writeLoopCycle = 0;
 			anInt1349 = -10000;
@@ -246,86 +248,87 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 	}
 
 	public int getAnimCount() {
-		return anIntArray1360.length;
+		return animIndices.length;
 	}
 
-	public void method558(int i, int j) {
-		if (i < 0 || i > versions.length || j < 0 || j > versions[i].length)
-			return;
-		if (versions[i][j] == 0)
-			return;
-		synchronized (nodeSubList) {
-			for (Resource onDemandData = (Resource) nodeSubList
-					.reverseGetFirst(); onDemandData != null; onDemandData = (Resource) nodeSubList
-					.reverseGetNext())
-				if (onDemandData.type == i && onDemandData.id == j)
-					return;
-
-			Resource onDemandData_1 = new Resource();
-			onDemandData_1.type = i;
-			onDemandData_1.id = j;
-			onDemandData_1.incomplete = true;
-			synchronized (aClass19_1370) {
-				aClass19_1370.append(onDemandData_1);
+	public void method558(int type, int id) {
+		if (Constants.CHECK_VERSION_AND_CRC) {
+			if (type < 0 || type > versions.length || id < 0 || id > versions[type].length) {
+				return;
 			}
-			nodeSubList.insertHead(onDemandData_1);
+			if (versions[type][id] == 0) {
+				return;
+			}
+		}
+		synchronized (nodeSubList) {
+			for (Resource resource = (Resource) nodeSubList.reverseGetFirst(); resource != null; resource = (Resource) nodeSubList.reverseGetNext()) {
+				if (resource.type == type && resource.id == id) {
+					return;
+				}
+			}
+			Resource resource = new Resource();
+			resource.type = type;
+			resource.id = id;
+			resource.incomplete = true;
+			synchronized (aClass19_1370) {
+				aClass19_1370.append(resource);
+			}
+			nodeSubList.insertHead(resource);
 		}
 	}
 
-	public int getModelIndex(int i) {
-		return modelIndices[i] & 0xff;
+	public int getModelFlag(int index) {
+		return modelFlags[index] & 0xff;
 	}
 
 	public void run() {
 		try {
 			while (running) {
-				onDemandCycle++;
+				resourceCycle++;
 				int i = 20;
-				if (anInt1332 == 0 && client.jagCache[0] != null)
+				if (anInt1332 == 0 && client.jagCache[0] != null) {
 					i = 50;
+				}
 				try {
 					Thread.sleep(i);
 				} catch (Exception _ex) {
 				}
 				waiting = true;
 				for (int j = 0; j < 100; j++) {
-					if (!waiting)
+					if (!waiting) {
 						break;
+					}
 					waiting = false;
 					checkReceived();
 					handleFailed();
-					if (uncompletedCount == 0 && j >= 5)
+					if (incompletedCount == 0 && j >= 5) {
 						break;
+					}
 					method568();
-					if (in != null)
+					if (in != null) {
 						handleResponse();
+					}
 				}
-
 				boolean flag = false;
-				for (Resource onDemandData = (Resource) requested
-						.head(); onDemandData != null; onDemandData = (Resource) requested
-						.next())
-					if (onDemandData.incomplete) {
+				for (Resource resource = (Resource) requested.head(); resource != null; resource = (Resource) requested.next()) {
+					if (resource.incomplete) {
 						flag = true;
-						onDemandData.requestAge++;
-						if (onDemandData.requestAge > 50) {
-							onDemandData.requestAge = 0;
-							closeRequest(onDemandData);
+						resource.requestAge++;
+						if (resource.requestAge > 50) {
+							resource.requestAge = 0;
+							closeRequest(resource);
 						}
 					}
-
+				}
 				if (!flag) {
-					for (Resource onDemandData_1 = (Resource) requested
-							.head(); onDemandData_1 != null; onDemandData_1 = (Resource) requested
-							.next()) {
+					for (Resource resource = (Resource) requested.head(); resource != null; resource = (Resource) requested.next()) {
 						flag = true;
-						onDemandData_1.requestAge++;
-						if (onDemandData_1.requestAge > 50) {
-							onDemandData_1.requestAge = 0;
-							closeRequest(onDemandData_1);
+						resource.requestAge++;
+						if (resource.requestAge > 50) {
+							resource.requestAge = 0;
+							closeRequest(resource);
 						}
 					}
-
 				}
 				if (flag) {
 					connectionIdleTicks++;
@@ -343,10 +346,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 					connectionIdleTicks = 0;
 					statusString = "";
 				}
-				if (client.loggedIn
-						&& socket != null
-						&& out != null
-						&& (anInt1332 > 0 || client.jagCache[0] == null)) {
+				if (client.loggedIn && socket != null && out != null && (anInt1332 > 0 || client.jagCache[0] == null)) {
 					writeLoopCycle++;
 					if (writeLoopCycle > 500) {
 						writeLoopCycle = 0;
@@ -367,66 +367,76 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		}
 	}
 
-	public void method560(int i, int j) {
-		if (client.jagCache[0] == null)
+	public void method560(int id, int type) {
+		if (client.jagCache[0] == null) {
 			return;
-		if (versions[j][i] == 0)
+		}
+		if (Constants.CHECK_VERSION_AND_CRC) {
+			if (versions[type][id] == 0) {
+				return;
+			}
+		}
+		if (fileStatus[type][id] == 0) {
 			return;
-		if (fileStatus[j][i] == 0)
+		}
+		if (anInt1332 == 0) {
 			return;
-		if (anInt1332 == 0)
-			return;
-		Resource onDemandData = new Resource();
-		onDemandData.type = j;
-		onDemandData.id = i;
-		onDemandData.incomplete = false;
+		}
+		Resource resource = new Resource();
+		resource.type = type;
+		resource.id = id;
+		resource.incomplete = false;
 		synchronized (aClass19_1344) {
-			aClass19_1344.append(onDemandData);
+			aClass19_1344.append(resource);
 		}
 	}
 
 	public Resource getNextNode() {
-		Resource onDemandData;
+		Resource resource;
 		synchronized (completed) {
-			onDemandData = (Resource) completed.popFront();
+			resource = (Resource) completed.popFront();
 		}
-		if (onDemandData == null)
+		if (resource == null) {
 			return null;
-		synchronized (nodeSubList) {
-			onDemandData.unlinkSub();
 		}
-		if (onDemandData.data == null)
-			return onDemandData;
+		synchronized (nodeSubList) {
+			resource.unlinkSub();
+		}
+		if (resource.data == null) {
+			return resource;
+		}
 		int i = 0;
 		try {
-			GZIPInputStream gzipinputstream = new GZIPInputStream(
-					new ByteArrayInputStream(onDemandData.data));
+			GZIPInputStream in = new GZIPInputStream(new ByteArrayInputStream(resource.data));
 			do {
-				if (i == gzipInputBuffer.length)
+				if (i == gzipInputBuffer.length) {
 					throw new RuntimeException("buffer overflow!");
-				int k = gzipinputstream.read(gzipInputBuffer, i,
-						gzipInputBuffer.length - i);
-				if (k == -1)
+				}
+				int k = in.read(gzipInputBuffer, i, gzipInputBuffer.length - i);
+				if (k == -1) {
 					break;
+				}
 				i += k;
 			} while (true);
-		} catch (IOException _ex) {
+		} catch (IOException e) {
 			throw new RuntimeException("error unzipping");
 		}
-		onDemandData.data = new byte[i];
-		System.arraycopy(gzipInputBuffer, 0, onDemandData.data, 0, i);
-
-		return onDemandData;
+		resource.data = new byte[i];
+		System.arraycopy(gzipInputBuffer, 0, resource.data, 0, i);
+		return resource;
 	}
 
 	public int method562(int i, int k, int l) {
 		int i1 = (l << 8) + k;
-		for (int j1 = 0; j1 < mapIndices1.length; j1++)
-			if (mapIndices1[j1] == i1)
-				if (i == 0)
-					return mapIndices2[j1];
-				else
-					return mapIndices3[j1];
+		for (int index = 0; index < mapIndices1.length; index++) {
+			if (mapIndices1[index] == i1) {
+				if (i == 0) {
+					return mapIndices2[index];
+				} else {
+					return mapIndices3[index];
+				}
+			}
+		}
 		return -1;
 	}
 
@@ -434,49 +444,57 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		method558(0, i);
 	}
 
-	public void method563(byte byte0, int i, int j) {
-		if (client.jagCache[0] == null)
+	public void method563(byte status, int type, int id) {
+		if (client.jagCache[0] == null) {
 			return;
-		if (versions[i][j] == 0)
-			return;
-		byte abyte0[] = client.jagCache[i + 1].get(j);
-		if (crcMatches(versions[i][j], crcs[i][j], abyte0))
-			return;
-		fileStatus[i][j] = byte0;
-		if (byte0 > anInt1332)
-			anInt1332 = byte0;
+		}
+		if (Constants.CHECK_VERSION_AND_CRC) {
+			if (versions[type][id] == 0) {
+				return;
+			}
+			byte data[] = client.jagCache[type + 1].get(id);
+			if (crcMatches(versions[type][id], crcs[type][id], data)) {
+				return;
+			}
+		}
+		fileStatus[type][id] = status;
+		if (status > anInt1332) {
+			anInt1332 = status;
+		}
 		totalFiles++;
 	}
 
 	public boolean method564(int i) {
-		for (int k = 0; k < mapIndices1.length; k++)
-			if (mapIndices3[k] == i)
+		for (int index = 0; index < mapIndices1.length; index++) {
+			if (mapIndices3[index] == i) {
 				return true;
+			}
+		}
 		return false;
 	}
 
 	private void handleFailed() {
-		uncompletedCount = 0;
+		incompletedCount = 0;
 		completedCount = 0;
-		for (Resource onDemandData = (Resource) requested
-				.head(); onDemandData != null; onDemandData = (Resource) requested
-				.next())
-			if (onDemandData.incomplete)
-				uncompletedCount++;
-			else
+		for (Resource resource = (Resource) requested.head(); resource != null; resource = (Resource) requested.next()) {
+			if (resource.incomplete) {
+				incompletedCount++;
+			} else {
 				completedCount++;
-
-		while (uncompletedCount < 10) {
-			Resource onDemandData_1 = (Resource) aClass19_1368
-					.popFront();
-			if (onDemandData_1 == null)
+			}
+		}
+		while (incompletedCount < 10) {
+			Resource resource = (Resource) aClass19_1368.popFront();
+			if (resource == null) {
 				break;
-			if (fileStatus[onDemandData_1.type][onDemandData_1.id] != 0)
+			}
+			if (fileStatus[resource.type][resource.id] != 0) {
 				filesLoaded++;
-			fileStatus[onDemandData_1.type][onDemandData_1.id] = 0;
-			requested.append(onDemandData_1);
-			uncompletedCount++;
-			closeRequest(onDemandData_1);
+			}
+			fileStatus[resource.type][resource.id] = 0;
+			requested.append(resource);
+			incompletedCount++;
+			closeRequest(resource);
 			waiting = true;
 		}
 	}
@@ -488,89 +506,93 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 	}
 
 	private void checkReceived() {
-		Resource onDemandData;
+		Resource resource;
 		synchronized (aClass19_1370) {
-			onDemandData = (Resource) aClass19_1370.popFront();
+			resource = (Resource) aClass19_1370.popFront();
 		}
-		while (onDemandData != null) {
+		while (resource != null) {
 			waiting = true;
-			byte abyte0[] = null;
-			if (client.jagCache[0] != null)
-				abyte0 = client.jagCache[onDemandData.type + 1]
-						.get(onDemandData.id);
-			if (!crcMatches(versions[onDemandData.type][onDemandData.id],
-					crcs[onDemandData.type][onDemandData.id], abyte0))
-				abyte0 = null;
+			byte data[] = null;
+			if (client.jagCache[0] != null) {
+				data = client.jagCache[resource.type + 1].get(resource.id);
+			}
+			if (Constants.CHECK_VERSION_AND_CRC) {
+				if (!crcMatches(versions[resource.type][resource.id], crcs[resource.type][resource.id], data)) {
+					data = null;
+				}
+			}
 			synchronized (aClass19_1370) {
-				if (abyte0 == null) {
-					aClass19_1368.append(onDemandData);
+				if (data == null) {
+					aClass19_1368.append(resource);
 				} else {
-					onDemandData.data = abyte0;
+					resource.data = data;
 					synchronized (completed) {
-						completed.append(onDemandData);
+						completed.append(resource);
 					}
 				}
-				onDemandData = (Resource) aClass19_1370.popFront();
+				resource = (Resource) aClass19_1370.popFront();
 			}
 		}
 	}
 
 	private void method568() {
-		while (uncompletedCount == 0 && completedCount < 10) {
-			if (anInt1332 == 0)
+		while (incompletedCount == 0 && completedCount < 10) {
+			if (anInt1332 == 0) {
 				break;
-			Resource onDemandData;
-			synchronized (aClass19_1344) {
-				onDemandData = (Resource) aClass19_1344.popFront();
 			}
-			while (onDemandData != null) {
-				if (fileStatus[onDemandData.type][onDemandData.id] != 0) {
-					fileStatus[onDemandData.type][onDemandData.id] = 0;
-					requested.append(onDemandData);
-					closeRequest(onDemandData);
+			Resource resource;
+			synchronized (aClass19_1344) {
+				resource = (Resource) aClass19_1344.popFront();
+			}
+			while (resource != null) {
+				if (fileStatus[resource.type][resource.id] != 0) {
+					fileStatus[resource.type][resource.id] = 0;
+					requested.append(resource);
+					closeRequest(resource);
 					waiting = true;
-					if (filesLoaded < totalFiles)
+					if (filesLoaded < totalFiles) {
 						filesLoaded++;
-					statusString = "Loading extra files - "
-							+ (filesLoaded * 100) / totalFiles + "%";
+					}
+					statusString = "Loading extra files - " + (filesLoaded * 100) / totalFiles + "%";
 					completedCount++;
-					if (completedCount == 10)
+					if (completedCount == 10) {
 						return;
+					}
 				}
 				synchronized (aClass19_1344) {
-					onDemandData = (Resource) aClass19_1344.popFront();
+					resource = (Resource) aClass19_1344.popFront();
 				}
 			}
-			for (int j = 0; j < 4; j++) {
-				byte abyte0[] = fileStatus[j];
-				int k = abyte0.length;
-				for (int l = 0; l < k; l++)
-					if (abyte0[l] == anInt1332) {
-						abyte0[l] = 0;
-						Resource onDemandData_1 = new Resource();
-						onDemandData_1.type = j;
-						onDemandData_1.id = l;
-						onDemandData_1.incomplete = false;
-						requested.append(onDemandData_1);
-						closeRequest(onDemandData_1);
+			for (int type = 0; type < 4; type++) {
+				byte status[] = fileStatus[type];
+				int total = status.length;
+				for (int id = 0; id < total; id++) {
+					if (status[id] == anInt1332) {
+						status[id] = 0;
+						Resource extra = new Resource();
+						extra.type = type;
+						extra.id = id;
+						extra.incomplete = false;
+						requested.append(extra);
+						closeRequest(extra);
 						waiting = true;
-						if (filesLoaded < totalFiles)
+						if (filesLoaded < totalFiles) {
 							filesLoaded++;
-						statusString = "Loading extra files - "
-								+ (filesLoaded * 100) / totalFiles + "%";
+						}
+						statusString = "Loading extra files - " + (filesLoaded * 100) / totalFiles + "%";
 						completedCount++;
-						if (completedCount == 10)
+						if (completedCount == 10) {
 							return;
+						}
 					}
-
+				}
 			}
-
 			anInt1332--;
 		}
 	}
 
 	public boolean method569(int i) {
-		return anIntArray1348[i] == 1;
+		return midiIndices[i] == 1;
 	}
 
 	public ResourceProvider() {
@@ -600,13 +622,13 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 	private int[] mapIndices3;
 	private final CRC32 crc32;
 	private final byte[] ioBuffer;
-	public int onDemandCycle;
+	public int resourceCycle;
 	private final byte[][] fileStatus;
 	private Client client;
 	private final Deque aClass19_1344;
 	private int completedSize;
 	private int expectedSize;
-	private int[] anIntArray1348;
+	private int[] midiIndices;
 	public int anInt1349;
 	private int[] mapIndices2;
 	private int filesLoaded;
@@ -616,18 +638,18 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 	private boolean waiting;
 	private final Deque completed;
 	private final byte[] gzipInputBuffer;
-	private int[] anIntArray1360;
+	private int[] animIndices;
 	private final Queue nodeSubList;
 	private InputStream in;
 	private Socket socket;
 	private final int[][] versions;
 	private final int[][] crcs;
-	private int uncompletedCount;
+	private int incompletedCount;
 	private int completedCount;
 	private final Deque aClass19_1368;
 	private Resource current;
 	private final Deque aClass19_1370;
 	private int[] mapIndices1;
-	private byte[] modelIndices;
+	private byte[] modelFlags;
 	private int connectionIdleTicks;
 }

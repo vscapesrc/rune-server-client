@@ -11,7 +11,7 @@ public final class GameObjectSpawnRequest extends Node {
 	public int type2;
 	public int anInt1294;
 	public int plane;
-	public int anInt1296;
+	public int requestType;
 	public int x;
 	public int y;
 	public int id;

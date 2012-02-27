@@ -10,7 +10,7 @@ import rs2.graphics.Rasterizer;
 
 public final class ItemDefinitions {
 
-	public static void nullLoader() {
+	public static void clearCache() {
 		memCache2 = null;
 		memCache1 = null;
 		streamIndices = null;
@@ -72,7 +72,7 @@ public final class ItemDefinitions {
 		}
 		if (oldColors != null) {
 			for (int index = 0; index < oldColors.length; index++) {
-				model.changeModelColors(oldColors[index], newColors[index]);
+				model.changeColors(oldColors[index], newColors[index]);
 			}
 		}
 		return model;
@@ -128,14 +128,14 @@ public final class ItemDefinitions {
 				model = new Model(2, models);
 			}
 		if (gender == 0 && maleOffset != 0) {
-			model.method475(0, maleOffset, 0);
+			model.moveVertices(0, maleOffset, 0);
 		}
 		if (gender == 1 && femaleOffset != 0) {
-			model.method475(0, femaleOffset, 0);
+			model.moveVertices(0, femaleOffset, 0);
 		}
 		if (oldColors != null) {
 			for (int color = 0; color < oldColors.length; color++) {
-				model.changeModelColors(oldColors[color], newColors[color]);
+				model.changeColors(oldColors[color], newColors[color]);
 			}
 		}
 		return model;
@@ -346,7 +346,7 @@ public final class ItemDefinitions {
 		}
 		if (k == 0)
 			memCache1.put(sprite2, i);
-		RSDrawingArea.initDrawingArea(j2, i2, ai1);
+		RSDrawingArea.initDrawingArea(i2, j2, ai1);
 		RSDrawingArea.setBounds(k2, l2, i3, j3);
 		Rasterizer.centerX = k1;
 		Rasterizer.centerY = l1;
@@ -384,10 +384,10 @@ public final class ItemDefinitions {
 		}
 		if (oldColors != null) {
 			for (int color = 0; color < oldColors.length; color++) {
-				model.changeModelColors(oldColors[color], newColors[color]);
+				model.changeColors(oldColors[color], newColors[color]);
 			}
 		}
-		model.method479(64 + modelBrightness, 768 + modelShadowing, -50, -10, -50, true);
+		model.doLighting(64 + modelBrightness, 768 + modelShadowing, -50, -10, -50, true);
 		model.aBoolean1659 = true;
 		memCache2.put(model, id);
 		return model;
@@ -410,7 +410,7 @@ public final class ItemDefinitions {
 			return null;
 		if (oldColors != null) {
 			for (int color = 0; color < oldColors.length; color++) {
-				model.changeModelColors(oldColors[color], newColors[color]);
+				model.changeColors(oldColors[color], newColors[color]);
 			}
 		}
 		return model;

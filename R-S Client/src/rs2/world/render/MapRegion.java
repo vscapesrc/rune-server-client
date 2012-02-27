@@ -4,6 +4,7 @@ import rs2.JagexBuffer;
 import rs2.Model;
 import rs2.config.Floor;
 import rs2.config.ObjectDefinitions;
+import rs2.constants.Constants;
 import rs2.graphics.Rasterizer;
 import rs2.resource.ResourceProvider;
 import rs2.util.MapUtils;
@@ -55,16 +56,22 @@ public final class MapRegion {
 				}
 			}
 		}
-		hueOffset += (int)(Math.random() * 5D) - 2;
-		if(hueOffset < -8)
-			hueOffset = -8;
-		if(hueOffset > 8)
-			hueOffset = 8;
-		lightnessOffset += (int)(Math.random() * 5D) - 2;
-		if(lightnessOffset < -16)
-			lightnessOffset = -16;
-		if(lightnessOffset > 16)
-			lightnessOffset = 16;
+		if (Constants.BOT_RANDOMIZATION) {
+			hueOffset += (int)(Math.random() * 5D) - 2;
+			if(hueOffset < -8) {
+				hueOffset = -8;
+			}
+			if(hueOffset > 8) {
+				hueOffset = 8;
+			}
+			lightnessOffset += (int)(Math.random() * 5D) - 2;
+			if(lightnessOffset < -16) {
+				lightnessOffset = -16;
+			}
+			if(lightnessOffset > 16) {
+				lightnessOffset = 16;
+			}
+		}
 		for(int z = 0; z < 4; z++) {
 			byte abyte0[][] = objectShadowData[z];
 			byte light_off = 96;
@@ -101,10 +108,10 @@ public final class MapRegion {
 						int id = underlay[z][xPlus5][y] & 0xff;
 						if(id > 0) {
 							Floor floor = Floor.cache[id - 1];
-							hue[y] += floor.anInt397;
+							hue[y] += floor.hueVar;
 							saturation[y] += floor.saturation;
 							lightness[y] += floor.lightness;
-							hueDivider[y] += floor.anInt398;
+							hueDivider[y] += floor.hueDivider;
 							colorCount[y]++;
 						}
 					}
@@ -113,10 +120,10 @@ public final class MapRegion {
 						int id = underlay[z][xMinus5][y] & 0xff;
 						if(id > 0) {
 							Floor floor = Floor.cache[id - 1];
-							hue[y] -= floor.anInt397;
+							hue[y] -= floor.hueVar;
 							saturation[y] -= floor.saturation;
 							lightness[y] -= floor.lightness;
-							hueDivider[y] -= floor.anInt398;
+							hueDivider[y] -= floor.hueDivider;
 							colorCount[y]--;
 						}
 					}
@@ -162,34 +169,38 @@ public final class MapRegion {
 								int i21 = tileLightness[x][y + 1];
 								int j21 = -1;
 								int k21 = -1;
-								if(l18 > 0)
-								{
-									int l21 = (tile_hue * 256) / tile_hue_shirt;
-									int j22 = tile_saturation / totalColors;
-									int l22 = tile_light / totalColors;
-									j21 = packHSL(l21, j22, l22);
-									l21 = l21 + hueOffset & 0xff;
-									l22 += lightnessOffset;
-									if(l22 < 0)
-										l22 = 0;
-									else
-									if(l22 > 255)
-										l22 = 255;
-									k21 = packHSL(l21, j22, l22);
+								if(l18 > 0) {
+									int hue = (tile_hue * 256) / tile_hue_shirt;
+									int saturation = tile_saturation / totalColors;
+									int lightness = tile_light / totalColors;
+									j21 = packHSL(hue, saturation, lightness);
+									if (Constants.BOT_RANDOMIZATION) {
+										hue = hue + hueOffset & 0xff;
+										lightness += lightnessOffset;
+										if(lightness < 0) {
+											lightness = 0;
+										} else if(lightness > 255) {
+											lightness = 255;
+										}
+									}
+									k21 = packHSL(hue, saturation, lightness);
 								}
-								if(z > 0)
-								{
+								if(z > 0) {
 									boolean flag = true;
-									if(l18 == 0 && tileShape[z][x][y] != 0)
+									if(l18 == 0 && tileShape[z][x][y] != 0) {
 										flag = false;
-									if(i19 > 0 && !Floor.cache[i19 - 1].occlude)
+									}
+									if(i19 > 0 && !Floor.cache[i19 - 1].occlude) {
 										flag = false;
-									if(flag && j19 == k19 && j19 == l19 && j19 == i20)
+									}
+									if(flag && j19 == k19 && j19 == l19 && j19 == i20) {
 										tileCullingBitmap[z][x][y] |= 0x924;
+									}
 								}
 								int i22 = 0;
-								if(j21 != -1)
+								if(j21 != -1) {
 									i22 = Rasterizer.hslToRGB[mixLightness(k21, 96)];
+								}
 								if(i19 == 0) {
 									sceneGraph.addTile(z, x, y, 0, 0, -1, j19, k19, l19, i20, mixLightness(j21, j20), mixLightness(j21, k20), mixLightness(j21, l20), mixLightness(j21, i21), 0, 0, 0, 0, i22, 0);
 								} else {
@@ -202,13 +213,13 @@ public final class MapRegion {
 									if(texture >= 0) {
 										rgb = Rasterizer.getAverageTextureColor(texture);
 										hsl = -1;
-									} else if(floor.getTerrainColor() == 0xff00ff) {
+									} else if (floor.getTerrainColor() == 0xff00ff || floor.getTerrainColor() == -65281) {
 										rgb = 0;
 										hsl = -2;
 										texture = -1;
 									} else {
-										hsl = packHSL(floor.anInt394, floor.saturation, floor.lightness);
-										rgb = Rasterizer.hslToRGB[method185(floor.anInt399, 96)];
+										hsl = packHSL(floor.hue, floor.saturation, floor.lightness);
+										rgb = Rasterizer.hslToRGB[method185(floor.hslValue, 96)];
 									}
 									sceneGraph.addTile(z, x, y, shape, rotation, texture, j19, k19, l19, i20, mixLightness(j21, j20), mixLightness(j21, k20), mixLightness(j21, l20), mixLightness(j21, i21), method185(hsl, j20), method185(hsl, k20), method185(hsl, l20), method185(hsl, i21), i22, rgb);
 								}
@@ -217,103 +228,91 @@ public final class MapRegion {
 					}
 				}
 			}
-
-			for(int j8 = 1; j8 < yMapSize - 1; j8++) {
-				for(int i10 = 1; i10 < xMapSize - 1; i10++)
-					sceneGraph.setTileLogicHeight(z, i10, j8, getLogicHeight(j8, z, i10));
+			for(int y = 1; y < yMapSize - 1; y++) {
+				for(int x = 1; x < xMapSize - 1; x++) {
+					sceneGraph.setTileLogicHeight(z, x, y, getLogicHeight(y, z, x));
+				}
 			}
 		}
-
 		sceneGraph.shadeModels(-10, -50, -50);
-		for(int j1 = 0; j1 < xMapSize; j1++)
-		{
-			for(int l1 = 0; l1 < yMapSize; l1++)
-				if((tileSettings[1][j1][l1] & 2) == 2)
-					sceneGraph.applyBridgeMode(l1, j1);
-
+		for(int x = 0; x < xMapSize; x++) {
+			for(int y = 0; y < yMapSize; y++) {
+				if((tileSettings[1][x][y] & 2) == 2) {
+					sceneGraph.applyBridgeMode(y, x);
+				}
+			}
 		}
-
 		int i2 = 1;
 		int j2 = 2;
 		int k2 = 4;
-		for(int l2 = 0; l2 < 4; l2++)
-		{
-			if(l2 > 0)
-			{
+		for(int height = 0; height < 4; height++) {
+			if(height > 0) {
 				i2 <<= 3;
 				j2 <<= 3;
 				k2 <<= 3;
 			}
-			for(int i3 = 0; i3 <= l2; i3++)
-			{
-				for(int k3 = 0; k3 <= yMapSize; k3++)
-				{
-					for(int i4 = 0; i4 <= xMapSize; i4++)
-					{
-						if((tileCullingBitmap[i3][i4][k3] & i2) != 0)
-						{
-							int k4 = k3;
-							int l5 = k3;
-							int i7 = i3;
-							int k8 = i3;
-							for(; k4 > 0 && (tileCullingBitmap[i3][i4][k4 - 1] & i2) != 0; k4--);
-							for(; l5 < yMapSize && (tileCullingBitmap[i3][i4][l5 + 1] & i2) != 0; l5++);
-label0:
-							for(; i7 > 0; i7--)
-							{
-								for(int j10 = k4; j10 <= l5; j10++)
-									if((tileCullingBitmap[i7 - 1][i4][j10] & i2) == 0)
+			for(int z = 0; z <= height; z++) {
+				for(int y = 0; y <= yMapSize; y++) {
+					for(int x = 0; x <= xMapSize; x++) {
+						if((tileCullingBitmap[z][x][y] & i2) != 0) {
+							int k4 = y;
+							int y_ = y;
+							int z_ = z;
+							int z__ = z;
+							for(; k4 > 0 && (tileCullingBitmap[z][x][k4 - 1] & i2) != 0; k4--);
+							for(; y_ < yMapSize && (tileCullingBitmap[z][x][y_ + 1] & i2) != 0; y_++);
+						label0:
+							for(; z_ > 0; z_--) {
+								for(int yy = k4; yy <= y_; yy++) {
+									if((tileCullingBitmap[z_ - 1][x][yy] & i2) == 0) {
 										break label0;
-
-							}
-
-label1:
-							for(; k8 < l2; k8++)
-							{
-								for(int k10 = k4; k10 <= l5; k10++)
-									if((tileCullingBitmap[k8 + 1][i4][k10] & i2) == 0)
-										break label1;
-
-							}
-
-							int l10 = ((k8 + 1) - i7) * ((l5 - k4) + 1);
-							if(l10 >= 8)
-							{
-								char c1 = '\360';
-								int k14 = heightMap[k8][i4][k4] - c1;
-								int l15 = heightMap[i7][i4][k4];
-								SceneGraph.createCullingCluster(l2, i4 * 128, l15, i4 * 128, l5 * 128 + 128, k14, k4 * 128, 1);
-								for(int l16 = i7; l16 <= k8; l16++)
-								{
-									for(int l17 = k4; l17 <= l5; l17++)
-										tileCullingBitmap[l16][i4][l17] &= ~i2;
-
+									}
 								}
+							}
+						label1:
+							for(; z__ < height; z__++) {
+								for(int y__ = k4; y__ <= y_; y__++) {
+									if((tileCullingBitmap[z__ + 1][x][y__] & i2) == 0) {
+										break label1;
+									}
+								}
+							}
 
+							int l10 = ((z__ + 1) - z_) * ((y_ - k4) + 1);
+							if(l10 >= 8) {
+								char c1 = '\360';
+								int k14 = heightMap[z__][x][k4] - c1;
+								int l15 = heightMap[z_][x][k4];
+								SceneGraph.createCullingCluster(height, x * 128, l15, x * 128, y_ * 128 + 128, k14, k4 * 128, 1);
+								for(int l16 = z_; l16 <= z__; l16++) {
+									for(int l17 = k4; l17 <= y_; l17++) {
+										tileCullingBitmap[l16][x][l17] &= ~i2;
+									}
+								}
 							}
 						}
-						if((tileCullingBitmap[i3][i4][k3] & j2) != 0)
+						if((tileCullingBitmap[z][x][y] & j2) != 0)
 						{
-							int l4 = i4;
-							int i6 = i4;
-							int j7 = i3;
-							int l8 = i3;
-							for(; l4 > 0 && (tileCullingBitmap[i3][l4 - 1][k3] & j2) != 0; l4--);
-							for(; i6 < xMapSize && (tileCullingBitmap[i3][i6 + 1][k3] & j2) != 0; i6++);
+							int l4 = x;
+							int i6 = x;
+							int j7 = z;
+							int l8 = z;
+							for(; l4 > 0 && (tileCullingBitmap[z][l4 - 1][y] & j2) != 0; l4--);
+							for(; i6 < xMapSize && (tileCullingBitmap[z][i6 + 1][y] & j2) != 0; i6++);
 label2:
 							for(; j7 > 0; j7--)
 							{
 								for(int i11 = l4; i11 <= i6; i11++)
-									if((tileCullingBitmap[j7 - 1][i11][k3] & j2) == 0)
+									if((tileCullingBitmap[j7 - 1][i11][y] & j2) == 0)
 										break label2;
 
 							}
 
 label3:
-							for(; l8 < l2; l8++)
+							for(; l8 < height; l8++)
 							{
 								for(int j11 = l4; j11 <= i6; j11++)
-									if((tileCullingBitmap[l8 + 1][j11][k3] & j2) == 0)
+									if((tileCullingBitmap[l8 + 1][j11][y] & j2) == 0)
 										break label3;
 
 							}
@@ -322,31 +321,31 @@ label3:
 							if(k11 >= 8)
 							{
 								char c2 = '\360';
-								int l14 = heightMap[l8][l4][k3] - c2;
-								int i16 = heightMap[j7][l4][k3];
-								SceneGraph.createCullingCluster(l2, l4 * 128, i16, i6 * 128 + 128, k3 * 128, l14, k3 * 128, 2);
+								int l14 = heightMap[l8][l4][y] - c2;
+								int i16 = heightMap[j7][l4][y];
+								SceneGraph.createCullingCluster(height, l4 * 128, i16, i6 * 128 + 128, y * 128, l14, y * 128, 2);
 								for(int i17 = j7; i17 <= l8; i17++)
 								{
 									for(int i18 = l4; i18 <= i6; i18++)
-										tileCullingBitmap[i17][i18][k3] &= ~j2;
+										tileCullingBitmap[i17][i18][y] &= ~j2;
 
 								}
 
 							}
 						}
-						if((tileCullingBitmap[i3][i4][k3] & k2) != 0)
+						if((tileCullingBitmap[z][x][y] & k2) != 0)
 						{
-							int i5 = i4;
-							int j6 = i4;
-							int k7 = k3;
-							int i9 = k3;
-							for(; k7 > 0 && (tileCullingBitmap[i3][i4][k7 - 1] & k2) != 0; k7--);
-							for(; i9 < yMapSize && (tileCullingBitmap[i3][i4][i9 + 1] & k2) != 0; i9++);
+							int i5 = x;
+							int j6 = x;
+							int k7 = y;
+							int i9 = y;
+							for(; k7 > 0 && (tileCullingBitmap[z][x][k7 - 1] & k2) != 0; k7--);
+							for(; i9 < yMapSize && (tileCullingBitmap[z][x][i9 + 1] & k2) != 0; i9++);
 label4:
 							for(; i5 > 0; i5--)
 							{
 								for(int l11 = k7; l11 <= i9; l11++)
-									if((tileCullingBitmap[i3][i5 - 1][l11] & k2) == 0)
+									if((tileCullingBitmap[z][i5 - 1][l11] & k2) == 0)
 										break label4;
 
 							}
@@ -355,19 +354,19 @@ label5:
 							for(; j6 < xMapSize; j6++)
 							{
 								for(int i12 = k7; i12 <= i9; i12++)
-									if((tileCullingBitmap[i3][j6 + 1][i12] & k2) == 0)
+									if((tileCullingBitmap[z][j6 + 1][i12] & k2) == 0)
 										break label5;
 
 							}
 
 							if(((j6 - i5) + 1) * ((i9 - k7) + 1) >= 4)
 							{
-								int j12 = heightMap[i3][i5][k7];
-								SceneGraph.createCullingCluster(l2, i5 * 128, j12, j6 * 128 + 128, i9 * 128 + 128, j12, k7 * 128, 4);
+								int j12 = heightMap[z][i5][k7];
+								SceneGraph.createCullingCluster(height, i5 * 128, j12, j6 * 128 + 128, i9 * 128 + 128, j12, k7 * 128, 4);
 								for(int k13 = i5; k13 <= j6; k13++)
 								{
 									for(int i15 = k7; i15 <= i9; i15++)
-										tileCullingBitmap[i3][k13][i15] &= ~k2;
+										tileCullingBitmap[z][k13][i15] &= ~k2;
 
 								}
 
@@ -566,10 +565,12 @@ label5:
 				if(def.aBoolean764)
 					tileCullingBitmap[z][x][y] |= 0x492;
 			}
-			if(def.unwalkable && tileSetting != null)
+			if(def.unwalkable && tileSetting != null) {
 				tileSetting.method211(y, objectFace, x, objectType, def.aBoolean757);
-			if(def.anInt775 != 16)
-				sceneGraph.method290(y, def.anInt775, x, z);
+			}
+			if(def.renderOffset != 16) {
+				sceneGraph.setWallDecorationOffset(y, def.renderOffset, x, z);
+			}
 			return;
 		}
 		if(objectType == 1) {
@@ -623,8 +624,8 @@ label5:
 				}
 			if(def.unwalkable && tileSetting != null)
 				tileSetting.method211(y, objectFace, x, objectType, def.aBoolean757);
-			if(def.anInt775 != 16)
-				sceneGraph.method290(y, def.anInt775, x, z);
+			if(def.renderOffset != 16)
+				sceneGraph.setWallDecorationOffset(y, def.renderOffset, x, z);
 			return;
 		}
 		if(objectType == 3) {
@@ -689,16 +690,17 @@ label5:
 			return;
 		}
 		if(objectType == 5) {
-			int i4 = 16;
-			int k4 = sceneGraph.getWallObjectUID(z, x, y);
-			if(k4 > 0)
-				i4 = ObjectDefinitions.getDefinition(k4 >> 14 & 0x7fff).anInt775;
+			int renderOffset = 16;
+			int uid = sceneGraph.getWallObjectUID(z, x, y);
+			if(uid > 0) {
+				renderOffset = ObjectDefinitions.getDefinition(uid >> 14 & 0x7fff).renderOffset;
+			}
 			Object object;
 			if(def.animationId == -1 && def.childrenIDs == null)
 				object = def.renderObject(4, 0, k1, l1, i2, j2, -1);
 			else
 				object = new ObjectOnTile(objectId, 0, 4, l1, i2, k1, j2, def.animationId, true);
-			sceneGraph.addWallDecoration(l2, y, objectFace * 512, z, faceOffsetX[objectFace] * i4, k2, ((Animable) (object)), x, byte0, faceOffsetY[objectFace] * i4, bitValues[objectFace]);
+			sceneGraph.addWallDecoration(l2, y, objectFace * 512, z, faceOffsetX[objectFace] * renderOffset, k2, ((Animable) (object)), x, byte0, faceOffsetY[objectFace] * renderOffset, bitValues[objectFace]);
 			return;
 		}
 		if(objectType == 6) {
@@ -1136,7 +1138,7 @@ label0:
 			int j4 = 16;
 			int l4 = sceneGraph.getWallObjectUID(k1, i1, j);
 			if(l4 > 0)
-				j4 = ObjectDefinitions.getDefinition(l4 >> 14 & 0x7fff).anInt775;
+				j4 = ObjectDefinitions.getDefinition(l4 >> 14 & 0x7fff).renderOffset;
 			Object obj13;
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj13 = def.renderObject(4, 0, l1, i2, j2, k2, -1);

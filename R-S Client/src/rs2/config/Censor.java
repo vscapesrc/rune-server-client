@@ -22,36 +22,38 @@ public final class Censor {
 	}
 
 	private static void readTldList(JagexBuffer buffer) {
-		int i = buffer.getInt();
-		aCharArrayArray624 = new char[i][];
-		anIntArray625 = new int[i];
-		for (int j = 0; j < i; j++) {
-			anIntArray625[j] = buffer.getUnsignedByte();
-			char ac[] = new char[buffer.getUnsignedByte()];
-			for (int k = 0; k < ac.length; k++)
-				ac[k] = (char) buffer.getUnsignedByte();
-			aCharArrayArray624[j] = ac;
+		int length = buffer.getInt();
+		aCharArrayArray624 = new char[length][];
+		anIntArray625 = new int[length];
+		for (int index = 0; index < length; index++) {
+			anIntArray625[index] = buffer.getUnsignedByte();
+			char characters[] = new char[buffer.getUnsignedByte()];
+			for (int character = 0; character < characters.length; character++) {
+				characters[character] = (char) buffer.getUnsignedByte();
+			}
+			aCharArrayArray624[index] = characters;
 		}
 
 	}
 
 	private static void readBadEnc(JagexBuffer buffer) {
-		int j = buffer.getInt();
-		aCharArrayArray621 = new char[j][];
-		aByteArrayArrayArray622 = new byte[j][][];
+		int length = buffer.getInt();
+		aCharArrayArray621 = new char[length][];
+		aByteArrayArrayArray622 = new byte[length][][];
 		method493(buffer, aCharArrayArray621, aByteArrayArrayArray622);
 	}
 
 	private static void readDomainEnc(JagexBuffer buffer) {
-		int i = buffer.getInt();
-		aCharArrayArray623 = new char[i][];
+		int length = buffer.getInt();
+		aCharArrayArray623 = new char[length][];
 		method494(aCharArrayArray623, buffer);
 	}
 
 	private static void readFragmentsEnc(JagexBuffer buffer) {
 		anIntArray620 = new int[buffer.getInt()];
-		for (int i = 0; i < anIntArray620.length; i++)
-			anIntArray620[i] = buffer.getUnsignedShort();
+		for (int index = 0; index < anIntArray620.length; index++) {
+			anIntArray620[index] = buffer.getUnsignedShort();
+		}
 	}
 
 	private static void method493(JagexBuffer stream, char ac[][], byte abyte0[][][]) {
@@ -100,8 +102,7 @@ public final class Censor {
 	}
 
 	private static boolean method496(char c) {
-		return c >= ' ' && c <= '\177' || c == ' ' || c == '\n' || c == '\t'
-				|| c == '\243' || c == '\u20AC';
+		return c >= ' ' && c <= '\177' || c == ' ' || c == '\n' || c == '\t' || c == '\243' || c == '\u20AC';
 	}
 
 	public static String censor(String s) {
@@ -132,9 +133,11 @@ public final class Censor {
 	}
 
 	private static void method498(char ac[], char ac1[]) {
-		for (int j = 0; j < ac.length; j++)
-			if (ac1[j] != '*' && isUpperCaseLetter(ac[j]))
+		for (int j = 0; j < ac.length; j++) {
+			if (ac1[j] != '*' && isUpperCaseLetter(ac[j])) {
 				ac1[j] = ac[j];
+			}
+		}
 	}
 
 	private static void method499(char ac[]) {

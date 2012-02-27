@@ -369,16 +369,17 @@ public final class SceneGraph {
 		}
 	}
 
-	public void method290(int i, int k, int l, int i1) {
-		Tile tile = tileArray[i1][l][i];
-		if (tile == null)
+	public void setWallDecorationOffset(int y, int offset, int x, int z) {
+		Tile tile = tileArray[z][x][y];
+		if (tile == null) {
 			return;
+		}
 		WallDecoration wallDecoration = tile.wallDecoration;
 		if (wallDecoration != null) {
-			int j1 = l * 128 + 64;
-			int k1 = i * 128 + 64;
-			wallDecoration.x = j1 + ((wallDecoration.x - j1) * k) / 16;
-			wallDecoration.y = k1 + ((wallDecoration.y - k1) * k) / 16;
+			int posX = x * 128 + 64;
+			int posY = y * 128 + 64;
+			wallDecoration.x = posX + ((wallDecoration.x - posX) * offset) / 16;
+			wallDecoration.y = posY + ((wallDecoration.y - posY) * offset) / 16;
 		}
 	}
 

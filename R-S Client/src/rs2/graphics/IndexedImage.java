@@ -113,7 +113,7 @@ public final class IndexedImage extends RSDrawingArea {
 		anInt1455 = anInt1457 - myHeight - anInt1455;
 	}
 
-	public void method360(int i, int j, int k) {
+	public void adjustColors(int i, int j, int k) {
 		for (int i1 = 0; i1 < anIntArray1451.length; i1++) {
 			int j1 = anIntArray1451[i1] >> 16 & 0xff;
 			j1 += i;

@@ -4,7 +4,7 @@ import rs2.NodeSub;
 
 public class RSDrawingArea extends NodeSub {
 
-	public static void initDrawingArea(int h, int w, int pix[]) {
+	public static void initDrawingArea(int w, int h, int pix[]) {
 		pixels = pix;
 		width = w;
 		height = h;

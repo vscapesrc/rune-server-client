@@ -50,9 +50,9 @@ public final class ObjectOnTile extends Animable {
 			int l = varBit.anInt649;
 			int i1 = varBit.anInt650;
 			int j1 = Client.anIntArray1232[i1 - l];
-			i = clientInstance.variousSettings[k] >> l & j1;
+			i = client.variousSettings[k] >> l & j1;
 		} else if (anInt1602 != -1)
-			i = clientInstance.variousSettings[anInt1602];
+			i = client.variousSettings[anInt1602];
 		if (i < 0 || i >= anIntArray1600.length || anIntArray1600[i] == -1)
 			return null;
 		else
@@ -68,7 +68,7 @@ public final class ObjectOnTile extends Animable {
 		anInt1605 = i1;
 		anInt1606 = k1;
 		if (animationId != -1) {
-			sequence = Sequence.getSeq(animationId);
+			sequence = Sequence.getSequence(animationId);
 			frame = 0;
 			delay = Client.currentTime;
 			if (randomize && sequence.frameStep != -1) {
@@ -92,7 +92,7 @@ public final class ObjectOnTile extends Animable {
 	private final int anInt1606;
 	private Sequence sequence;
 	private int delay;
-	public static Client clientInstance;
+	public static Client client;
 	private final int objectId;
 	private final int anInt1611;
 	private final int anInt1612;

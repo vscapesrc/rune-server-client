@@ -77,7 +77,7 @@ public class IdentityKit {
 			if (oldColors[color] == 0) {
 				break;
 			}
-			model.changeModelColors(oldColors[color], newColors[color]);
+			model.changeColors(oldColors[color], newColors[color]);
 		}
 		return model;
 	}
@@ -105,7 +105,7 @@ public class IdentityKit {
 			if (oldColors[color] == 0) {
 				break;
 			}
-			model.changeModelColors(oldColors[color], newColors[color]);
+			model.changeColors(oldColors[color], newColors[color]);
 		}
 
 		return model;

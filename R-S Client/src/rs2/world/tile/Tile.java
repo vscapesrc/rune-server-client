@@ -2,14 +2,14 @@ package rs2.world.tile;
 
 import rs2.Node;
 import rs2.world.GroundDecoration;
-import rs2.world.InteractableObject;
+import rs2.world.InteractiveObject;
 import rs2.world.WallDecoration;
 import rs2.world.WallObject;
 
 public final class Tile extends Node {
 
 	public Tile(int i, int j, int k) {
-		interactableObjects = new InteractableObject[5];
+		interactiveObjects = new InteractiveObject[5];
 		anIntArray1319 = new int[5];
 		anInt1310 = tileZ = i;
 		anInt1308 = j;
@@ -27,7 +27,7 @@ public final class Tile extends Node {
 	public GroundDecoration groundDecoration;
 	public GroundItemTile groundItemTile;
 	public int count;
-	public final InteractableObject[] interactableObjects;
+	public final InteractiveObject[] interactiveObjects;
 	public final int[] anIntArray1319;
 	public int anInt1320;
 	public int logicHeight;

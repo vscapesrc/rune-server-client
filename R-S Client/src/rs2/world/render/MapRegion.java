@@ -964,18 +964,19 @@ label0:
 		return (i & 0xff80) + j;
 	}
 
-	public static void method188(SceneGraph sceneGraph, int i, int j, int k, int l, TileSetting class11, int ai[][][], int i1,
-								 int j1, int k1)
+	public static void method188(SceneGraph sceneGraph, int i, int j, int k, int l, TileSetting tileSetting, int ai[][][], int i1,
+								 int id, int k1)
 	{
 		int l1 = ai[l][i1][j];
 		int i2 = ai[l][i1 + 1][j];
 		int j2 = ai[l][i1 + 1][j + 1];
 		int k2 = ai[l][i1][j + 1];
 		int l2 = l1 + i2 + j2 + k2 >> 2;
-		ObjectDefinitions def = ObjectDefinitions.getDefinition(j1);
-		int i3 = i1 + (j << 7) + (j1 << 14) + 0x40000000;
-		if(!def.hasActions)
+		ObjectDefinitions def = ObjectDefinitions.getDefinition(id);
+		int i3 = i1 + (j << 7) + (id << 14) + 0x40000000;
+		if(!def.hasActions) {
 			i3 += 0x80000000;
+		}
 		byte byte1 = (byte)((i << 6) + k);
 		if(k == 22)
 		{
@@ -983,10 +984,10 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj = def.renderObject(22, i, l1, i2, j2, k2, -1);
 			else
-				obj = new ObjectOnTile(j1, i, 22, i2, j2, l1, k2, def.animationId, true);
+				obj = new ObjectOnTile(id, i, 22, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addGroundDecoration(k1, l2, j, ((Animable) (obj)), byte1, i3, i1);
 			if(def.unwalkable && def.hasActions)
-				class11.clipTableSet(j, i1);
+				tileSetting.clipTableSet(j, i1);
 			return;
 		}
 		if(k == 10 || k == 11)
@@ -995,7 +996,7 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj1 = def.renderObject(10, i, l1, i2, j2, k2, -1);
 			else
-				obj1 = new ObjectOnTile(j1, i, 10, i2, j2, l1, k2, def.animationId, true);
+				obj1 = new ObjectOnTile(id, i, 10, i2, j2, l1, k2, def.animationId, true);
 			if(obj1 != null)
 			{
 				int j5 = 0;
@@ -1015,7 +1016,7 @@ label0:
 				sceneGraph.method284(i3, byte1, l2, i5, ((Animable) (obj1)), k4, k1, j5, j, i1);
 			}
 			if(def.unwalkable)
-				class11.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, i1, j, i);
+				tileSetting.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, i1, j, i);
 			return;
 		}
 		if(k >= 12)
@@ -1024,10 +1025,10 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj2 = def.renderObject(k, i, l1, i2, j2, k2, -1);
 			else
-				obj2 = new ObjectOnTile(j1, i, k, i2, j2, l1, k2, def.animationId, true);
+				obj2 = new ObjectOnTile(id, i, k, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.method284(i3, byte1, l2, 1, ((Animable) (obj2)), 1, k1, 0, j, i1);
 			if(def.unwalkable)
-				class11.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, i1, j, i);
+				tileSetting.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, i1, j, i);
 			return;
 		}
 		if(k == 0)
@@ -1036,10 +1037,10 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj3 = def.renderObject(0, i, l1, i2, j2, k2, -1);
 			else
-				obj3 = new ObjectOnTile(j1, i, 0, i2, j2, l1, k2, def.animationId, true);
+				obj3 = new ObjectOnTile(id, i, 0, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallObject(bitValues[i], ((Animable) (obj3)), i3, j, byte1, i1, null, l2, 0, k1);
 			if(def.unwalkable)
-				class11.method211(j, i, i1, k, def.aBoolean757);
+				tileSetting.method211(j, i, i1, k, def.aBoolean757);
 			return;
 		}
 		if(k == 1)
@@ -1048,10 +1049,10 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj4 = def.renderObject(1, i, l1, i2, j2, k2, -1);
 			else
-				obj4 = new ObjectOnTile(j1, i, 1, i2, j2, l1, k2, def.animationId, true);
+				obj4 = new ObjectOnTile(id, i, 1, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallObject(highNybbleBitValues[i], ((Animable) (obj4)), i3, j, byte1, i1, null, l2, 0, k1);
 			if(def.unwalkable)
-				class11.method211(j, i, i1, k, def.aBoolean757);
+				tileSetting.method211(j, i, i1, k, def.aBoolean757);
 			return;
 		}
 		if(k == 2)
@@ -1065,12 +1066,12 @@ label0:
 				obj12 = def.renderObject(2, j3, l1, i2, j2, k2, -1);
 			} else
 			{
-				obj11 = new ObjectOnTile(j1, 4 + i, 2, i2, j2, l1, k2, def.animationId, true);
-				obj12 = new ObjectOnTile(j1, j3, 2, i2, j2, l1, k2, def.animationId, true);
+				obj11 = new ObjectOnTile(id, 4 + i, 2, i2, j2, l1, k2, def.animationId, true);
+				obj12 = new ObjectOnTile(id, j3, 2, i2, j2, l1, k2, def.animationId, true);
 			}
 			sceneGraph.addWallObject(bitValues[i], ((Animable) (obj11)), i3, j, byte1, i1, ((Animable) (obj12)), l2, bitValues[j3], k1);
 			if(def.unwalkable)
-				class11.method211(j, i, i1, k, def.aBoolean757);
+				tileSetting.method211(j, i, i1, k, def.aBoolean757);
 			return;
 		}
 		if(k == 3)
@@ -1079,10 +1080,10 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj5 = def.renderObject(3, i, l1, i2, j2, k2, -1);
 			else
-				obj5 = new ObjectOnTile(j1, i, 3, i2, j2, l1, k2, def.animationId, true);
+				obj5 = new ObjectOnTile(id, i, 3, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallObject(highNybbleBitValues[i], ((Animable) (obj5)), i3, j, byte1, i1, null, l2, 0, k1);
 			if(def.unwalkable)
-				class11.method211(j, i, i1, k, def.aBoolean757);
+				tileSetting.method211(j, i, i1, k, def.aBoolean757);
 			return;
 		}
 		if(k == 9)
@@ -1091,10 +1092,10 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj6 = def.renderObject(k, i, l1, i2, j2, k2, -1);
 			else
-				obj6 = new ObjectOnTile(j1, i, k, i2, j2, l1, k2, def.animationId, true);
+				obj6 = new ObjectOnTile(id, i, k, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.method284(i3, byte1, l2, 1, ((Animable) (obj6)), 1, k1, 0, j, i1);
 			if(def.unwalkable)
-				class11.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, i1, j, i);
+				tileSetting.method212(def.aBoolean757, def.tileSizeX, def.tileSizeY, i1, j, i);
 			return;
 		}
 		if(def.conforms)
@@ -1129,7 +1130,7 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj7 = def.renderObject(4, 0, l1, i2, j2, k2, -1);
 			else
-				obj7 = new ObjectOnTile(j1, 0, 4, i2, j2, l1, k2, def.animationId, true);
+				obj7 = new ObjectOnTile(id, 0, 4, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallDecoration(i3, j, i * 512, k1, 0, l2, ((Animable) (obj7)), i1, byte1, 0, bitValues[i]);
 			return;
 		}
@@ -1143,7 +1144,7 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj13 = def.renderObject(4, 0, l1, i2, j2, k2, -1);
 			else
-				obj13 = new ObjectOnTile(j1, 0, 4, i2, j2, l1, k2, def.animationId, true);
+				obj13 = new ObjectOnTile(id, 0, 4, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallDecoration(i3, j, i * 512, k1, faceOffsetX[i] * j4, l2, ((Animable) (obj13)), i1, byte1, faceOffsetY[i] * j4, bitValues[i]);
 			return;
 		}
@@ -1153,7 +1154,7 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj8 = def.renderObject(4, 0, l1, i2, j2, k2, -1);
 			else
-				obj8 = new ObjectOnTile(j1, 0, 4, i2, j2, l1, k2, def.animationId, true);
+				obj8 = new ObjectOnTile(id, 0, 4, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallDecoration(i3, j, i, k1, 0, l2, ((Animable) (obj8)), i1, byte1, 0, 256);
 			return;
 		}
@@ -1163,7 +1164,7 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj9 = def.renderObject(4, 0, l1, i2, j2, k2, -1);
 			else
-				obj9 = new ObjectOnTile(j1, 0, 4, i2, j2, l1, k2, def.animationId, true);
+				obj9 = new ObjectOnTile(id, 0, 4, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallDecoration(i3, j, i, k1, 0, l2, ((Animable) (obj9)), i1, byte1, 0, 512);
 			return;
 		}
@@ -1173,7 +1174,7 @@ label0:
 			if(def.animationId == -1 && def.childrenIDs == null)
 				obj10 = def.renderObject(4, 0, l1, i2, j2, k2, -1);
 			else
-				obj10 = new ObjectOnTile(j1, 0, 4, i2, j2, l1, k2, def.animationId, true);
+				obj10 = new ObjectOnTile(id, 0, 4, i2, j2, l1, k2, def.animationId, true);
 			sceneGraph.addWallDecoration(i3, j, i, k1, 0, l2, ((Animable) (obj10)), i1, byte1, 0, 768);
 		}
 	}

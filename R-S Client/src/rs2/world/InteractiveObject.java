@@ -2,9 +2,9 @@ package rs2.world;
 
 import rs2.Animable;
 
-public final class InteractableObject {
+public final class InteractiveObject {
 
-	public InteractableObject() {
+	public InteractiveObject() {
 	}
 
 	public int z;

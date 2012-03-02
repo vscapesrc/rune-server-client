@@ -371,6 +371,88 @@ public final class RSImage extends RSDrawingArea {
 		}
 	}
 
+	public void drawOutlinedSprite(int x, int y, int color) {
+		drawOutlinedSprite(x, y, color, 256);
+	}
+
+	public void drawOutlinedSprite(int xPos, int yPos, int color, int alpha) {
+		int alphaValue = alpha;
+		int tempWidth = myWidth + 2;
+		int tempHeight = myHeight + 2;
+		int[] pixels = new int[tempWidth * tempHeight];
+		for (int x = 0; x < myWidth; x++) {
+			for (int y = 0; y < myHeight; y++) {
+				if (myPixels[x + y * myWidth] != 0) {
+					pixels[(x + 1) + (y + 1) * tempWidth] = myPixels[x + y * myWidth];
+				}
+			}
+		}
+		for (int x = 0; x < tempWidth; x++) {
+			for (int y = 0; y < tempHeight; y++) {
+				if (pixels[(x) + (y) * tempWidth] == 0) {
+					if (x < tempWidth - 1
+							&& pixels[(x + 1) + ((y) * tempWidth)] > 0
+							&& pixels[(x + 1) + ((y) * tempWidth)] != 0xffffff) {
+						pixels[(x) + (y) * tempWidth] = color;
+					}
+					if (x > 0
+							&& pixels[(x - 1) + ((y) * tempWidth)] > 0
+							&& pixels[(x - 1) + ((y) * tempWidth)] != 0xffffff) {
+						pixels[(x) + (y) * tempWidth] = color;
+					}
+					if (y < tempHeight - 1
+							&& pixels[(x) + ((y + 1) * tempWidth)] > 0
+							&& pixels[(x) + ((y + 1) * tempWidth)] != 0xffffff) {
+						pixels[(x) + (y) * tempWidth] = color;
+					}
+					if (y > 0
+							&& pixels[(x) + ((y - 1) * tempWidth)] > 0
+							&& pixels[(x) + ((y - 1) * tempWidth)] != 0xffffff) {
+						pixels[(x) + (y) * tempWidth] = color;
+					}
+				}
+			}
+		}
+		xPos--;
+		yPos--;
+		xPos += offsetX;
+		yPos += offsetY;
+		int offsetX = xPos + yPos * RSDrawingArea.width;
+		int x = 0;
+		int outlineHeight = tempHeight;
+		int outlineWidth = tempWidth;
+		int l1 = RSDrawingArea.width - outlineWidth;
+		int i2 = 0;
+		if (yPos < RSDrawingArea.startY) {
+			int j2 = RSDrawingArea.startY - yPos;
+			outlineHeight -= j2;
+			yPos = RSDrawingArea.startY;
+			x += j2 * outlineWidth;
+			offsetX += j2 * RSDrawingArea.width;
+		}
+		if (yPos + outlineHeight > RSDrawingArea.endY) {
+			outlineHeight -= (yPos + outlineHeight) - RSDrawingArea.endY;
+		}
+		if (xPos < RSDrawingArea.startX) {
+			int k2 = RSDrawingArea.startX - xPos;
+			outlineWidth -= k2;
+			xPos = RSDrawingArea.startX;
+			x += k2;
+			offsetX += k2;
+			i2 += k2;
+			l1 += k2;
+		}
+		if (xPos + outlineWidth > RSDrawingArea.endX) {
+			int l2 = (xPos + outlineWidth) - RSDrawingArea.endX;
+			outlineWidth -= l2;
+			i2 += l2;
+			l1 += l2;
+		}
+		if (!(outlineWidth <= 0 || outlineHeight <= 0)) {
+			setPixels(x, outlineWidth, RSDrawingArea.pixels, pixels, i2, outlineHeight, l1, alphaValue, offsetX);
+		}
+	}
+
 	@SuppressWarnings("unused")
 	private void method349(int ai[], int ai1[], int j, int k, int l, int i1, int j1, int k1) {
 		int i;// was parameter

@@ -112,7 +112,7 @@ public final class Model extends Animable {
 			return null;
 		ModelHeader class21 = headerArray[j];
 		if (class21 == null) {
-			aOnDemandFetcherParent_1662.method548(j);
+			aOnDemandFetcherParent_1662.loadModel(j);
 			return null;
 		} else {
 			return new Model(j);
@@ -125,7 +125,7 @@ public final class Model extends Animable {
 		}
 		ModelHeader modelHeader = headerArray[i];
 		if (modelHeader == null) {
-			aOnDemandFetcherParent_1662.method548(i);
+			aOnDemandFetcherParent_1662.loadModel(i);
 			return false;
 		} else {
 			return true;
@@ -1085,8 +1085,8 @@ public final class Model extends Animable {
 	}
 
 	public void doLighting(int frontLight, int backLight, int rightLight, int middleLight, int leftLight, boolean shade) {
-		int j1 = (int) Math.sqrt(rightLight * rightLight + middleLight * middleLight + leftLight * leftLight);
-		int k1 = backLight * j1 >> 8;
+		int light = (int) Math.sqrt(rightLight * rightLight + middleLight * middleLight + leftLight * leftLight);
+		int k1 = backLight * light >> 8;
 		if (anIntArray1634 == null) {
 			anIntArray1634 = new int[triangleCount];
 			anIntArray1635 = new int[triangleCount];
@@ -1094,20 +1094,20 @@ public final class Model extends Animable {
 		}
 		if (super.vertexNormals == null) {
 			super.vertexNormals = new VertexNormal[totalVertices];
-			for (int l1 = 0; l1 < totalVertices; l1++)
-				super.vertexNormals[l1] = new VertexNormal();
-
+			for (int vertex = 0; vertex < totalVertices; vertex++) {
+				super.vertexNormals[vertex] = new VertexNormal();
+			}
 		}
-		for (int i2 = 0; i2 < triangleCount; i2++) {
-			int j2 = triangleA[i2];
-			int l2 = triangleB[i2];
-			int i3 = triangleC[i2];
-			int j3 = vertexX[l2] - vertexX[j2];
-			int k3 = vertexY[l2] - vertexY[j2];
-			int l3 = vertexZ[l2] - vertexZ[j2];
-			int i4 = vertexX[i3] - vertexX[j2];
-			int j4 = vertexY[i3] - vertexY[j2];
-			int k4 = vertexZ[i3] - vertexZ[j2];
+		for (int triangle = 0; triangle < triangleCount; triangle++) {
+			int a = triangleA[triangle];
+			int b = triangleB[triangle];
+			int c = triangleC[triangle];
+			int j3 = vertexX[b] - vertexX[a];
+			int k3 = vertexY[b] - vertexY[a];
+			int l3 = vertexZ[b] - vertexZ[a];
+			int i4 = vertexX[c] - vertexX[a];
+			int j4 = vertexY[c] - vertexY[a];
+			int k4 = vertexZ[c] - vertexZ[a];
 			int l4 = k3 * k4 - j4 * l3;
 			int i5 = l3 * i4 - k4 * j3;
 			int j5;
@@ -1123,35 +1123,34 @@ public final class Model extends Animable {
 			l4 = (l4 * 256) / k5;
 			i5 = (i5 * 256) / k5;
 			j5 = (j5 * 256) / k5;
-			if (triangleDrawType == null || (triangleDrawType[i2] & 1) == 0) {
-				VertexNormal vertex = super.vertexNormals[j2];
+			if (triangleDrawType == null || (triangleDrawType[triangle] & 1) == 0) {
+				VertexNormal vertex = super.vertexNormals[a];
 				vertex.x += l4;
 				vertex.y += i5;
 				vertex.z += j5;
 				vertex.magnitude++;
-				vertex = super.vertexNormals[l2];
+				vertex = super.vertexNormals[b];
 				vertex.x += l4;
 				vertex.y += i5;
 				vertex.z += j5;
 				vertex.magnitude++;
-				vertex = super.vertexNormals[i3];
+				vertex = super.vertexNormals[c];
 				vertex.x += l4;
 				vertex.y += i5;
 				vertex.z += j5;
 				vertex.magnitude++;
 			} else {
 				int l5 = frontLight + (rightLight * l4 + middleLight * i5 + leftLight * j5) / (k1 + k1 / 2);
-				anIntArray1634[i2] = method481(colors[i2], l5, triangleDrawType[i2]);
+				anIntArray1634[triangle] = method481(colors[triangle], l5, triangleDrawType[triangle]);
 			}
 		}
-
 		if (shade) {
 			doShading(frontLight, k1, rightLight, middleLight, leftLight);
 		} else {
 			vertexNormalOffset = new VertexNormal[totalVertices];
-			for (int k2 = 0; k2 < totalVertices; k2++) {
-				VertexNormal vertex = super.vertexNormals[k2];
-				VertexNormal vertex_1 = vertexNormalOffset[k2] = new VertexNormal();
+			for (int index = 0; index < totalVertices; index++) {
+				VertexNormal vertex = super.vertexNormals[index];
+				VertexNormal vertex_1 = vertexNormalOffset[index] = new VertexNormal();
 				vertex_1.x = vertex.x;
 				vertex_1.y = vertex.y;
 				vertex_1.z = vertex.z;

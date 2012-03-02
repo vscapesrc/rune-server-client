@@ -43,7 +43,7 @@ import rs2.resource.ResourceProvider;
 import rs2.sign.signlink;
 import rs2.util.TextUtils;
 import rs2.world.GroundDecoration;
-import rs2.world.InteractableObject;
+import rs2.world.InteractiveObject;
 import rs2.world.ObjectOnTile;
 import rs2.world.Projectile;
 import rs2.world.StillGraphics;
@@ -169,7 +169,7 @@ public final class Client extends RSApplet {
 	 * @return
 	 */
 	public int getLines() {
-		return isFixed() ? 5 : 8;
+		return isFixed() && getFrameVersion() <= 474 ? 5 : 8;
 	}
 
 	public String getPrefix(int rights) {
@@ -224,6 +224,8 @@ public final class Client extends RSApplet {
 
 	public void setFrameVersion(int version) {
 		frameVersion = version;
+		updateTabArea = true;
+		inputTaken = true;
 	}
 
 	public void drawChannels(int x, int y) {
@@ -298,7 +300,7 @@ public final class Client extends RSApplet {
 		} else {
 			getChatAreaImage().drawImage(0, 0);
 		}
-		drawChannels(offsetX, offsetY);
+		drawChannels(0, (isFixed() ? 0 : getClientHeight() - 165));
 		if (!showChatArea) {
 			return;
 		}
@@ -321,12 +323,12 @@ public final class Client extends RSApplet {
 		} else {
 			RSFont font = regular;
 			int offset = 0;
-			int x = offsetX + (getLines() == 5 ? 4 : 9);
+			int x = offsetX;
 			RSDrawingArea.setBounds(0 + offsetX, (getLines() == 5 ? 463 : 494) + offsetX, (isFixed() ? 0 : 1) + textOffsetY, (getLines() == 5 ? 77 : 115) + textOffsetY);
 			for(int index = 0; index < 100; index++)
 				if(chatMessages[index] != null) {
 					int type = chatTypes[index];
-					int y = ((isFixed() ? 70 : 110) - offset * 14) + anInt1089;
+					int y = ((isFixed() && getFrameVersion() <= 459 ? 70 : 110) - offset * 14) + anInt1089;
 					String name = chatNames[index];
 					String prefix = name;
 					int rights = 0;
@@ -400,7 +402,7 @@ public final class Client extends RSApplet {
 			if(anInt1211 < (getLines() == 5 ? 78 : 111)) {
 				anInt1211 = (getLines() == 5 ? 78 : 111);
 			}
-			drawScrollbar((getLines() == 5 ? 463 : 496) + offsetX, 0 + textOffsetY, (getLines() == 5 ? 77 : 114), anInt1211 - anInt1089 - (getLines() == 5 ? 77 : 113), anInt1211, !isFixed());
+			drawScrollbar((getLines() == 5 ? 463 : 488) + offsetX, 0 + textOffsetY, (getLines() == 5 ? 77 : 114), anInt1211 - anInt1089 - (getLines() == 5 ? 77 : 113), anInt1211, !isFixed());
 			String name;
 			if(myPlayer != null && myPlayer.name != null) {
 				name = myPlayer.name;
@@ -410,10 +412,10 @@ public final class Client extends RSApplet {
 			font.drawShadowedString(name + ":", x, (getLines() == 5 ? 90 : 126) + textOffsetY, isFixed() ? 0 : 0xFFFFFF, !isFixed());
 			font.drawShadowedString(inputString + "*", x + font.getEffectTextWidth(name + ": "), (getLines() == 5 ? 90 : 126) + textOffsetY, isFixed() ? 255 : 0x7FA9FF, !isFixed());
 			if (isFixed()) {
-				RSDrawingArea.drawHorizontalLine(0 + offsetX, 77 + offsetY, 479, 0);
+				RSDrawingArea.drawHorizontalLine(-1 + offsetX, (getFrameVersion() >= 474 ? 114 : 77) + offsetY, getFrameVersion() >= 474 ? 505 : 479, getFrameVersion() == 317 ? 0 : 0x807660);
 			}
 		}
-		if(menuOpen) {
+		if(menuOpen && isFixed()) {
 			drawMenu(0, 338);
 		}
 		if (isFixed()) {
@@ -582,8 +584,8 @@ public final class Client extends RSApplet {
 	private void method22() {
 		try {
 			anInt985 = -1;
-			aClass19_1056.removeAll();
-			aClass19_1013.removeAll();
+			aClass19_1056.clear();
+			aClass19_1013.clear();
 			Rasterizer.clearTextureCache();
 			unlinkMRUNodes();
 			sceneGraph.initToNull();
@@ -723,7 +725,7 @@ public final class Client extends RSApplet {
 			out.putInt(0x3f008edd);
 		}
 		if(lowMem && signlink.cache_dat != null) {
-			int count = resourceProvider.getVersionCount(0);
+			int count = resourceProvider.getCount(0);
 			for(int index = 0; index < count; index++) {
 				int l1 = resourceProvider.getModelFlag(index);
 				if((l1 & 0x79) == 0) {
@@ -733,7 +735,7 @@ public final class Client extends RSApplet {
 		}
 		System.gc();
 		Rasterizer.resetTextures();
-		resourceProvider.method566();
+		resourceProvider.ignoreExtras();
 		int k = (anInt1069 - 6) / 8 - 1;
 		int j1 = (anInt1069 + 6) / 8 + 1;
 		int i2 = (anInt1070 - 6) / 8 - 1;
@@ -1347,7 +1349,7 @@ public final class Client extends RSApplet {
 				if (musicEnabled) {
 					nextSong = currentSong;
 					songChanging = true;
-					resourceProvider.method558(2, nextSong);
+					resourceProvider.loadMandatory(2, nextSong);
 				} else {
 					stopMidi();
 				}
@@ -1788,7 +1790,7 @@ public final class Client extends RSApplet {
 		}
 		drawTabs();
 		drawSideIcons();
-		if(menuOpen) {
+		if(menuOpen && isFixed()) {
 			drawMenu(516, 160);
 		}
 		if (isFixed()) {
@@ -2647,7 +2649,7 @@ public final class Client extends RSApplet {
 		{
 			int j = method54();
 			if(j != 0 && System.currentTimeMillis() - aLong824 > 0x57e40L) {
-				signlink.reportError(getUsername() + " glcfb " + aLong1215 + "," + j + "," + lowMem + "," + jagCache[0] + "," + resourceProvider.getNodeCount() + "," + floor_level + "," + anInt1069 + "," + anInt1070);
+				signlink.reportError(getUsername() + " glcfb " + aLong1215 + "," + j + "," + lowMem + "," + resourceCaches[0] + "," + resourceProvider.getRemaining() + "," + floor_level + "," + anInt1069 + "," + anInt1070);
 				aLong824 = System.currentTimeMillis();
 			}
 		}
@@ -3472,8 +3474,8 @@ public final class Client extends RSApplet {
 		int l = 5;
 		try
 		{
-			if(jagCache[0] != null)
-				abyte0 = jagCache[0].get(i);
+			if(resourceCaches[0] != null)
+				abyte0 = resourceCaches[0].get(i);
 		}
 		catch(Exception _ex) { }
 		if(abyte0 != null)
@@ -3526,12 +3528,12 @@ public final class Client extends RSApplet {
 				datainputstream.close();
 				try
 				{
-					if(jagCache[0] != null)
-						jagCache[0].put(abyte0.length, abyte0, i);
+					if(resourceCaches[0] != null)
+						resourceCaches[0].put(abyte0.length, abyte0, i);
 				}
 				catch(Exception _ex)
 				{
-					jagCache[0] = null;
+					resourceCaches[0] = null;
 				}
 				/*			 if(abyte0 != null)
 				{
@@ -3744,6 +3746,9 @@ public final class Client extends RSApplet {
 				} else {
 					pushMessage("", "Please close the interface you have open before using 'report abuse'", 0);
 				}
+				break;
+			case FACE_NORTH:
+				setNorth();
 				break;
 		}
 		if(action == 582) {
@@ -4034,23 +4039,24 @@ public final class Client extends RSApplet {
 			if(RSInterface.cache[cmd3].parentId == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
-		if(action == 626)
-		{
-			RSInterface class9_1 = RSInterface.cache[cmd3];
+		if(action == 626) {
+			RSInterface rsi = RSInterface.cache[cmd3];
+			selectedSpell = rsi.id;
 			spellSelected = 1;
 			anInt1137 = cmd3;
-			spellUsableOn = class9_1.spellUsableOn;
+			spellUsableOn = rsi.spellUsableOn;
 			itemSelected = 0;
 			updateTabArea = true;
-			String s4 = class9_1.selectedActionName;
-			if(s4.indexOf(" ") != -1)
-				s4 = s4.substring(0, s4.indexOf(" "));
-			String s8 = class9_1.selectedActionName;
-			if(s8.indexOf(" ") != -1)
-				s8 = s8.substring(s8.indexOf(" ") + 1);
-			spellTooltip = s4 + " " + class9_1.spellName + " " + s8;
-			if(spellUsableOn == 16)
-			{
+			String prefix = rsi.selectedActionName;
+			if(prefix.indexOf(" ") != -1) {
+				prefix = prefix.substring(0, prefix.indexOf(" "));
+			}
+			String suffix = rsi.selectedActionName;
+			if(suffix.indexOf(" ") != -1) {
+				suffix = suffix.substring(suffix.indexOf(" ") + 1);
+			}
+			spellTooltip = prefix + " " + rsi.spellName + " " + suffix;
+			if(spellUsableOn == 16) {
 				updateTabArea = true;
 				tabID = 3;
 			}
@@ -5072,8 +5078,8 @@ public final class Client extends RSApplet {
 										if(inputString.equals("::lag"))
 											printDebug();
 										if(inputString.equals("::prefetchmusic")) {
-											for(int j1 = 0; j1 < resourceProvider.getVersionCount(2); j1++)
-												resourceProvider.method563((byte)1, 2, j1);
+											for(int j1 = 0; j1 < resourceProvider.getCount(2); j1++)
+												resourceProvider.setExtraPriority((byte)1, 2, j1);
 
 										}
 										if(inputString.equals("::fpson"))
@@ -5996,9 +6002,11 @@ public final class Client extends RSApplet {
 	public final int FRIENDS_TRADE = 922;
 	public final int OFF_TRADE = 923;
 	public final int REPORT_ABUSE = 924;
+	public final int FACE_NORTH = 925;
 
 	public int chatModeHover = -1;
 	public void processRightClickChatMode() {
+		inputTaken = true;
 		if (!isFixed() || getFrameVersion() != 317) {
 			int x = 5;
 			int y = getClientHeight() - 22;
@@ -6139,6 +6147,16 @@ public final class Client extends RSApplet {
         anInt1315 = 0;
 	}
 
+	public void processMapAreaClick() {
+		int x = getFrameVersion() == 317 ? 550 : 0;
+		int y = getFrameVersion() == 317 ? 5 : 0;
+		if (mouseInRegion(x, x + 33, y, y + 33)) {
+			menuActionName[1] = "Face North";
+			menuActionID[1] = FACE_NORTH;
+			menuActionRow = 2;
+		}
+	}
+
 	private void processRightClick() {
 		if(activeInterfaceType != 0) {
 			return;
@@ -6166,6 +6184,7 @@ public final class Client extends RSApplet {
 		processGameAreaClick();
 		processTabAreaClick();
 		processChatAreaClick();
+		processMapAreaClick();
         processRightClickChatMode();
 		boolean flag = false;
 		while(!flag) {
@@ -6394,8 +6413,8 @@ public final class Client extends RSApplet {
 					npcArray[index] = null;
 				}
 				myPlayer = playerArray[myPlayerIndex] = new Player();
-				aClass19_1013.removeAll();
-				aClass19_1056.removeAll();
+				aClass19_1013.clear();
+				aClass19_1056.clear();
 				for(int z = 0; z < 4; z++) {
 					for(int x = 0; x < 104; x++) {
 						for(int y = 0; y < 104; y++) {
@@ -7111,7 +7130,7 @@ public final class Client extends RSApplet {
 			if(prevSong == 0 && musicEnabled && !lowMem) {
 				nextSong = currentSong;
 				songChanging = true;
-				resourceProvider.method558(2, nextSong);
+				resourceProvider.loadMandatory(2, nextSong);
 			}
 		}
 	}
@@ -7128,7 +7147,7 @@ public final class Client extends RSApplet {
 		}
 		if(signlink.cache_dat != null) {
 			for(int i = 0; i < 5; i++)
-				jagCache[i] = new ResourceCache(signlink.cache_dat, signlink.cache_idx[i], i + 1);
+				resourceCaches[i] = new ResourceCache(signlink.cache_dat, signlink.cache_idx[i], i + 1);
 		}
 		try {
 			if (Constants.UPDATE_SERVER_ENABLED) {
@@ -7159,7 +7178,7 @@ public final class Client extends RSApplet {
 			resourceProvider = new ResourceProvider();
 			resourceProvider.start(lists, this);
 			FrameReader.method528(resourceProvider.getAnimCount());
-			Model.method459(resourceProvider.getVersionCount(0), resourceProvider);
+			Model.method459(resourceProvider.getCount(0), resourceProvider);
 			if(!lowMem) {
 				nextSong = 0;
 				try {
@@ -7167,26 +7186,26 @@ public final class Client extends RSApplet {
 				} catch(Exception _ex) {
 				}
 				songChanging = true;
-				resourceProvider.method558(2, nextSong);
-				while(resourceProvider.getNodeCount() > 0) {
+				resourceProvider.loadMandatory(2, nextSong);
+				while(resourceProvider.getRemaining() > 0) {
 					processOnDemandQueue();
 					try {
 						Thread.sleep(100L);
 					}
 					catch(Exception _ex) { }
-					if(resourceProvider.anInt1349 > 3) {
+					if(resourceProvider.errorCount > 3) {
 						loadError();
 						return;
 					}
 				}
 			}
 			displayProgress("Requesting animations", 65);
-			int total = resourceProvider.getVersionCount(1);
+			int total = resourceProvider.getCount(1);
 			for(int index = 0; index < total; index++) {
-				resourceProvider.method558(1, index);
+				resourceProvider.loadMandatory(1, index);
 			}
-			while(resourceProvider.getNodeCount() > 0) {
-				int current = total - resourceProvider.getNodeCount();
+			while(resourceProvider.getRemaining() > 0) {
+				int current = total - resourceProvider.getRemaining();
 				if(current > 0) {
 					displayProgress("Loading animations - " + (current * 100) / total + "%", 65);
 				}
@@ -7195,22 +7214,22 @@ public final class Client extends RSApplet {
 					Thread.sleep(100L);
 				} catch(Exception _ex) {
 				}
-				if(resourceProvider.anInt1349 > 3) {
+				if(resourceProvider.errorCount > 3) {
 					loadError();
 					return;
 				}
 			}
 			displayProgress("Requesting models", 70);
-			total = resourceProvider.getVersionCount(0);
+			total = resourceProvider.getCount(0);
 			for(int index = 0; index < total; index++) {
 				int modelFlag = resourceProvider.getModelFlag(index);
 				if((modelFlag & 1) != 0) {
-					resourceProvider.method558(0, index);
+					resourceProvider.loadMandatory(0, index);
 				}
 			}
-			total = resourceProvider.getNodeCount();
-			while(resourceProvider.getNodeCount() > 0) {
-				int current = total - resourceProvider.getNodeCount();
+			total = resourceProvider.getRemaining();
+			while(resourceProvider.getRemaining() > 0) {
+				int current = total - resourceProvider.getRemaining();
 				if(current > 0) {
 					displayProgress("Loading models - " + (current * 100) / total + "%", 70);
 				}
@@ -7220,23 +7239,23 @@ public final class Client extends RSApplet {
 				} catch(Exception _ex) {
 				}
 			}
-			if(jagCache[0] != null) {
+			if(resourceCaches[0] != null) {
 				displayProgress("Requesting maps", 75);
-				resourceProvider.method558(3, resourceProvider.method562(0, 48, 47));
-				resourceProvider.method558(3, resourceProvider.method562(1, 48, 47));
-				resourceProvider.method558(3, resourceProvider.method562(0, 48, 48));
-				resourceProvider.method558(3, resourceProvider.method562(1, 48, 48));
-				resourceProvider.method558(3, resourceProvider.method562(0, 48, 49));
-				resourceProvider.method558(3, resourceProvider.method562(1, 48, 49));
-				resourceProvider.method558(3, resourceProvider.method562(0, 47, 47));
-				resourceProvider.method558(3, resourceProvider.method562(1, 47, 47));
-				resourceProvider.method558(3, resourceProvider.method562(0, 47, 48));
-				resourceProvider.method558(3, resourceProvider.method562(1, 47, 48));
-				resourceProvider.method558(3, resourceProvider.method562(0, 148, 48));
-				resourceProvider.method558(3, resourceProvider.method562(1, 148, 48));
-				total = resourceProvider.getNodeCount();
-				while(resourceProvider.getNodeCount() > 0) {
-					int current = total - resourceProvider.getNodeCount();
+				resourceProvider.loadMandatory(3, resourceProvider.method562(0, 48, 47));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(1, 48, 47));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(0, 48, 48));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(1, 48, 48));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(0, 48, 49));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(1, 48, 49));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(0, 47, 47));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(1, 47, 47));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(0, 47, 48));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(1, 47, 48));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(0, 148, 48));
+				resourceProvider.loadMandatory(3, resourceProvider.method562(1, 148, 48));
+				total = resourceProvider.getRemaining();
+				while(resourceProvider.getRemaining() > 0) {
+					int current = total - resourceProvider.getRemaining();
 					if(current > 0) {
 						displayProgress("Loading maps - " + (current * 100) / total + "%", 75);
 					}
@@ -7247,7 +7266,7 @@ public final class Client extends RSApplet {
 					}
 				}
 			}
-			total = resourceProvider.getVersionCount(0);
+			total = resourceProvider.getCount(0);
 			for(int index = 0; index < total; index++) {
 				int modelFlag = resourceProvider.getModelFlag(index);
 				byte priority = 0;
@@ -7270,15 +7289,15 @@ public final class Client extends RSApplet {
 					priority = 3;
 				}
 				if(priority != 0) {
-					resourceProvider.method563(priority, 0, index);
+					resourceProvider.setExtraPriority(priority, 0, index);
 				}
 			}
 			resourceProvider.method554(isMembers);
 			if(!lowMem) {
-				int count = resourceProvider.getVersionCount(2);
+				int count = resourceProvider.getCount(2);
 				for(int index = 1; index < count; index++) {
-					if(resourceProvider.method569(index)) {
-						resourceProvider.method563((byte)1, 2, index);
+					if(resourceProvider.isMidiPreloaded(index)) {
+						resourceProvider.setExtraPriority((byte)1, 2, index);
 					}
 				}
 			}
@@ -7367,6 +7386,12 @@ public final class Client extends RSApplet {
 					}
 				}
 			}
+			RSImage image = new RSImage("frame/554", 0, 0, 4, 338);
+			leftFrame = new RSImageProducer(image.myWidth, image.myHeight, getGameComponent());
+			image.drawImage(0, 0);
+			image = new RSImage("frame/554", 4, 0, 512, 4);
+			topFrame = new RSImageProducer(image.myWidth, image.myHeight, getGameComponent());
+			image.drawImage(0, 0);
 			displayProgress("Unpacking textures", 83);
 			Rasterizer.unpack(textures);
 			Rasterizer.calculatePalette(0.80000000000000004D);
@@ -7434,7 +7459,7 @@ public final class Client extends RSApplet {
             fullScreenTextureArray = Rasterizer.lineOffsets;
 			Rasterizer.setBounds(479, 96);
 			chatAreaTextureArray = Rasterizer.lineOffsets;
-			Rasterizer.setBounds(190, 261);
+			Rasterizer.setBounds(249, 343);
 			tabAreaTextureArray = Rasterizer.lineOffsets;
 			Rasterizer.setBounds(512, 334);
 			gameAreaTextureArray = Rasterizer.lineOffsets;
@@ -7997,6 +8022,8 @@ public final class Client extends RSApplet {
 		if(welcomeScreenRaised) {
 			welcomeScreenRaised = false;
 			if (isFixed()) {
+				topFrame.drawGraphics(4, 0, super.graphics);
+				leftFrame.drawGraphics(0, 0, super.graphics);
 				/*backLeftIP1.drawGraphics(0, 4, super.graphics);
 				backLeftIP2.drawGraphics(0, 357, super.graphics);
 				backRightIP1.drawGraphics(722, 4, super.graphics);
@@ -8249,7 +8276,7 @@ public final class Client extends RSApplet {
 							hovered = true;
 						}
 						int color;
-						if(interfaceIsSelected(child)) {
+						if(isEnabled(child)) {
 							color = child.enabledColor;
 							if(hovered && child.enabledHoverColor != 0) {
 								color = child.enabledHoverColor;
@@ -8281,7 +8308,7 @@ public final class Client extends RSApplet {
 							hovered = true;
 						}
 						int color;
-						if(interfaceIsSelected(child)) {
+						if(isEnabled(child)) {
 							color = child.enabledColor;
 							if(hovered && child.enabledHoverColor != 0) {
 								color = child.enabledHoverColor;
@@ -8357,13 +8384,17 @@ public final class Client extends RSApplet {
 						}
 				} else if(child.type == 5) {
 					RSImage sprite;
-					if(interfaceIsSelected(child)) {
+					if(isEnabled(child)) {
 						sprite = child.enabledSprite;
 					} else {
 						sprite = child.disabledSprite;
 					}
-					if(sprite != null) {
-						sprite.drawImage(x, y);
+					if (spellSelected == 1 && child.id == selectedSpell && selectedSpell != 0 && sprite != null) {
+						sprite.drawOutlinedSprite(x, y, 0xffffff);
+					} else {
+						if(sprite != null) {
+							sprite.drawImage(x, y);
+						}
 					}
 				} else if(child.type == 6) {
 					int k3 = Rasterizer.centerX;
@@ -8372,7 +8403,7 @@ public final class Client extends RSApplet {
 					Rasterizer.centerY = y + child.height / 2;
 					int i5 = Rasterizer.SINE[child.rotationX] * child.zoom >> 16;
 					int l5 = Rasterizer.COSINE[child.rotationX] * child.zoom >> 16;
-					boolean enabled = interfaceIsSelected(child);
+					boolean enabled = isEnabled(child);
 					int anim;
 					if(enabled) {
 						anim = child.enabledAnimation;
@@ -8911,7 +8942,7 @@ public final class Client extends RSApplet {
 			drawTooltip();
 		} else {
 			//if(menuScreenArea == 0) {
-				drawMenu(4, 4);
+				drawMenu(getGameAreaX(), getGameAreaY());
 			//}
 		}
 		if(anInt1055 == 1)
@@ -9234,7 +9265,7 @@ public final class Client extends RSApplet {
 				flag1 |= method119(i, child.id);
 			}
 			if(child.type == 6 && (child.disabledAnimation != -1 || child.enabledAnimation != -1)) {
-				boolean enabled = interfaceIsSelected(child);
+				boolean enabled = isEnabled(child);
 				int anim;
 				if(enabled) {
 					anim = child.enabledAnimation;
@@ -9448,10 +9479,10 @@ public final class Client extends RSApplet {
 						break;
 					case 10:
 						child = RSInterface.cache[valueArray[valuePointer++]];
-						int l2 = valueArray[valuePointer++] + 1;
-						if(l2 >= 0 && l2 < ItemDefinitions.totalItems && (!ItemDefinitions.getDefinition(l2).membersObject || isMembers)) {
-							for(int k3 = 0; k3 < child.inventory.length; k3++) {
-								if(child.inventory[k3] != l2) {
+						int itemId = valueArray[valuePointer++] + 1;
+						if(itemId >= 0 && itemId < ItemDefinitions.totalItems && (!ItemDefinitions.getDefinition(itemId).membersObject || isMembers)) {
+							for(int index = 0; index < child.inventory.length; index++) {
+								if(child.inventory[index] != itemId) {
 									continue;
 								}
 								returned = 0x3b9ac9ff;
@@ -9658,11 +9689,11 @@ public final class Client extends RSApplet {
 		if(destX != 0) {
 			int x = (destX * 4 + 2) - myPlayer.currentX / 32;
 			int y = (destY * 4 + 2) - myPlayer.currentY / 32;
-			markMinimap(mapFlag, x, y);
+			markMinimap(mapFlag, x, y - 10);
 		}
 		RSDrawingArea.drawFilledPixels(131, 82, 3, 3, 0xffffff);
 		getMapAreaImage().drawImage(0, 0);
-		if (menuOpen) {
+		if (menuOpen && isFixed()) {
 			drawMenu(516, 0);
 		}
 		if (isFixed()) {
@@ -9780,33 +9811,37 @@ public final class Client extends RSApplet {
 		class30_sub1.anInt1294 = j;
 	}
 
-	private boolean interfaceIsSelected(RSInterface class9)
-	{
-		if(class9.valueCompareType == null)
+	private boolean isEnabled(RSInterface rsi) {
+		if(rsi.valueCompareType == null) {
 			return false;
-		for(int i = 0; i < class9.valueCompareType.length; i++)
-		{
-			int j = extractValue(class9, i);
-			int k = class9.requiredValues[i];
-			if(class9.valueCompareType[i] == 2)
-			{
-				if(j >= k)
-					return false;
-			} else
-				if(class9.valueCompareType[i] == 3)
-				{
-					if(j <= k)
-						return false;
-				} else
-					if(class9.valueCompareType[i] == 4)
-					{
-						if(j == k)
-							return false;
-					} else
-						if(j != k)
-							return false;
 		}
-
+		for(int index = 0; index < rsi.valueCompareType.length; index++) {
+			int value = extractValue(rsi, index);
+			int required = rsi.requiredValues[index];
+			//if (rsi.valueCompareType[index] != 3)
+				System.out.println("id: " + rsi.id + ", compareType: " + rsi.valueCompareType[index] + ", value: " + value + ", required: " + required);
+			if(rsi.valueCompareType[index] == 2) {
+				if(value >= required) {
+					return false;
+				}
+			} else {
+				if(rsi.valueCompareType[index] == 3) {
+					if(value <= required) {
+						return false;
+					}
+				} else {
+					if(rsi.valueCompareType[index] == 4) {
+						if(value == required) {
+							return false;
+						}
+					} else {
+						if(value != required) {
+							return false;
+						}
+					}
+				}
+			}
+		}
 		return true;
 	}
 
@@ -10279,7 +10314,7 @@ public final class Client extends RSApplet {
 				}
 				if(j16 == 2)
 				{
-					InteractableObject class28 = sceneGraph.getInteractableObject(j4, i7, floor_level);
+					InteractiveObject class28 = sceneGraph.getInteractableObject(j4, i7, floor_level);
 					if(j12 == 11)
 						j12 = 10;
 					if(class28 != null)
@@ -10967,7 +11002,7 @@ public final class Client extends RSApplet {
 				{
 					nextSong = i2;
 					songChanging = true;
-					resourceProvider.method558(2, nextSong);
+					resourceProvider.loadMandatory(2, nextSong);
 				}
 				currentSong = i2;
 				opCode = -1;
@@ -10981,7 +11016,7 @@ public final class Client extends RSApplet {
 				{
 					nextSong = j2;
 					songChanging = false;
-					resourceProvider.method558(2, nextSong);
+					resourceProvider.loadMandatory(2, nextSong);
 					prevSong = k10;
 				}
 				opCode = -1;
@@ -11086,10 +11121,10 @@ public final class Client extends RSApplet {
 							{
 								int k28 = anIntArray1235[k16] = resourceProvider.method562(0, j26, l23);
 								if(k28 != -1)
-									resourceProvider.method558(3, k28);
+									resourceProvider.loadMandatory(3, k28);
 								int j30 = anIntArray1236[k16] = resourceProvider.method562(1, j26, l23);
 								if(j30 != -1)
-									resourceProvider.method558(3, j30);
+									resourceProvider.loadMandatory(3, j30);
 								k16++;
 							}
 						}
@@ -11142,10 +11177,10 @@ public final class Client extends RSApplet {
 					int l31 = i29 & 0xff;
 					int j32 = anIntArray1235[l26] = resourceProvider.method562(0, l31, l30);
 					if(j32 != -1)
-						resourceProvider.method558(3, j32);
+						resourceProvider.loadMandatory(3, j32);
 					int i33 = anIntArray1236[l26] = resourceProvider.method562(1, l31, l30);
 					if(i33 != -1)
-						resourceProvider.method558(3, i33);
+						resourceProvider.loadMandatory(3, i33);
 					}
 
 				}
@@ -12126,7 +12161,7 @@ public final class Client extends RSApplet {
 		drawY = -1;
 		anIntArray968 = new int[33];
 		anIntArray969 = new int[256];
-		jagCache = new ResourceCache[5];
+		resourceCaches = new ResourceCache[5];
 		variousSettings = new int[2000];
 		aBoolean972 = false;
 		anInt975 = 50;
@@ -12354,7 +12389,7 @@ public final class Client extends RSApplet {
 	};
 	private final int[] anIntArray968;
 	private final int[] anIntArray969;
-	public final ResourceCache[] jagCache;
+	public final ResourceCache[] resourceCaches;
 	public int variousSettings[];
 	private boolean aBoolean972;
 	private final int anInt975;
@@ -12666,6 +12701,9 @@ public final class Client extends RSApplet {
 	public static int anInt1290;
 	public int drawCount;
 	public boolean running;
+	public int selectedSpell;
+	public RSImageProducer topFrame;
+	public RSImageProducer leftFrame;
 
     public int fullscreenInterfaceID;
     public int anInt1044;//377
@@ -12722,7 +12760,7 @@ public final class Client extends RSApplet {
 		fullScreenTextureArray = Rasterizer.lineOffsets;
 		Rasterizer.setBounds(isFixed() ? 519 : clientWidth, isFixed() ? 165 : clientHeight);
 		chatAreaTextureArray = Rasterizer.lineOffsets;
-		Rasterizer.setBounds(isFixed() ? 246 : clientWidth, isFixed() ? 335 : clientHeight);
+		Rasterizer.setBounds(isFixed() ? 249 : clientWidth, isFixed() ? 343 : clientHeight);
 		tabAreaTextureArray = Rasterizer.lineOffsets;
 		Rasterizer.setBounds(gameAreaWidth, gameAreaHeight);
 		gameAreaTextureArray = Rasterizer.lineOffsets;
@@ -12786,18 +12824,28 @@ public final class Client extends RSApplet {
 	}
 
 	public int getChatOffsetX() {
+		if (!isFixed()) {
+			return 8;
+		}
 		switch (getFrameVersion()) {
 			case 317:
 				return 17;
+			case 554:
+				return 8;
 		}
 		return 0;
 	}
 
 	public int getChatOffsetY() {
+		if (!isFixed()) {
+			return 0;
+		}
 		switch (getFrameVersion()) {
-		case 317:
-			return 19;
-	}
+			case 317:
+				return 19;
+			case 554:
+				return 7;
+		}
 		return 0;
 	}
 

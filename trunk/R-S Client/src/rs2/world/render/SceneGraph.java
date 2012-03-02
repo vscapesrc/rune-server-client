@@ -7,7 +7,7 @@ import rs2.Model;
 import rs2.graphics.RSDrawingArea;
 import rs2.graphics.Rasterizer;
 import rs2.world.GroundDecoration;
-import rs2.world.InteractableObject;
+import rs2.world.InteractiveObject;
 import rs2.world.WallDecoration;
 import rs2.world.WallObject;
 import rs2.world.tile.GroundItemTile;
@@ -21,7 +21,7 @@ public final class SceneGraph {
 		int length = 104;// was parameter
 		int width = 104;// was parameter
 		int height = 4;// was parameter
-		interactableObjectCache = new InteractableObject[5000];
+		interactableObjectCache = new InteractiveObject[5000];
 		anIntArray486 = new int[10000];
 		anIntArray487 = new int[10000];
 		zMapSize = height;
@@ -34,7 +34,7 @@ public final class SceneGraph {
 	}
 
 	public static void clearCache() {
-		interactableObjects = null;
+		interactiveObjects = null;
 		cullingClusterPointer = null;
 		cullingClusters = null;
 		aClass19_477 = null;
@@ -61,8 +61,8 @@ public final class SceneGraph {
 			interactableObjectCache[k1] = null;
 
 		interactableObjectCacheCurrPos = 0;
-		for (int l1 = 0; l1 < interactableObjects.length; l1++)
-			interactableObjects[l1] = null;
+		for (int l1 = 0; l1 < interactiveObjects.length; l1++)
+			interactiveObjects[l1] = null;
 
 	}
 
@@ -84,9 +84,9 @@ public final class SceneGraph {
 			if (tile_1 != null) {
 				tile_1.tileZ--;
 				for (int pointer = 0; pointer < tile_1.count; pointer++) {
-					InteractableObject interactableObject = tile_1.interactableObjects[pointer];
-					if ((interactableObject.uid >> 29 & 3) == 2 && interactableObject.tileLeft == x && interactableObject.tileTop == y) {
-						interactableObject.z--;
+					InteractiveObject interactiveObject = tile_1.interactiveObjects[pointer];
+					if ((interactiveObject.uid >> 29 & 3) == 2 && interactiveObject.tileLeft == x && interactiveObject.tileTop == y) {
+						interactiveObject.z--;
 					}
 				}
 			}
@@ -182,8 +182,8 @@ public final class SceneGraph {
 		Tile tile = tileArray[z][x][y];
 		if (tile != null) {
 			for (int index = 0; index < tile.count; index++) {
-				if (tile.interactableObjects[index].animable instanceof Model) {
-					int l1 = ((Model) tile.interactableObjects[index].animable).anInt1654;
+				if (tile.interactiveObjects[index].animable instanceof Model) {
+					int l1 = ((Model) tile.interactiveObjects[index].animable).anInt1654;
 					if (l1 > j1) {
 						j1 = l1;
 					}
@@ -292,19 +292,19 @@ public final class SceneGraph {
 				}
 			}
 		}
-		InteractableObject interactableObject = new InteractableObject();
-		interactableObject.uid = j2;
-		interactableObject.aByte530 = byte0;
-		interactableObject.z = z;
-		interactableObject.worldX = worldX;
-		interactableObject.worldY = worldY;
-		interactableObject.worldZ = worldZ;
-		interactableObject.animable = animable;
-		interactableObject.rotation = rotation;
-		interactableObject.tileLeft = x;
-		interactableObject.tileTop = y;
-		interactableObject.tileRight = (x + tileWidth) - 1;
-		interactableObject.tileBottom = (y + tileHeight) - 1;
+		InteractiveObject interactiveObject = new InteractiveObject();
+		interactiveObject.uid = j2;
+		interactiveObject.aByte530 = byte0;
+		interactiveObject.z = z;
+		interactiveObject.worldX = worldX;
+		interactiveObject.worldY = worldY;
+		interactiveObject.worldZ = worldZ;
+		interactiveObject.animable = animable;
+		interactiveObject.rotation = rotation;
+		interactiveObject.tileLeft = x;
+		interactiveObject.tileTop = y;
+		interactiveObject.tileRight = (x + tileWidth) - 1;
+		interactiveObject.tileBottom = (y + tileHeight) - 1;
 		for (int xx = x; xx < x + tileWidth; xx++) {
 			for (int yy = y; yy < y + tileHeight; yy++) {
 				int k3 = 0;
@@ -322,42 +322,42 @@ public final class SceneGraph {
 					}
 				}
 				Tile tile = tileArray[z][xx][yy];
-				tile.interactableObjects[tile.count] = interactableObject;
+				tile.interactiveObjects[tile.count] = interactiveObject;
 				tile.anIntArray1319[tile.count] = k3;
 				tile.anInt1320 |= k3;
 				tile.count++;
 			}
 		}
 		if (flag) {
-			interactableObjectCache[interactableObjectCacheCurrPos++] = interactableObject;
+			interactableObjectCache[interactableObjectCacheCurrPos++] = interactiveObject;
 		}
 		return true;
 	}
 
 	public void clearInteractableObjectCache() {
 		for (int index = 0; index < interactableObjectCacheCurrPos; index++) {
-			InteractableObject interactableObject = interactableObjectCache[index];
-			remove(interactableObject);
+			InteractiveObject interactiveObject = interactableObjectCache[index];
+			remove(interactiveObject);
 			interactableObjectCache[index] = null;
 		}
 		interactableObjectCacheCurrPos = 0;
 	}
 
-	private void remove(InteractableObject interactableObject) {
-		for (int x = interactableObject.tileLeft; x <= interactableObject.tileRight; x++) {
-			for (int y = interactableObject.tileTop; y <= interactableObject.tileBottom; y++) {
-				Tile tile = tileArray[interactableObject.z][x][y];
+	private void remove(InteractiveObject interactiveObject) {
+		for (int x = interactiveObject.tileLeft; x <= interactiveObject.tileRight; x++) {
+			for (int y = interactiveObject.tileTop; y <= interactiveObject.tileBottom; y++) {
+				Tile tile = tileArray[interactiveObject.z][x][y];
 				if (tile != null) {
 					for (int index = 0; index < tile.count; index++) {
-						if (tile.interactableObjects[index] != interactableObject) {
+						if (tile.interactiveObjects[index] != interactiveObject) {
 							continue;
 						}
 						tile.count--;
 						for (int index_2 = index; index_2 < tile.count; index_2++) {
-							tile.interactableObjects[index_2] = tile.interactableObjects[index_2 + 1];
+							tile.interactiveObjects[index_2] = tile.interactiveObjects[index_2 + 1];
 							tile.anIntArray1319[index_2] = tile.anIntArray1319[index_2 + 1];
 						}
-						tile.interactableObjects[tile.count] = null;
+						tile.interactiveObjects[tile.count] = null;
 						break;
 					}
 					tile.anInt1320 = 0;
@@ -403,9 +403,9 @@ public final class SceneGraph {
 			return;
 		}
 		for (int j1 = 0; j1 < tile.count; j1++) {
-			InteractableObject interactableObject = tile.interactableObjects[j1];
-			if ((interactableObject.uid >> 29 & 3) == 2 && interactableObject.tileLeft == x && interactableObject.tileTop == y) {
-				remove(interactableObject);
+			InteractiveObject interactiveObject = tile.interactiveObjects[j1];
+			if ((interactiveObject.uid >> 29 & 3) == 2 && interactiveObject.tileLeft == x && interactiveObject.tileTop == y) {
+				remove(interactiveObject);
 				return;
 			}
 		}
@@ -444,13 +444,13 @@ public final class SceneGraph {
 		}
 	}
 
-	public InteractableObject getInteractableObject(int x, int y, int z) {
+	public InteractiveObject getInteractableObject(int x, int y, int z) {
 		Tile tile = tileArray[z][x][y];
 		if (tile == null) {
 			return null;
 		}
 		for (int index = 0; index < tile.count; index++) {
-			InteractableObject interactableOBject = tile.interactableObjects[index];
+			InteractiveObject interactableOBject = tile.interactiveObjects[index];
 			if ((interactableOBject.uid >> 29 & 3) == 2 && interactableOBject.tileLeft == x && interactableOBject.tileTop == y) {
 				return interactableOBject;
 			}
@@ -488,9 +488,9 @@ public final class SceneGraph {
 		if (tile == null)
 			return 0;
 		for (int l = 0; l < tile.count; l++) {
-			InteractableObject interactableObject = tile.interactableObjects[l];
-			if ((interactableObject.uid >> 29 & 3) == 2 && interactableObject.tileLeft == x && interactableObject.tileTop == y)
-				return interactableObject.uid;
+			InteractiveObject interactiveObject = tile.interactiveObjects[l];
+			if ((interactiveObject.uid >> 29 & 3) == 2 && interactiveObject.tileLeft == x && interactiveObject.tileTop == y)
+				return interactiveObject.uid;
 		}
 		return 0;
 	}
@@ -519,8 +519,8 @@ public final class SceneGraph {
 			return tile.groundDecoration.objectConfig & 0xff;
 		}
 		for (int index = 0; index < tile.count; index++) {
-			if (tile.interactableObjects[index].uid == interactableObjectUID) {
-				return tile.interactableObjects[index].aByte530 & 0xff;
+			if (tile.interactiveObjects[index].uid == interactableObjectUID) {
+				return tile.interactiveObjects[index].aByte530 & 0xff;
 			}
 		}
 		return -1;
@@ -547,10 +547,10 @@ public final class SceneGraph {
 							((Model) wallObject.node1).doShading(lightness, l_magnitude, x, y, z);
 						}
 						for (int k2 = 0; k2 < tile.count; k2++) {
-							InteractableObject interactableObject = tile.interactableObjects[k2];
-							if (interactableObject != null && interactableObject.animable != null && interactableObject.animable.vertexNormals != null) {
-								method307(zz, (interactableObject.tileRight - interactableObject.tileLeft) + 1, (interactableObject.tileBottom - interactableObject.tileTop) + 1, xx, yy, (Model) interactableObject.animable);
-								((Model) interactableObject.animable).doShading(lightness, l_magnitude, x, y, z);
+							InteractiveObject interactiveObject = tile.interactiveObjects[k2];
+							if (interactiveObject != null && interactiveObject.animable != null && interactiveObject.animable.vertexNormals != null) {
+								method307(zz, (interactiveObject.tileRight - interactiveObject.tileLeft) + 1, (interactiveObject.tileBottom - interactiveObject.tileTop) + 1, xx, yy, (Model) interactiveObject.animable);
+								((Model) interactiveObject.animable).doShading(lightness, l_magnitude, x, y, z);
 							}
 						}
 						GroundDecoration groundDecoration = tile.groundDecoration;
@@ -608,11 +608,11 @@ public final class SceneGraph {
 									if (wallObject != null && wallObject.node2 != null && wallObject.node2.vertexNormals != null)
 										method308(model, (Model) wallObject.node2, (x - l) * 128 + (1 - j) * 64, i3, (y - i1) * 128 + (1 - k) * 64, flag);
 									for (int index = 0; index < tile.count; index++) {
-										InteractableObject interactableObject = tile.interactableObjects[index];
-										if (interactableObject != null && interactableObject.animable != null && interactableObject.animable.vertexNormals != null) {
-											int k3 = (interactableObject.tileRight - interactableObject.tileLeft) + 1;
-											int l3 = (interactableObject.tileBottom - interactableObject.tileTop) + 1;
-											method308(model, (Model) interactableObject.animable, (interactableObject.tileLeft - l) * 128 + (k3 - j) * 64, i3, (interactableObject.tileTop - i1) * 128 + (l3 - k) * 64, flag);
+										InteractiveObject interactiveObject = tile.interactiveObjects[index];
+										if (interactiveObject != null && interactiveObject.animable != null && interactiveObject.animable.vertexNormals != null) {
+											int k3 = (interactiveObject.tileRight - interactiveObject.tileLeft) + 1;
+											int l3 = (interactiveObject.tileBottom - interactiveObject.tileTop) + 1;
+											method308(model, (Model) interactiveObject.animable, (interactiveObject.tileLeft - l) * 128 + (k3 - j) * 64, i3, (interactiveObject.tileTop - i1) * 128 + (l3 - k) * 64, flag);
 										}
 									}
 								}
@@ -1024,9 +1024,9 @@ public final class SceneGraph {
 						wallObject.node1.renderAtPoint(0, yCurveSine, yCurveCosine, xCurveSine, xCurveCosine, wallObject.x - cameraPositionX, wallObject.z - cameraPositionZ, wallObject.y - cameraPositionY, wallObject.uid);
 					}
 					for (int index = 0; index < ground.count; index++) {
-						InteractableObject interactableObject = ground.interactableObjects[index];
-						if (interactableObject != null) {
-							interactableObject.animable.renderAtPoint(interactableObject.rotation, yCurveSine, yCurveCosine, xCurveSine, xCurveCosine, interactableObject.worldX - cameraPositionX, interactableObject.worldZ - cameraPositionZ, interactableObject.worldY - cameraPositionY, interactableObject.uid);
+						InteractiveObject interactiveObject = ground.interactiveObjects[index];
+						if (interactiveObject != null) {
+							interactiveObject.animable.renderAtPoint(interactiveObject.rotation, yCurveSine, yCurveCosine, xCurveSine, xCurveCosine, interactiveObject.worldX - cameraPositionX, interactiveObject.worldZ - cameraPositionZ, interactiveObject.worldY - cameraPositionY, interactiveObject.uid);
 						}
 					}
 				}
@@ -1157,7 +1157,7 @@ public final class SceneGraph {
 			if (newTile.anInt1325 != 0) {
 				boolean flag2 = true;
 				for (int k1 = 0; k1 < newTile.count; k1++) {
-					if (newTile.interactableObjects[k1].anInt528 == anInt448 || (newTile.anIntArray1319[k1] & newTile.anInt1325) != newTile.anInt1326)
+					if (newTile.interactiveObjects[k1].anInt528 == anInt448 || (newTile.anIntArray1319[k1] & newTile.anInt1325) != newTile.anInt1326)
 						continue;
 					flag2 = false;
 					break;
@@ -1175,11 +1175,11 @@ public final class SceneGraph {
 					newTile.aBoolean1324 = false;
 					int l1 = 0;
 					label0: for (int k2 = 0; k2 < i1; k2++) {
-						InteractableObject interactableObject = newTile.interactableObjects[k2];
-						if (interactableObject.anInt528 == anInt448)
+						InteractiveObject interactiveObject = newTile.interactiveObjects[k2];
+						if (interactiveObject.anInt528 == anInt448)
 							continue;
-						for (int k3 = interactableObject.tileLeft; k3 <= interactableObject.tileRight; k3++) {
-							for (int l4 = interactableObject.tileTop; l4 <= interactableObject.tileBottom; l4++) {
+						for (int k3 = interactiveObject.tileLeft; k3 <= interactiveObject.tileRight; k3++) {
+							for (int l4 = interactiveObject.tileTop; l4 <= interactiveObject.tileBottom; l4++) {
 								Tile class30_sub3_21 = tiles[k3][l4];
 								if (class30_sub3_21.aBoolean1322) {
 									newTile.aBoolean1324 = true;
@@ -1187,13 +1187,13 @@ public final class SceneGraph {
 									if (class30_sub3_21.anInt1325 == 0)
 										continue;
 									int l6 = 0;
-									if (k3 > interactableObject.tileLeft)
+									if (k3 > interactiveObject.tileLeft)
 										l6++;
-									if (k3 < interactableObject.tileRight)
+									if (k3 < interactiveObject.tileRight)
 										l6 += 4;
-									if (l4 > interactableObject.tileTop)
+									if (l4 > interactiveObject.tileTop)
 										l6 += 8;
-									if (l4 < interactableObject.tileBottom)
+									if (l4 < interactiveObject.tileBottom)
 										l6 += 2;
 									if ((l6 & class30_sub3_21.anInt1325) != newTile.anInt1327)
 										continue;
@@ -1204,33 +1204,33 @@ public final class SceneGraph {
 
 						}
 
-						interactableObjects[l1++] = interactableObject;
-						int i5 = cameraTilePositionX - interactableObject.tileLeft;
-						int i6 = interactableObject.tileRight - cameraTilePositionX;
+						interactiveObjects[l1++] = interactiveObject;
+						int i5 = cameraTilePositionX - interactiveObject.tileLeft;
+						int i6 = interactiveObject.tileRight - cameraTilePositionX;
 						if (i6 > i5)
 							i5 = i6;
-						int i7 = cameraTilePositionY - interactableObject.tileTop;
-						int j8 = interactableObject.tileBottom - cameraTilePositionY;
+						int i7 = cameraTilePositionY - interactiveObject.tileTop;
+						int j8 = interactiveObject.tileBottom - cameraTilePositionY;
 						if (j8 > i7)
-							interactableObject.anInt527 = i5 + j8;
+							interactiveObject.anInt527 = i5 + j8;
 						else
-							interactableObject.anInt527 = i5 + i7;
+							interactiveObject.anInt527 = i5 + i7;
 					}
 
 					while (l1 > 0) {
 						int i3 = -50;
 						int l3 = -1;
 						for (int j5 = 0; j5 < l1; j5++) {
-							InteractableObject interactableObject = interactableObjects[j5];
-							if (interactableObject.anInt528 != anInt448)
-								if (interactableObject.anInt527 > i3) {
-									i3 = interactableObject.anInt527;
+							InteractiveObject interactiveObject = interactiveObjects[j5];
+							if (interactiveObject.anInt528 != anInt448)
+								if (interactiveObject.anInt527 > i3) {
+									i3 = interactiveObject.anInt527;
 									l3 = j5;
-								} else if (interactableObject.anInt527 == i3) {
-									int j7 = interactableObject.worldX - cameraPositionX;
-									int k8 = interactableObject.worldY - cameraPositionY;
-									int l9 = interactableObjects[l3].worldX - cameraPositionX;
-									int l10 = interactableObjects[l3].worldY - cameraPositionY;
+								} else if (interactiveObject.anInt527 == i3) {
+									int j7 = interactiveObject.worldX - cameraPositionX;
+									int k8 = interactiveObject.worldY - cameraPositionY;
+									int l9 = interactiveObjects[l3].worldX - cameraPositionX;
+									int l10 = interactiveObjects[l3].worldY - cameraPositionY;
 									if (j7 * j7 + k8 * k8 > l9 * l9 + l10 * l10)
 										l3 = j5;
 								}
@@ -1238,12 +1238,12 @@ public final class SceneGraph {
 
 						if (l3 == -1)
 							break;
-						InteractableObject interactableObject = interactableObjects[l3];
-						interactableObject.anInt528 = anInt448;
-						if (!method323(l, interactableObject.tileLeft, interactableObject.tileRight, interactableObject.tileTop, interactableObject.tileBottom, interactableObject.animable.modelHeight))
-							interactableObject.animable.renderAtPoint(interactableObject.rotation, yCurveSine, yCurveCosine, xCurveSine, xCurveCosine, interactableObject.worldX - cameraPositionX, interactableObject.worldZ - cameraPositionZ, interactableObject.worldY - cameraPositionY, interactableObject.uid);
-						for (int k7 = interactableObject.tileLeft; k7 <= interactableObject.tileRight; k7++) {
-							for (int l8 = interactableObject.tileTop; l8 <= interactableObject.tileBottom; l8++) {
+						InteractiveObject interactiveObject = interactiveObjects[l3];
+						interactiveObject.anInt528 = anInt448;
+						if (!method323(l, interactiveObject.tileLeft, interactiveObject.tileRight, interactiveObject.tileTop, interactiveObject.tileBottom, interactiveObject.animable.modelHeight))
+							interactiveObject.animable.renderAtPoint(interactiveObject.rotation, yCurveSine, yCurveCosine, xCurveSine, xCurveCosine, interactiveObject.worldX - cameraPositionX, interactiveObject.worldZ - cameraPositionZ, interactiveObject.worldY - cameraPositionY, interactiveObject.uid);
+						for (int k7 = interactiveObject.tileLeft; k7 <= interactiveObject.tileRight; k7++) {
+							for (int l8 = interactiveObject.tileTop; l8 <= interactiveObject.tileBottom; l8++) {
 								Tile _tile = tiles[k7][l8];
 								if (_tile.anInt1325 != 0)
 									aClass19_477.append(_tile);
@@ -1950,7 +1950,7 @@ public final class SceneGraph {
 	private final Tile[][][] tileArray;
 	private int currentHeight;
 	private int interactableObjectCacheCurrPos;
-	private final InteractableObject[] interactableObjectCache;
+	private final InteractiveObject[] interactableObjectCache;
 	private final int[][][] anIntArrayArrayArray445;
 	private static int anInt446;
 	private static int plane;
@@ -1968,7 +1968,7 @@ public final class SceneGraph {
 	private static int yCurveCosine;
 	private static int xCurveSine;
 	private static int xCurveCosine;
-	private static InteractableObject[] interactableObjects = new InteractableObject[100];
+	private static InteractiveObject[] interactiveObjects = new InteractiveObject[100];
 	private static final int[] anIntArray463 = { 53, -53, -53, 53 };
 	private static final int[] anIntArray464 = { -53, -53, 53, 53 };
 	private static final int[] anIntArray465 = { -45, 45, 45, -45 };

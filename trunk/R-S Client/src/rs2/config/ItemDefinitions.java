@@ -416,106 +416,112 @@ public final class ItemDefinitions {
 		return model;
 	}
 
-	public void readValues(JagexBuffer stream) {
+	public void readValues(JagexBuffer buffer) {
 		do {
-			int i = stream.getUnsignedByte();
-			if (i == 0)
+			int opcode = buffer.getUnsignedByte();
+			if (opcode == 0) {
 				return;
-			if (i == 1)
-				displayModel = stream.getUnsignedShort();
-			else if (i == 2)
-				name = stream.getString();
-			else if (i == 3)
-				description = stream.getBytes();
-			else if (i == 4)
-				modelZoom = stream.getUnsignedShort();
-			else if (i == 5)
-				modelRotationX = stream.getUnsignedShort();
-			else if (i == 6)
-				modelRotationY = stream.getUnsignedShort();
-			else if (i == 7) {
-				modelOffsetX = stream.getUnsignedShort();
-				if (modelOffsetX > 32767)
+			}
+			if (opcode == 1) {
+				displayModel = buffer.getUnsignedShort();
+			} else if (opcode == 2) {
+				name = buffer.getString();
+			} else if (opcode == 3) {
+				description = buffer.getBytes();
+			} else if (opcode == 4) {
+				modelZoom = buffer.getUnsignedShort();
+			} else if (opcode == 5) {
+				modelRotationX = buffer.getUnsignedShort();
+			} else if (opcode == 6) {
+				modelRotationY = buffer.getUnsignedShort();
+			} else if (opcode == 7) {
+				modelOffsetX = buffer.getUnsignedShort();
+				if (modelOffsetX > 32767) {
 					modelOffsetX -= 0x10000;
-			} else if (i == 8) {
-				modelOffsetY = stream.getUnsignedShort();
-				if (modelOffsetY > 32767)
+				}
+			} else if (opcode == 8) {
+				modelOffsetY = buffer.getUnsignedShort();
+				if (modelOffsetY > 32767) {
 					modelOffsetY -= 0x10000;
-			} else if (i == 10)
-				stream.getUnsignedShort();
-			else if (i == 11)
+				}
+			} else if (opcode == 10) {
+				buffer.getUnsignedShort();
+			} else if (opcode == 11) {
 				stackable = true;
-			else if (i == 12)
-				value = stream.getInt();
-			else if (i == 16)
+			} else if (opcode == 12) {
+				value = buffer.getInt();
+			} else if (opcode == 16) {
 				membersObject = true;
-			else if (i == 23) {
-				maleModel1 = stream.getUnsignedShort();
-				maleOffset = stream.getSignedByte();
-			} else if (i == 24)
-				maleModel2 = stream.getUnsignedShort();
-			else if (i == 25) {
-				femaleModel1 = stream.getUnsignedShort();
-				femaleOffset = stream.getSignedByte();
-			} else if (i == 26)
-				femaleModel2 = stream.getUnsignedShort();
-			else if (i >= 30 && i < 35) {
-				if (groundActions == null)
+			} else if (opcode == 23) {
+				maleModel1 = buffer.getUnsignedShort();
+				maleOffset = buffer.getSignedByte();
+			} else if (opcode == 24) {
+				maleModel2 = buffer.getUnsignedShort();
+			} else if (opcode == 25) {
+				femaleModel1 = buffer.getUnsignedShort();
+				femaleOffset = buffer.getSignedByte();
+			} else if (opcode == 26) {
+				femaleModel2 = buffer.getUnsignedShort();
+			} else if (opcode >= 30 && opcode < 35) {
+				if (groundActions == null) {
 					groundActions = new String[5];
-				groundActions[i - 30] = stream.getString();
-				if (groundActions[i - 30].equalsIgnoreCase("hidden"))
-					groundActions[i - 30] = null;
-			} else if (i >= 35 && i < 40) {
+				}
+				groundActions[opcode - 30] = buffer.getString();
+				if (groundActions[opcode - 30].equalsIgnoreCase("hidden")) {
+					groundActions[opcode - 30] = null;
+				}
+			} else if (opcode >= 35 && opcode < 40) {
 				if (actions == null)
 					actions = new String[5];
-				actions[i - 35] = stream.getString();
-			} else if (i == 40) {
-				int j = stream.getUnsignedByte();
+				actions[opcode - 35] = buffer.getString();
+			} else if (opcode == 40) {
+				int j = buffer.getUnsignedByte();
 				oldColors = new int[j];
 				newColors = new int[j];
 				for (int k = 0; k < j; k++) {
-					oldColors[k] = stream.getUnsignedShort();
-					newColors[k] = stream.getUnsignedShort();
+					oldColors[k] = buffer.getUnsignedShort();
+					newColors[k] = buffer.getUnsignedShort();
 				}
 
-			} else if (i == 78)
-				maleModel3 = stream.getUnsignedShort();
-			else if (i == 79)
-				femaleModel3 = stream.getUnsignedShort();
-			else if (i == 90)
-				maleDialog1 = stream.getUnsignedShort();
-			else if (i == 91)
-				femaleDialog1 = stream.getUnsignedShort();
-			else if (i == 92)
-				maleDialog2 = stream.getUnsignedShort();
-			else if (i == 93)
-				femaleDialog2 = stream.getUnsignedShort();
-			else if (i == 95) {
-				anInt204 = stream.getUnsignedShort();
+			} else if (opcode == 78) {
+				maleModel3 = buffer.getUnsignedShort();
+			} else if (opcode == 79) {
+				femaleModel3 = buffer.getUnsignedShort();
+			} else if (opcode == 90) {
+				maleDialog1 = buffer.getUnsignedShort();
+			} else if (opcode == 91) {
+				femaleDialog1 = buffer.getUnsignedShort();
+			} else if (opcode == 92) {
+				maleDialog2 = buffer.getUnsignedShort();
+			} else if (opcode == 93) {
+				femaleDialog2 = buffer.getUnsignedShort();
+			} else if (opcode == 95) {
+				anInt204 = buffer.getUnsignedShort();
 				anInt204 = anInt204 * 10;
-			} else if (i == 97)
-				certId = stream.getUnsignedShort();
-			else if (i == 98)
-				certTemplateId = stream.getUnsignedShort();
-			else if (i >= 100 && i < 110) {
+			} else if (opcode == 97) {
+				certId = buffer.getUnsignedShort();
+			} else if (opcode == 98) {
+				certTemplateId = buffer.getUnsignedShort();
+			} else if (opcode >= 100 && opcode < 110) {
 				if (stackIDs == null) {
 					stackIDs = new int[10];
 					stackAmounts = new int[10];
 				}
-				stackIDs[i - 100] = stream.getUnsignedShort();
-				stackAmounts[i - 100] = stream.getUnsignedShort();
-			} else if (i == 110)
-				modelScaleX = stream.getUnsignedShort();
-			else if (i == 111)
-				modelScaleY = stream.getUnsignedShort();
-			else if (i == 112)
-				modelScaleZ = stream.getUnsignedShort();
-			else if (i == 113)
-				modelBrightness = stream.getSignedByte();
-			else if (i == 114)
-				modelShadowing = stream.getSignedByte() * 5;
-			else if (i == 115)
-				team = stream.getUnsignedByte();
+				stackIDs[opcode - 100] = buffer.getUnsignedShort();
+				stackAmounts[opcode - 100] = buffer.getUnsignedShort();
+			} else if (opcode == 110) {
+				modelScaleX = buffer.getUnsignedShort();
+			} else if (opcode == 111) {
+				modelScaleY = buffer.getUnsignedShort();
+			} else if (opcode == 112) {
+				modelScaleZ = buffer.getUnsignedShort();
+			} else if (opcode == 113) {
+				modelBrightness = buffer.getSignedByte();
+			} else if (opcode == 114) {
+				modelShadowing = buffer.getSignedByte() * 5;
+			} else if (opcode == 115) {
+				team = buffer.getUnsignedByte();
+			}
 		} while (true);
 	}
 

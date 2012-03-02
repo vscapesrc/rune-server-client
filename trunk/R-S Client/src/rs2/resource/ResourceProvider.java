@@ -18,7 +18,7 @@ import rs2.sign.signlink;
 
 public final class ResourceProvider extends ModelProvider implements Runnable {
 
-	private boolean crcMatches(int listVersion, int listCrc, byte data[]) {
+	private boolean verify(int listVersion, int listCrc, byte data[]) {
 		if (data == null || data.length < 2) {
 			return false;
 		}
@@ -34,12 +34,12 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		try {
 			int available = in.available();
 			if (expectedSize == 0 && available >= 6) {
-				waiting = true;
-				for (int index = 0; index < 6; index += in.read(ioBuffer, index, 6 - index));
-				int type = ioBuffer[0] & 0xff;
-				int id = ((ioBuffer[1] & 0xff) << 8) + (ioBuffer[2] & 0xff);
-				int length = ((ioBuffer[3] & 0xff) << 8) + (ioBuffer[4] & 0xff);
-				int blockNum = ioBuffer[5] & 0xff;
+				expectingData = true;
+				for (int index = 0; index < 6; index += in.read(inputBuffer, index, 6 - index));
+				int type = inputBuffer[0] & 0xff;
+				int id = ((inputBuffer[1] & 0xff) << 8) + (inputBuffer[2] & 0xff);
+				int length = ((inputBuffer[3] & 0xff) << 8) + (inputBuffer[4] & 0xff);
+				int blockNum = inputBuffer[5] & 0xff;
 				current = null;
 				for (Resource resource = (Resource) requested.head(); resource != null; resource = (Resource) requested.next()) {
 					if (resource.type == type && resource.id == id) {
@@ -77,8 +77,8 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 					expectedSize = length - blockNum * 500;
 			}
 			if (expectedSize > 0 && available >= expectedSize) {
-				waiting = true;
-				byte data[] = ioBuffer;
+				expectingData = true;
+				byte data[] = inputBuffer;
 				int read = 0;
 				if (current != null) {
 					data = current.data;
@@ -86,8 +86,8 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 				}
 				for (int index = 0; index < expectedSize; index += in.read(data, index + read, expectedSize - index));
 				if (expectedSize + completedSize >= data.length && current != null) {
-					if (client.jagCache[0] != null) {
-						client.jagCache[current.type + 1].put(data.length, data, current.id);
+					if (client.resourceCaches[0] != null) {
+						client.resourceCaches[current.type + 1].put(data.length, data, current.id);
 					}
 					if (!current.incomplete && current.type == 3) {
 						current.incomplete = true;
@@ -122,7 +122,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 			int total = data.length / 2;
 			JagexBuffer buffer = new JagexBuffer(data);
 			versions[type] = new int[total];
-			fileStatus[type] = new byte[total];
+			priorities[type] = new byte[total];
 			for (int id = 0; id < total; id++) {
 				versions[type][id] = buffer.getUnsignedShort();
 			}
@@ -132,33 +132,33 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 			byte data[] = archive.getData(crc[type]);
 			int total = data.length / 4;
 			JagexBuffer buffer = new JagexBuffer(data);
-			crcs[type] = new int[total];
+			checksums[type] = new int[total];
 			for (int id = 0; id < total; id++) {
-				crcs[type][id] = buffer.getInt();
+				checksums[type][id] = buffer.getInt();
 			}
 		}
 		byte data[] = archive.getData("model_index");
 		int total = versions[0].length;
-		modelFlags = new byte[total];
+		modelIndices = new byte[total];
 		for (int id = 0; id < total; id++) {
 			if (id < data.length) {
-				modelFlags[id] = data[id];
+				modelIndices[id] = data[id];
 			} else {
-				modelFlags[id] = 0;
+				modelIndices[id] = 0;
 			}
 		}
 		data = archive.getData("map_index");
 		JagexBuffer buffer = new JagexBuffer(data);
 		total = data.length / 7;
-		mapIndices1 = new int[total];
-		mapIndices2 = new int[total];
-		mapIndices3 = new int[total];
-		mapIndices4 = new int[total];
+		mapRegionIds = new int[total];
+		mapTerrains = new int[total];
+		mapLandscapes = new int[total];
+		regionPreload = new int[total];
 		for (int index = 0; index < total; index++) {
-			mapIndices1[index] = buffer.getUnsignedShort();
-			mapIndices2[index] = buffer.getUnsignedShort();
-			mapIndices3[index] = buffer.getUnsignedShort();
-			mapIndices4[index] = buffer.getUnsignedByte();
+			mapRegionIds[index] = buffer.getUnsignedShort();
+			mapTerrains[index] = buffer.getUnsignedShort();
+			mapLandscapes[index] = buffer.getUnsignedShort();
+			regionPreload[index] = buffer.getUnsignedByte();
 		}
 		data = archive.getData("anim_index");
 		buffer = new JagexBuffer(data);
@@ -179,9 +179,9 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		client.startRunnable(this, 2);
 	}
 
-	public int getNodeCount() {
-		synchronized (nodeSubList) {
-			return nodeSubList.getNodeCount();
+	public int getRemaining() {
+		synchronized (remainingMandatory) {
+			return remainingMandatory.getNodeCount();
 		}
 	}
 
@@ -189,17 +189,17 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		running = false;
 	}
 
-	public void method554(boolean flag) {
-		int total = mapIndices1.length;
+	public void method554(boolean members) {
+		int total = mapRegionIds.length;
 		for (int index = 0; index < total; index++) {
-			if (flag || mapIndices4[index] != 0) {
-				method563((byte) 2, 3, mapIndices3[index]);
-				method563((byte) 2, 3, mapIndices2[index]);
+			if (members || regionPreload[index] != 0) {
+				setExtraPriority((byte) 2, 3, mapLandscapes[index]);
+				setExtraPriority((byte) 2, 3, mapTerrains[index]);
 			}
 		}
 	}
 
-	public int getVersionCount(int type) {
+	public int getCount(int type) {
 		return versions[type].length;
 	}
 
@@ -220,19 +220,19 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 				}
 				connectionIdleTicks = 0;
 			}
-			ioBuffer[0] = (byte) resource.type;
-			ioBuffer[1] = (byte) (resource.id >> 8);
-			ioBuffer[2] = (byte) resource.id;
+			inputBuffer[0] = (byte) resource.type;
+			inputBuffer[1] = (byte) (resource.id >> 8);
+			inputBuffer[2] = (byte) resource.id;
 			if (resource.incomplete) {
-				ioBuffer[3] = 2;
+				inputBuffer[3] = 2;
 			} else if (!client.loggedIn) {
-				ioBuffer[3] = 1;
+				inputBuffer[3] = 1;
 			} else {
-				ioBuffer[3] = 0;
+				inputBuffer[3] = 0;
 			}
-			out.write(ioBuffer, 0, 4);
+			out.write(inputBuffer, 0, 4);
 			writeLoopCycle = 0;
-			anInt1349 = -10000;
+			errorCount = -10000;
 			return;
 		} catch (IOException ioexception) {
 		}
@@ -244,14 +244,14 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		in = null;
 		out = null;
 		expectedSize = 0;
-		anInt1349++;
+		errorCount++;
 	}
 
 	public int getAnimCount() {
 		return animIndices.length;
 	}
 
-	public void method558(int type, int id) {
+	public void loadMandatory(int type, int id) {
 		if (Constants.CHECK_VERSION_AND_CRC) {
 			if (type < 0 || type > versions.length || id < 0 || id > versions[type].length) {
 				return;
@@ -260,8 +260,8 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 				return;
 			}
 		}
-		synchronized (nodeSubList) {
-			for (Resource resource = (Resource) nodeSubList.reverseGetFirst(); resource != null; resource = (Resource) nodeSubList.reverseGetNext()) {
+		synchronized (remainingMandatory) {
+			for (Resource resource = (Resource) remainingMandatory.reverseGetFirst(); resource != null; resource = (Resource) remainingMandatory.reverseGetNext()) {
 				if (resource.type == type && resource.id == id) {
 					return;
 				}
@@ -270,15 +270,15 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 			resource.type = type;
 			resource.id = id;
 			resource.incomplete = true;
-			synchronized (aClass19_1370) {
-				aClass19_1370.append(resource);
+			synchronized (mandatory) {
+				mandatory.append(resource);
 			}
-			nodeSubList.insertHead(resource);
+			remainingMandatory.insertHead(resource);
 		}
 	}
 
 	public int getModelFlag(int index) {
-		return modelFlags[index] & 0xff;
+		return modelIndices[index] & 0xff;
 	}
 
 	public void run() {
@@ -286,25 +286,25 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 			while (running) {
 				resourceCycle++;
 				int i = 20;
-				if (anInt1332 == 0 && client.jagCache[0] != null) {
+				if (maxPriority == 0 && client.resourceCaches[0] != null) {
 					i = 50;
 				}
 				try {
 					Thread.sleep(i);
 				} catch (Exception _ex) {
 				}
-				waiting = true;
+				expectingData = true;
 				for (int j = 0; j < 100; j++) {
-					if (!waiting) {
+					if (!expectingData) {
 						break;
 					}
-					waiting = false;
+					expectingData = false;
 					checkReceived();
 					handleFailed();
 					if (incompletedCount == 0 && j >= 5) {
 						break;
 					}
-					method568();
+					loadExtras();
 					if (in != null) {
 						handleResponse();
 					}
@@ -346,16 +346,16 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 					connectionIdleTicks = 0;
 					statusString = "";
 				}
-				if (client.loggedIn && socket != null && out != null && (anInt1332 > 0 || client.jagCache[0] == null)) {
+				if (client.loggedIn && socket != null && out != null && (maxPriority > 0 || client.resourceCaches[0] == null)) {
 					writeLoopCycle++;
 					if (writeLoopCycle > 500) {
 						writeLoopCycle = 0;
-						ioBuffer[0] = 0;
-						ioBuffer[1] = 0;
-						ioBuffer[2] = 0;
-						ioBuffer[3] = 10;
+						inputBuffer[0] = 0;
+						inputBuffer[1] = 0;
+						inputBuffer[2] = 0;
+						inputBuffer[3] = 10;
 						try {
-							out.write(ioBuffer, 0, 4);
+							out.write(inputBuffer, 0, 4);
 						} catch (IOException _ex) {
 							connectionIdleTicks = 5000;
 						}
@@ -368,7 +368,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 	}
 
 	public void method560(int id, int type) {
-		if (client.jagCache[0] == null) {
+		if (client.resourceCaches[0] == null) {
 			return;
 		}
 		if (Constants.CHECK_VERSION_AND_CRC) {
@@ -376,18 +376,18 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 				return;
 			}
 		}
-		if (fileStatus[type][id] == 0) {
+		if (priorities[type][id] == 0) {
 			return;
 		}
-		if (anInt1332 == 0) {
+		if (maxPriority == 0) {
 			return;
 		}
 		Resource resource = new Resource();
 		resource.type = type;
 		resource.id = id;
 		resource.incomplete = false;
-		synchronized (aClass19_1344) {
-			aClass19_1344.append(resource);
+		synchronized (extras) {
+			extras.append(resource);
 		}
 	}
 
@@ -399,7 +399,7 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		if (resource == null) {
 			return null;
 		}
-		synchronized (nodeSubList) {
+		synchronized (remainingMandatory) {
 			resource.unlinkSub();
 		}
 		if (resource.data == null) {
@@ -409,10 +409,10 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 		try {
 			GZIPInputStream in = new GZIPInputStream(new ByteArrayInputStream(resource.data));
 			do {
-				if (i == gzipInputBuffer.length) {
+				if (i == inflationBuffer.length) {
 					throw new RuntimeException("buffer overflow!");
 				}
-				int k = in.read(gzipInputBuffer, i, gzipInputBuffer.length - i);
+				int k = in.read(inflationBuffer, i, inflationBuffer.length - i);
 				if (k == -1) {
 					break;
 				}
@@ -422,51 +422,51 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 			throw new RuntimeException("error unzipping");
 		}
 		resource.data = new byte[i];
-		System.arraycopy(gzipInputBuffer, 0, resource.data, 0, i);
+		System.arraycopy(inflationBuffer, 0, resource.data, 0, i);
 		return resource;
 	}
 
 	public int method562(int i, int k, int l) {
 		int i1 = (l << 8) + k;
-		for (int index = 0; index < mapIndices1.length; index++) {
-			if (mapIndices1[index] == i1) {
+		for (int index = 0; index < mapRegionIds.length; index++) {
+			if (mapRegionIds[index] == i1) {
 				if (i == 0) {
-					return mapIndices2[index];
+					return mapTerrains[index];
 				} else {
-					return mapIndices3[index];
+					return mapLandscapes[index];
 				}
 			}
 		}
 		return -1;
 	}
 
-	public void method548(int i) {
-		method558(0, i);
+	public void loadModel(int index) {
+		loadMandatory(0, index);
 	}
 
-	public void method563(byte status, int type, int id) {
-		if (client.jagCache[0] == null) {
+	public void setExtraPriority(byte priority, int type, int id) {
+		if (client.resourceCaches[0] == null) {
 			return;
 		}
 		if (Constants.CHECK_VERSION_AND_CRC) {
 			if (versions[type][id] == 0) {
 				return;
 			}
-			byte data[] = client.jagCache[type + 1].get(id);
-			if (crcMatches(versions[type][id], crcs[type][id], data)) {
+			byte data[] = client.resourceCaches[type + 1].get(id);
+			if (verify(versions[type][id], checksums[type][id], data)) {
 				return;
 			}
 		}
-		fileStatus[type][id] = status;
-		if (status > anInt1332) {
-			anInt1332 = status;
+		priorities[type][id] = priority;
+		if (priority > maxPriority) {
+			maxPriority = priority;
 		}
 		totalFiles++;
 	}
 
 	public boolean method564(int i) {
-		for (int index = 0; index < mapIndices1.length; index++) {
-			if (mapIndices3[index] == i) {
+		for (int index = 0; index < mapRegionIds.length; index++) {
+			if (mapLandscapes[index] == i) {
 				return true;
 			}
 		}
@@ -484,72 +484,72 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 			}
 		}
 		while (incompletedCount < 10) {
-			Resource resource = (Resource) aClass19_1368.popFront();
+			Resource resource = (Resource) toRequest.popFront();
 			if (resource == null) {
 				break;
 			}
-			if (fileStatus[resource.type][resource.id] != 0) {
+			if (priorities[resource.type][resource.id] != 0) {
 				filesLoaded++;
 			}
-			fileStatus[resource.type][resource.id] = 0;
+			priorities[resource.type][resource.id] = 0;
 			requested.append(resource);
 			incompletedCount++;
 			closeRequest(resource);
-			waiting = true;
+			expectingData = true;
 		}
 	}
 
-	public void method566() {
-		synchronized (aClass19_1344) {
-			aClass19_1344.removeAll();
+	public void ignoreExtras() {
+		synchronized (extras) {
+			extras.clear();
 		}
 	}
 
 	private void checkReceived() {
 		Resource resource;
-		synchronized (aClass19_1370) {
-			resource = (Resource) aClass19_1370.popFront();
+		synchronized (mandatory) {
+			resource = (Resource) mandatory.popFront();
 		}
 		while (resource != null) {
-			waiting = true;
+			expectingData = true;
 			byte data[] = null;
-			if (client.jagCache[0] != null) {
-				data = client.jagCache[resource.type + 1].get(resource.id);
+			if (client.resourceCaches[0] != null) {
+				data = client.resourceCaches[resource.type + 1].get(resource.id);
 			}
 			if (Constants.CHECK_VERSION_AND_CRC) {
-				if (!crcMatches(versions[resource.type][resource.id], crcs[resource.type][resource.id], data)) {
+				if (!verify(versions[resource.type][resource.id], checksums[resource.type][resource.id], data)) {
 					data = null;
 				}
 			}
-			synchronized (aClass19_1370) {
+			synchronized (mandatory) {
 				if (data == null) {
-					aClass19_1368.append(resource);
+					toRequest.append(resource);
 				} else {
 					resource.data = data;
 					synchronized (completed) {
 						completed.append(resource);
 					}
 				}
-				resource = (Resource) aClass19_1370.popFront();
+				resource = (Resource) mandatory.popFront();
 			}
 		}
 	}
 
-	private void method568() {
+	private void loadExtras() {
 		while (incompletedCount == 0 && completedCount < 10) {
-			if (anInt1332 == 0) {
+			if (maxPriority == 0) {
 				break;
 			}
 			Resource resource;
-			synchronized (aClass19_1344) {
-				resource = (Resource) aClass19_1344.popFront();
+			synchronized (extras) {
+				resource = (Resource) extras.popFront();
 			}
 			while (resource != null) {
-				if (fileStatus[resource.type][resource.id] != 0) {
-					fileStatus[resource.type][resource.id] = 0;
+				if (priorities[resource.type][resource.id] != 0) {
+					priorities[resource.type][resource.id] = 0;
 					requested.append(resource);
 					closeRequest(resource);
-					waiting = true;
+					expectingData = true;
 					if (filesLoaded < totalFiles) {
 						filesLoaded++;
 					}
@@ -559,23 +559,23 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 						return;
 					}
 				}
-				synchronized (aClass19_1344) {
-					resource = (Resource) aClass19_1344.popFront();
+				synchronized (extras) {
+					resource = (Resource) extras.popFront();
 				}
 			}
 			for (int type = 0; type < 4; type++) {
-				byte status[] = fileStatus[type];
-				int total = status.length;
+				byte priority[] = priorities[type];
+				int total = priority.length;
 				for (int id = 0; id < total; id++) {
-					if (status[id] == anInt1332) {
-						status[id] = 0;
+					if (priority[id] == maxPriority) {
+						priority[id] = 0;
 						Resource extra = new Resource();
 						extra.type = type;
 						extra.id = id;
 						extra.incomplete = false;
 						requested.append(extra);
 						closeRequest(extra);
-						waiting = true;
+						expectingData = true;
 						if (filesLoaded < totalFiles) {
 							filesLoaded++;
 						}
@@ -587,69 +587,69 @@ public final class ResourceProvider extends ModelProvider implements Runnable {
 					}
 				}
 			}
-			anInt1332--;
+			maxPriority--;
 		}
 	}
 
-	public boolean method569(int i) {
-		return midiIndices[i] == 1;
+	public boolean isMidiPreloaded(int index) {
+		return midiIndices[index] == 1;
 	}
 
 	public ResourceProvider() {
+		toRequest = new Deque();
 		requested = new Deque();
-		statusString = "";
-		crc32 = new CRC32();
-		ioBuffer = new byte[500];
-		fileStatus = new byte[4][];
-		aClass19_1344 = new Deque();
-		running = true;
-		waiting = false;
+		mandatory = new Deque();
 		completed = new Deque();
-		gzipInputBuffer = new byte[65000];
-		nodeSubList = new Queue();
+		extras = new Deque();
+		remainingMandatory = new Queue();
+		crc32 = new CRC32();
+		priorities = new byte[4][];
+		inputBuffer = new byte[500];
+		inflationBuffer = new byte[65000];
 		versions = new int[4][];
-		crcs = new int[4][];
-		aClass19_1368 = new Deque();
-		aClass19_1370 = new Deque();
+		checksums = new int[4][];
+		running = true;
+		expectingData = false;
+		statusString = "";
 	}
 
 	private int totalFiles;
 	private final Deque requested;
-	private int anInt1332;
+	private int maxPriority;
 	public String statusString;
 	private int writeLoopCycle;
 	private long openSocketTime;
-	private int[] mapIndices3;
+	private int[] mapLandscapes;
 	private final CRC32 crc32;
-	private final byte[] ioBuffer;
+	private final byte[] inputBuffer;
 	public int resourceCycle;
-	private final byte[][] fileStatus;
+	private final byte[][] priorities;
 	private Client client;
-	private final Deque aClass19_1344;
+	private final Deque extras;
 	private int completedSize;
 	private int expectedSize;
 	private int[] midiIndices;
-	public int anInt1349;
-	private int[] mapIndices2;
+	public int errorCount;
+	private int[] mapTerrains;
 	private int filesLoaded;
 	private boolean running;
 	private OutputStream out;
-	private int[] mapIndices4;
-	private boolean waiting;
+	private int[] regionPreload;
+	private boolean expectingData;
 	private final Deque completed;
-	private final byte[] gzipInputBuffer;
+	private final byte[] inflationBuffer;
 	private int[] animIndices;
-	private final Queue nodeSubList;
+	private final Queue remainingMandatory;
 	private InputStream in;
 	private Socket socket;
 	private final int[][] versions;
-	private final int[][] crcs;
+	private final int[][] checksums;
 	private int incompletedCount;
 	private int completedCount;
-	private final Deque aClass19_1368;
+	private final Deque toRequest;
 	private Resource current;
-	private final Deque aClass19_1370;
-	private int[] mapIndices1;
-	private byte[] modelFlags;
+	private final Deque mandatory;
+	private int[] mapRegionIds;
+	private byte[] modelIndices;
 	private int connectionIdleTicks;
 }
